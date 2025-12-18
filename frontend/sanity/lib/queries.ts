@@ -16,7 +16,7 @@ const postFields = /* groq */ `
 const linkReference = /* groq */ `
   _type == "link" => {
     "page": page->slug.current,
-    "post": post->slug.current
+    "article": article->slug.current
   }
 `
 
@@ -54,7 +54,7 @@ export const getPageQuery = defineQuery(`
 `)
 
 export const sitemapData = defineQuery(`
-  *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {
+  *[_type == "page" || _type == "article" && defined(slug.current)] | order(_type asc) {
     "slug": slug.current,
     _type,
     _updatedAt,
@@ -62,19 +62,19 @@ export const sitemapData = defineQuery(`
 `)
 
 export const allPostsQuery = defineQuery(`
-  *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) {
+  *[_type == "article" && defined(slug.current)] | order(date desc, _updatedAt desc) {
     ${postFields}
   }
 `)
 
 export const morePostsQuery = defineQuery(`
-  *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {
+  *[_type == "article" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {
     ${postFields}
   }
 `)
 
 export const postQuery = defineQuery(`
-  *[_type == "post" && slug.current == $slug] [0] {
+  *[_type == "article" && slug.current == $slug] [0] {
     content[]{
     ...,
     markDefs[]{
@@ -87,7 +87,7 @@ export const postQuery = defineQuery(`
 `)
 
 export const postPagesSlugs = defineQuery(`
-  *[_type == "post" && defined(slug.current)]
+  *[_type == "article" && defined(slug.current)]
   {"slug": slug.current}
 `)
 

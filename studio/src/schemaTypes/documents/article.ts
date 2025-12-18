@@ -3,13 +3,13 @@ import {format, parseISO} from 'date-fns'
 import {defineField, defineType} from 'sanity'
 
 /**
- * Post schema.  Define and edit the fields for the 'post' content type.
+ * Article schema.  Define and edit the fields for the 'article' content type.
  * Learn more: https://www.sanity.io/docs/schema-types
  */
 
-export const post = defineType({
-  name: 'post',
-  title: 'Post',
+export const article = defineType({
+  name: 'article',
+  title: 'Article',
   icon: DocumentTextIcon,
   type: 'document',
   fields: [
@@ -23,7 +23,7 @@ export const post = defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      description: 'A slug is required for the post to show up in the preview',
+      description: 'A slug is required for the article to show up in the preview',
       options: {
         source: 'title',
         maxLength: 96,

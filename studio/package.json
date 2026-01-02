@@ -12,6 +12,10 @@
     "build": "sanity build",
     "deploy": "sanity deploy",
     "dev": "sanity dev",
+    "dev:staging": "sanity dev --config sanity.config.staging.ts",
+    "dev:production": "sanity dev --config sanity.config.production.ts",
+    "deploy:staging": "sanity deploy --config sanity.config.staging.ts",
+    "deploy:production": "sanity deploy --config sanity.config.production.ts",
     "extract-types": "sanity schema extract --enforce-required-fields",
     "start": "sanity start",
     "type-check": "tsc --noEmit"

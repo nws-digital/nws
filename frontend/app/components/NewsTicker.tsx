@@ -24,7 +24,7 @@ export async function NewsTicker() {
   return (
     <section className="bg-white rounded-lg shadow-lg overflow-hidden w-full">
       <div className="bg-red-600 text-white px-4 py-3">
-        <h2 className="text-lg font-bold">📰 Breaking News</h2>
+        <h2 className="text-lg font-bold">Breaking News</h2>
       </div>
       
       <div className="h-[600px] overflow-hidden relative bg-black/90">

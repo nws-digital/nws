@@ -97,6 +97,15 @@ export default {
       fontFamily: {
         sans: ['var(--font-inter)'],
       },
+      animation: {
+        scroll: 'scroll 60s linear infinite',
+      },
+      keyframes: {
+        scroll: {
+          '0%': {transform: 'translateY(0)'},
+          '100%': {transform: 'translateY(-50%)'},
+        },
+      },
     },
   },
   future: {

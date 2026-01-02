@@ -33,3 +33,21 @@
 
   --default-transition-duration: 250ms;
 }
+
+/* Auto-scrolling animation */
+@keyframes scroll {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 360s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}

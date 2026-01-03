@@ -8,7 +8,8 @@ import SideBySideIcons from '@/app/components/SideBySideIcons'
 import {NewsTicker} from '@/app/components/NewsTicker'
 import {FeaturedArticle} from '@/app/components/FeaturedArticle'
 import {FeaturedPlaceholder} from '@/app/components/FeaturedPlaceholder'
-import {settingsQuery, featuredArticleQuery} from '@/sanity/lib/queries'
+import {CommentarySection} from '@/app/components/CommentarySection'
+import {settingsQuery, featuredArticleQuery, commentaryArticlesQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
 
 export default async function Page() {
@@ -18,6 +19,10 @@ export default async function Page() {
 
   const {data: featuredArticle} = await sanityFetch({
     query: featuredArticleQuery,
+  })
+
+  const {data: commentaryArticles} = await sanityFetch({
+    query: commentaryArticlesQuery,
   })
 
   return (
@@ -48,10 +53,14 @@ export default async function Page() {
           </div>
         </div>
       </div>
+
+      {/* Commentary Section */}
+      <CommentarySection articles={commentaryArticles || []} />
+
       <div className="border-t border-gray-100 bg-gray-50">
         <div className="container">
           <aside className="py-12 sm:py-20">
-            <Suspense>{await AllPosts()}</Suspense>
+            {/* <Suspense>{await AllPosts()}</Suspense> */}
           </aside>
         </div>
       </div>

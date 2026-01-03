@@ -14,6 +14,18 @@ export const featuredArticleQuery = defineQuery(`
   }
 `)
 
+export const commentaryArticlesQuery = defineQuery(`
+  *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
+    date,
+    "author": author->{firstName, lastName, designation, picture}
+  }
+`)
+
 const postFields = /* groq */ `
   _id,
   "status": select(_originalId in path("drafts.**") => "draft", "published"),

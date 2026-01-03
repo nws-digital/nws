@@ -39,6 +39,21 @@ export const article = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'World Exclusive', value: 'world-exclusive'},
+          {title: 'India Exclusive', value: 'india-exclusive'},
+          {title: 'ISSOT Exclusive', value: 'issot-exclusive'},
+          {title: 'Commentary', value: 'commentary'},
+        ],
+        layout: 'radio',
+      },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: 'content',
       title: 'Content',
       type: 'blockContent',
@@ -98,10 +113,13 @@ export const article = defineType({
       date: 'date',
       media: 'coverImage',
       featured: 'featured',
+      category: 'category',
     },
-    prepare({title, media, authorFirstName, authorLastName, date, featured}) {
+    prepare({title, media, authorFirstName, authorLastName, date, featured, category}) {
+      const categoryLabel = category ? category.replace('-', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : ''
       const subtitles = [
         featured && '⭐ Featured',
+        categoryLabel,
         authorFirstName && authorLastName && `by ${authorFirstName} ${authorLastName}`,
         date && `on ${format(parseISO(date), 'LLL d, yyyy')}`,
       ].filter(Boolean)
@@ -110,3 +128,4 @@ export const article = defineType({
     },
   },
 })
+

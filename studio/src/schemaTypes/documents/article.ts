@@ -32,6 +32,13 @@ export const article = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'featured',
+      title: 'Featured Article',
+      type: 'boolean',
+      description: 'Display this article as the hero banner on homepage',
+      initialValue: false,
+    }),
+    defineField({
       name: 'content',
       title: 'Content',
       type: 'blockContent',
@@ -90,9 +97,11 @@ export const article = defineType({
       authorLastName: 'author.lastName',
       date: 'date',
       media: 'coverImage',
+      featured: 'featured',
     },
-    prepare({title, media, authorFirstName, authorLastName, date}) {
+    prepare({title, media, authorFirstName, authorLastName, date, featured}) {
       const subtitles = [
+        featured && '⭐ Featured',
         authorFirstName && authorLastName && `by ${authorFirstName} ${authorLastName}`,
         date && `on ${format(parseISO(date), 'LLL d, yyyy')}`,
       ].filter(Boolean)

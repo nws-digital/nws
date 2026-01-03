@@ -2,6 +2,18 @@ import {defineQuery} from 'next-sanity'
 
 export const settingsQuery = defineQuery(`*[_type == "settings"][0]`)
 
+export const featuredArticleQuery = defineQuery(`
+  *[_type == "article" && featured == true] | order(date desc)[0] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    date,
+    "author": author->{firstName, lastName},
+    coverImage
+  }
+`)
+
 const postFields = /* groq */ `
   _id,
   "status": select(_originalId in path("drafts.**") => "draft", "published"),

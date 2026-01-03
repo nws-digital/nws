@@ -6,7 +6,9 @@ import {AllPosts} from '@/app/components/Posts'
 import GetStartedCode from '@/app/components/GetStartedCode'
 import SideBySideIcons from '@/app/components/SideBySideIcons'
 import {NewsTicker} from '@/app/components/NewsTicker'
-import {settingsQuery} from '@/sanity/lib/queries'
+import {FeaturedArticle} from '@/app/components/FeaturedArticle'
+import {FeaturedPlaceholder} from '@/app/components/FeaturedPlaceholder'
+import {settingsQuery, featuredArticleQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
 
 export default async function Page() {
@@ -14,44 +16,34 @@ export default async function Page() {
     query: settingsQuery,
   })
 
+  const {data: featuredArticle} = await sanityFetch({
+    query: featuredArticleQuery,
+  })
+
   return (
     <>
-      <div className="relative">
-        <div className="flex flex-col lg:flex-row items-start container mx-auto gap-8">
-          {/* Main content - Left side */}
-          <div className="flex-1 flex flex-col items-center w-full">
-            <div className="relative mx-auto max-w-2xl pb-20 pt-10 space-y-6 lg:max-w-4xl lg:px-12 flex flex-col items-center">
-              <div className="prose sm:prose-lg md:prose-xl xl:prose-2xl text-gray-700 prose-a:text-gray-700 font-light text-center">
-                {settings?.description && <PortableText value={settings.description} />}
-                <div className="flex items-center flex-col gap-4">
-                  <GetStartedCode />
-                  <Link
-                    href="https://www.sanity.io/docs"
-                    className="inline-flex text-brand text-xs md:text-sm underline hover:text-gray-900"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Sanity Documentation
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      className="w-4 h-4 ml-1 inline"
-                      fill="currentColor"
-                    >
-                      <path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V12L17.206 8.207L11.2071 14.2071L9.79289 12.7929L15.792 6.793L12 3H21Z"></path>
-                    </svg>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="relative w-full pt-20">
+        {/* Featured Article - Full width */}
+        <div className="w-full">
+          {featuredArticle ? (
+            <FeaturedArticle article={featuredArticle} />
+          ) : (
+            <FeaturedPlaceholder />
+          )}
+        </div>
 
-          {/* News Ticker - Right side */}
-          <aside className="w-full lg:w-80 lg:sticky lg:top-8 pt-10">
-            <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-[600px] animate-pulse" />}>
-              <NewsTicker />
-            </Suspense>
-          </aside>
+        {/* News Ticker - Overlaid on top right */}
+        <aside className="hidden lg:block absolute top-20 bottom-0 right-8 w-96 z-10 py-6">
+          <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-full w-full animate-pulse" />}>
+            <NewsTicker />
+          </Suspense>
+        </aside>
+
+        {/* News Ticker - Below on mobile */}
+        <div className="lg:hidden container mx-auto px-4 mt-8">
+          <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-[600px] animate-pulse" />}>
+            <NewsTicker />
+          </Suspense>
         </div>
       </div>
       <div className="border-t border-gray-100 bg-gray-50">

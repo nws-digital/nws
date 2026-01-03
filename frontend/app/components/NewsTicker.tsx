@@ -22,12 +22,12 @@ export async function NewsTicker() {
   const articles = await getAllNews()
 
   return (
-    <section className="bg-white rounded-lg shadow-lg overflow-hidden w-full h-full flex flex-col">
-      <div className="bg-red-600 text-white px-4 py-3 flex-shrink-0">
+    <section className="backdrop-blur-xl bg-black/60 border border-white/10 rounded-lg shadow-2xl overflow-hidden w-full h-full flex flex-col">
+      <div className="bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-3 flex-shrink-0 backdrop-blur-sm">
         <h2 className="text-lg font-bold">Breaking News</h2>
       </div>
       
-      <div className="flex-1 overflow-hidden relative bg-black/90">
+      <div className="flex-1 overflow-hidden relative backdrop-blur-md bg-black/70">
         {/* Scrolling container */}
         <div className="animate-scroll">
           {articles.length > 0 ? (

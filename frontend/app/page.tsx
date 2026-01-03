@@ -41,9 +41,11 @@ export default async function Page() {
 
         {/* News Ticker - Below on mobile */}
         <div className="lg:hidden container mx-auto px-4 mt-8">
-          <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-[600px] animate-pulse" />}>
-            <NewsTicker />
-          </Suspense>
+          <div className="h-[500px]">
+            <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-full w-full animate-pulse" />}>
+              <NewsTicker />
+            </Suspense>
+          </div>
         </div>
       </div>
       <div className="border-t border-gray-100 bg-gray-50">

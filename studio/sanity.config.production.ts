@@ -18,7 +18,7 @@ import {assist} from '@sanity/assist'
 
 // Production environment configuration
 const projectId = '01seu5c9'
-const dataset = 'nws'
+const dataset = 'production'
 const PREVIEW_URL = 'https://nws.vercel.app'
 
 const homeLocation = {

@@ -9,7 +9,8 @@ import {NewsTicker} from '@/app/components/NewsTicker'
 import {FeaturedArticle} from '@/app/components/FeaturedArticle'
 import {FeaturedPlaceholder} from '@/app/components/FeaturedPlaceholder'
 import {CommentarySection} from '@/app/components/CommentarySection'
-import {settingsQuery, featuredArticleQuery, commentaryArticlesQuery} from '@/sanity/lib/queries'
+import {LatestArticles} from '@/app/components/LatestArticles'
+import {settingsQuery, featuredArticleQuery, commentaryArticlesQuery, latestArticlesQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
 
 export default async function Page() {
@@ -23,6 +24,10 @@ export default async function Page() {
 
   const {data: commentaryArticles} = await sanityFetch({
     query: commentaryArticlesQuery,
+  })
+
+  const {data: latestArticles} = await sanityFetch({
+    query: latestArticlesQuery,
   })
 
   return (
@@ -53,6 +58,9 @@ export default async function Page() {
           </div>
         </div>
       </div>
+
+      {/* Latest Articles Section */}
+      <LatestArticles articles={latestArticles || []} />
 
       {/* Commentary Section */}
       <CommentarySection articles={commentaryArticles || []} />

@@ -26,6 +26,19 @@ export const commentaryArticlesQuery = defineQuery(`
   }
 `)
 
+export const latestArticlesQuery = defineQuery(`
+  *[_type == "article" && category != "commentary"] | order(date desc)[0...6] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
+    date,
+    category,
+    coverImage
+  }
+`)
+
 const postFields = /* groq */ `
   _id,
   "status": select(_originalId in path("drafts.**") => "draft", "published"),

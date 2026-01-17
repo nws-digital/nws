@@ -39,6 +39,35 @@ export const latestArticlesQuery = defineQuery(`
   }
 `)
 
+export const categoryArticlesQuery = defineQuery(`
+  *[_type == "article" && category == $category] | order(date desc)[$offset...$limit] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
+    date,
+    category,
+    coverImage
+  }
+`)
+
+export const categoryArticlesCountQuery = defineQuery(`
+  count(*[_type == "article" && category == $category])
+`)
+
+export const commentaryArticlesPageQuery = defineQuery(`
+  *[_type == "article" && category == "commentary"] | order(date desc)[$offset...$limit] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
+    date,
+    "author": author->{firstName, lastName, designation, picture}
+  }
+`)
+
 const postFields = /* groq */ `
   _id,
   "status": select(_originalId in path("drafts.**") => "draft", "published"),
@@ -48,6 +77,7 @@ const postFields = /* groq */ `
   coverImage,
   "date": coalesce(date, _updatedAt),
   "author": author->{firstName, lastName, picture},
+  category,
 `
 
 const linkReference = /* groq */ `

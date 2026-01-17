@@ -559,6 +559,15 @@ export type FeaturedArticleQueryResult = null
 // Variable: commentaryArticlesQuery
 // Query: *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    "author": author->{firstName, lastName, designation, picture}  }
 export type CommentaryArticlesQueryResult = Array<never>
+// Variable: latestArticlesQuery
+// Query: *[_type == "article" && category != "commentary"] | order(date desc)[0...6] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    category,    coverImage  }
+export type LatestArticlesQueryResult = Array<never>
+// Variable: categoryArticlesQuery
+// Query: *[_type == "article" && category == $category] | order(date desc)[$offset...$limit] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    category,    coverImage  }
+export type CategoryArticlesQueryResult = Array<never>
+// Variable: categoryArticlesCountQuery
+// Query: count(*[_type == "article" && category == $category])
+export type CategoryArticlesCountQueryResult = number
 // Variable: getPageQuery
 // Query: *[_type == 'page' && slug.current == $slug][0]{    _id,    _type,    name,    slug,    heading,    subheading,    "pageBuilder": pageBuilder[]{      ...,      _type == "callToAction" => {          link {      ...,        _type == "link" => {    "page": page->slug.current,    "article": article->slug.current  }      },      },      _type == "infoSection" => {        content[]{          ...,          markDefs[]{            ...,              _type == "link" => {    "page": page->slug.current,    "article": article->slug.current  }          }        }      },    },  }
 export type GetPageQueryResult = {
@@ -666,6 +675,9 @@ declare module '@sanity/client' {
     '*[_type == "settings"][0]': SettingsQueryResult
     '\n  *[_type == "article" && featured == true] | order(date desc)[0] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    date,\n    "author": author->{firstName, lastName},\n    coverImage\n  }\n': FeaturedArticleQueryResult
     '\n  *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    "author": author->{firstName, lastName, designation, picture}\n  }\n': CommentaryArticlesQueryResult
+    '\n  *[_type == "article" && category != "commentary"] | order(date desc)[0...6] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    category,\n    coverImage\n  }\n': LatestArticlesQueryResult
+    '\n  *[_type == "article" && category == $category] | order(date desc)[$offset...$limit] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    category,\n    coverImage\n  }\n': CategoryArticlesQueryResult
+    '\n  count(*[_type == "article" && category == $category])\n': CategoryArticlesCountQueryResult
     '\n  *[_type == \'page\' && slug.current == $slug][0]{\n    _id,\n    _type,\n    name,\n    slug,\n    heading,\n    subheading,\n    "pageBuilder": pageBuilder[]{\n      ...,\n      _type == "callToAction" => {\n        \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "article": article->slug.current\n  }\n\n      }\n,\n      },\n      _type == "infoSection" => {\n        content[]{\n          ...,\n          markDefs[]{\n            ...,\n            \n  _type == "link" => {\n    "page": page->slug.current,\n    "article": article->slug.current\n  }\n\n          }\n        }\n      },\n    },\n  }\n': GetPageQueryResult
     '\n  *[_type == "page" || _type == "article" && defined(slug.current)] | order(_type asc) {\n    "slug": slug.current,\n    _type,\n    _updatedAt,\n  }\n': SitemapDataResult
     '\n  *[_type == "article" && defined(slug.current)] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': AllPostsQueryResult

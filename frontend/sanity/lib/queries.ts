@@ -9,6 +9,7 @@ export const featuredArticleQuery = defineQuery(`
     slug,
     excerpt,
     date,
+    category,
     "author": author->{firstName, lastName},
     coverImage
   }

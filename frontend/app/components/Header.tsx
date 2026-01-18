@@ -21,22 +21,22 @@ export default function Header() {
           <nav className="hidden md:flex flex-1 justify-center">
             <ul className="flex items-center gap-6 lg:gap-8 text-xs lg:text-sm font-medium uppercase tracking-wide">
               <li>
-                <Link href="/category/world-exclusive" className="hover:text-red-600 transition-colors">
+                <Link href="/world-exclusive" className="hover:text-red-600 transition-colors">
                   World Exclusive
                 </Link>
               </li>
               <li>
-                <Link href="/category/india-exclusive" className="hover:text-red-600 transition-colors">
+                <Link href="/india-exclusive" className="hover:text-red-600 transition-colors">
                   India Exclusive
                 </Link>
               </li>
               <li>
-                <Link href="/category/issot-exclusive" className="hover:text-red-600 transition-colors">
+                <Link href="/issot-exclusive" className="hover:text-red-600 transition-colors">
                   ISSOT Exclusive
                 </Link>
               </li>
               <li>
-                <Link href="/category/commentary" className="hover:text-red-600 transition-colors">
+                <Link href="/commentary" className="hover:text-red-600 transition-colors">
                   Commentary
                 </Link>
               </li>
@@ -111,7 +111,7 @@ export default function Header() {
             <ul className="flex flex-col py-4">
               <li>
                 <Link 
-                  href="/category/world-exclusive" 
+                  href="/world-exclusive" 
                   className="block px-6 py-3 hover:bg-gray-50 hover:text-red-600 transition-colors font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -120,7 +120,7 @@ export default function Header() {
               </li>
               <li>
                 <Link 
-                  href="/category/india-exclusive" 
+                  href="/india-exclusive" 
                   className="block px-6 py-3 hover:bg-gray-50 hover:text-red-600 transition-colors font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -129,7 +129,7 @@ export default function Header() {
               </li>
               <li>
                 <Link 
-                  href="/category/issot-exclusive" 
+                  href="/issot-exclusive" 
                   className="block px-6 py-3 hover:bg-gray-50 hover:text-red-600 transition-colors font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -138,7 +138,7 @@ export default function Header() {
               </li>
               <li>
                 <Link 
-                  href="/category/commentary" 
+                  href="/commentary" 
                   className="block px-6 py-3 hover:bg-gray-50 hover:text-red-600 transition-colors font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >

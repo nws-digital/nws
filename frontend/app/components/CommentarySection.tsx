@@ -49,7 +49,7 @@ export function CommentarySection({articles}: CommentarySectionProps) {
             return (
               <Link
                 key={article._id}
-                href={`/posts/${article.slug.current}`}
+                href={`/commentary/${article.slug.current}`}
                 className="group flex flex-col bg-white border-2 border-gray-200 rounded-lg p-6 hover:shadow-xl transition-all duration-300 hover:border-red-600"
               >
                 {/* Author Info */}

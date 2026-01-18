@@ -9,6 +9,7 @@ interface FeaturedArticleProps {
     slug: {current: string}
     excerpt?: string
     date: string
+    category?: string
     author?: {
       firstName: string
       lastName: string
@@ -31,7 +32,7 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
 
   return (
     <Link 
-      href={`/${article.slug.current}`}
+      href={`/${article.category}/${article.slug.current}`}
       className="group block relative overflow-hidden shadow-2xl"
     >
       {/* Image */}

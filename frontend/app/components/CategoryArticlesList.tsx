@@ -75,7 +75,7 @@ export function CategoryArticlesList({initialArticles, category, totalCount}: Ca
           return (
             <Link
               key={article._id}
-              href={`/posts/${article.slug.current}`}
+              href={`/${category}/${article.slug.current}`}
               className="group flex flex-col bg-white rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-red-600"
             >
               {/* Cover Image */}

@@ -110,7 +110,7 @@ export default async function ArticlePage(props: Props) {
   return (
     <>
       <div className="pt-20">
-        <div className="container my-8 lg:my-12 grid gap-12">
+        <div className="container px-4 py-8">
           {/* Breadcrumb Navigation */}
           <Breadcrumb
             items={[
@@ -124,19 +124,19 @@ export default async function ArticlePage(props: Props) {
           />
 
           <div>
-            <div className="pb-6 grid gap-6 mb-6 border-b border-gray-100">
-              <div className="max-w-3xl flex flex-col gap-6">
-                <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl lg:text-4xl">
+            <div className="pb-2 mb-2 border-b border-gray-100">
+              <div className="max-w-3xl flex flex-col gap-2">
+                <h2 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl lg:text-3xl">
                   {post.title}
                 </h2>
               </div>
-              <div className="max-w-3xl flex gap-4 items-center">
+              <div className="max-w-3xl flex gap-4 items-center mt-2">
                 {post.author && post.author.firstName && post.author.lastName && (
-                  <Avatar person={post.author} date={post.date} />
+                  <Avatar person={post.author} date={post.date} small />
                 )}
               </div>
             </div>
-            <article className="gap-6 grid max-w-4xl">
+            <article className="gap-1 grid max-w-4xl">
               <div className="">{post?.coverImage && <CoverImage image={post.coverImage} priority />}</div>
               {post.content?.length && (
                 <PortableText className="max-w-2xl" value={post.content as PortableTextBlock[]} />

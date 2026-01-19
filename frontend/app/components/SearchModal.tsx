@@ -75,12 +75,14 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
   }
 
   useEffect(() => {
+    const nextQuery = searchTerm.trim()
+
     if (debounceRef.current) {
       clearTimeout(debounceRef.current)
       debounceRef.current = null
     }
 
-    if (trimmedQuery.length < 2) {
+    if (nextQuery.length < 2) {
       activeRequestRef.current += 1
       setLoading(false)
       setResults((prev) => (prev.length ? [] : prev))
@@ -91,7 +93,7 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
     setLoading(true)
 
     debounceRef.current = setTimeout(() => {
-      runSearch(trimmedQuery, requestId)
+      runSearch(nextQuery, requestId)
       debounceRef.current = null
     }, 300)
 
@@ -200,7 +202,7 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
           <div className="overflow-y-auto max-h-[50vh] p-6">
             {results.length === 0 && !loading && trimmedQuery.length >= 2 && (
               <div className="text-center py-8 text-gray-500">
-                No results found for "{searchTerm}"
+                No results found for &ldquo;{searchTerm}&rdquo;
               </div>
             )}
 

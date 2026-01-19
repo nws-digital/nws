@@ -1,11 +1,26 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Footer() {
   return (
     <footer className="bg-black text-white">
       <div className="container mx-auto px-6 py-12">
-        {/* Three column layout */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        {/* Four column layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+          {/* Logo and Description Column */}
+          <div>
+            <Image 
+              src="/images/Logo_White.svg" 
+              alt="NWS" 
+              width={136}
+              height={56}
+              className="h-10 w-auto mb-4"
+            />
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Reporting on global progress, the delicate balance between development and environmental concerns, and insightful, critical.
+            </p>
+          </div>
+
           {/* Sections Column */}
           <div>
             <h3 className="font-bold text-lg mb-4">Sections</h3>

@@ -1,6 +1,5 @@
 /**
- * This config is used to configure your Sanity Studio.
- * Learn more: https://www.sanity.io/docs/configuration
+ * Production environment configuration for Sanity Studio
  */
 
 import {defineConfig} from 'sanity'
@@ -17,21 +16,16 @@ import {
 } from 'sanity/presentation'
 import {assist} from '@sanity/assist'
 
-// Environment variables for project configuration
-const projectId = process.env.SANITY_STUDIO_PROJECT_ID || '01seu5c9'
-const dataset = process.env.SANITY_STUDIO_DATASET || 'staging'
+// Production environment configuration
+const projectId = '01seu5c9'
+const dataset = 'production'
+const PREVIEW_URL = 'https://nws.vercel.app'
 
-// URL for preview functionality, defaults to localhost:3000 if not set
-const SANITY_STUDIO_PREVIEW_URL = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
-
-// Define the home location for the presentation tool
 const homeLocation = {
   title: 'Home',
   href: '/',
 } satisfies DocumentLocation
 
-// resolveHref() is a convenience function that resolves the URL
-// path for different document types and used in the presentation tool.
 function resolveHref(documentType?: string, slug?: string): string | undefined {
   switch (documentType) {
     case 'article':
@@ -39,30 +33,26 @@ function resolveHref(documentType?: string, slug?: string): string | undefined {
     case 'page':
       return slug ? `/${slug}` : undefined
     default:
-      console.warn('Invalid document type:', documentType)
       return undefined
   }
 }
 
-// Main Sanity configuration
 export default defineConfig({
-  name: 'default',
-  title: 'NWS STUDIO',
+  name: 'production',
+  title: 'NWS (Production)',
 
   projectId,
   dataset,
 
   plugins: [
-    // Presentation tool configuration for Visual Editing
     presentationTool({
       previewUrl: {
-        origin: SANITY_STUDIO_PREVIEW_URL,
+        origin: PREVIEW_URL,
         previewMode: {
           enable: '/api/draft-mode/enable',
         },
       },
       resolve: {
-        // The Main Document Resolver API provides a method of resolving a main document from a given route or route pattern. https://www.sanity.io/docs/presentation-resolver-api#57720a5678d9
         mainDocuments: defineDocuments([
           {
             route: '/',
@@ -77,7 +67,6 @@ export default defineConfig({
             filter: `_type == "article" && slug.current == $slug || _id == $slug`,
           },
         ]),
-        // Locations Resolver API allows you to define where data is being used in your application. https://www.sanity.io/docs/presentation-resolver-api#8d8bca7bfcd7
         locations: {
           settings: defineLocations({
             locations: [homeLocation],
@@ -119,16 +108,12 @@ export default defineConfig({
         },
       },
     }),
-    structureTool({
-      structure, // Custom studio structure configuration, imported from ./src/structure.ts
-    }),
-    // Additional plugins for enhanced functionality
+    structureTool({structure}),
     unsplashImageAsset(),
     assist(),
     visionTool(),
   ],
 
-  // Schema configuration, imported from ./src/schemaTypes/index.ts
   schema: {
     types: schemaTypes,
   },

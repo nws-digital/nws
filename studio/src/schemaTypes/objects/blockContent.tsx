@@ -92,5 +92,28 @@ export const blockContent = defineType({
         ],
       },
     }),
+    // Add image support
+    defineArrayMember({
+      type: 'image',
+      title: 'Image',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        defineField({
+          name: 'alt',
+          type: 'string',
+          title: 'Alternative text',
+          description: 'Important for SEO and accessibility.',
+          validation: (Rule) => Rule.required(),
+        }),
+        defineField({
+          name: 'caption',
+          type: 'string',
+          title: 'Caption',
+          description: 'Optional caption displayed below the image.',
+        }),
+      ],
+    }),
   ],
 })

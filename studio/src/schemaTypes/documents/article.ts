@@ -32,6 +32,28 @@ export const article = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'featured',
+      title: 'Featured Article',
+      type: 'boolean',
+      description: 'Display this article as the hero banner on homepage',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'World Exclusive', value: 'world-exclusive'},
+          {title: 'India Exclusive', value: 'india-exclusive'},
+          {title: 'OSINT Exclusive', value: 'osint-exclusive'},
+          {title: 'Commentary', value: 'commentary'},
+        ],
+        layout: 'radio',
+      },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: 'content',
       title: 'Content',
       type: 'blockContent',
@@ -90,9 +112,14 @@ export const article = defineType({
       authorLastName: 'author.lastName',
       date: 'date',
       media: 'coverImage',
+      featured: 'featured',
+      category: 'category',
     },
-    prepare({title, media, authorFirstName, authorLastName, date}) {
+    prepare({title, media, authorFirstName, authorLastName, date, featured, category}) {
+      const categoryLabel = category ? category.replace('-', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : ''
       const subtitles = [
+        featured && '⭐ Featured',
+        categoryLabel,
         authorFirstName && authorLastName && `by ${authorFirstName} ${authorLastName}`,
         date && `on ${format(parseISO(date), 'LLL d, yyyy')}`,
       ].filter(Boolean)
@@ -101,3 +128,4 @@ export const article = defineType({
     },
   },
 })
+

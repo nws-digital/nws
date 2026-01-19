@@ -2,6 +2,73 @@ import {defineQuery} from 'next-sanity'
 
 export const settingsQuery = defineQuery(`*[_type == "settings"][0]`)
 
+export const featuredArticleQuery = defineQuery(`
+  *[_type == "article" && featured == true] | order(date desc)[0] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    date,
+    category,
+    "author": author->{firstName, lastName},
+    coverImage
+  }
+`)
+
+export const commentaryArticlesQuery = defineQuery(`
+  *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
+    date,
+    "author": author->{firstName, lastName, designation, picture}
+  }
+`)
+
+export const latestArticlesQuery = defineQuery(`
+  *[_type == "article" && category != "commentary"] | order(date desc)[0...6] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
+    date,
+    category,
+    coverImage
+  }
+`)
+
+export const categoryArticlesQuery = defineQuery(`
+  *[_type == "article" && category == $category] | order(date desc)[$offset...$limit] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
+    date,
+    category,
+    coverImage
+  }
+`)
+
+export const categoryArticlesCountQuery = defineQuery(`
+  count(*[_type == "article" && category == $category])
+`)
+
+export const commentaryArticlesPageQuery = defineQuery(`
+  *[_type == "article" && category == "commentary"] | order(date desc)[$offset...$limit] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
+    date,
+    "author": author->{firstName, lastName, designation, picture}
+  }
+`)
+
 const postFields = /* groq */ `
   _id,
   "status": select(_originalId in path("drafts.**") => "draft", "published"),
@@ -11,6 +78,7 @@ const postFields = /* groq */ `
   coverImage,
   "date": coalesce(date, _updatedAt),
   "author": author->{firstName, lastName, picture},
+  category,
 `
 
 const linkReference = /* groq */ `

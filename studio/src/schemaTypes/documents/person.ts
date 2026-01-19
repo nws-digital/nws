@@ -25,6 +25,13 @@ export const person = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'designation',
+      title: 'Designation',
+      type: 'string',
+      description: 'Job title or role (e.g., Senior Editor, Columnist, Correspondent)',
+      placeholder: 'e.g., Senior Editor',
+    }),
+    defineField({
       name: 'picture',
       title: 'Picture',
       type: 'image',
@@ -59,12 +66,13 @@ export const person = defineType({
     select: {
       firstName: 'firstName',
       lastName: 'lastName',
+      designation: 'designation',
       picture: 'picture',
     },
     prepare(selection) {
       return {
         title: `${selection.firstName} ${selection.lastName}`,
-        subtitle: 'Person',
+        subtitle: selection.designation || 'Person',
         media: selection.picture,
       }
     },

@@ -37,8 +37,8 @@ export default function Header() {
                 </Link>
               </li>
               <li>
-                <Link href="/issot-exclusive" className="hover:text-red-600 transition-colors">
-                  ISSOT Exclusive
+                <Link href="/osint-exclusive" className="hover:text-red-600 transition-colors">
+                  OSINT Exclusive
                 </Link>
               </li>
               <li>
@@ -135,11 +135,11 @@ export default function Header() {
               </li>
               <li>
                 <Link 
-                  href="/issot-exclusive" 
+                  href="/osint-exclusive" 
                   className="block px-6 py-3 hover:bg-gray-50 hover:text-red-600 transition-colors font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  ISSOT Exclusive
+                  OSINT Exclusive
                 </Link>
               </li>
               <li>

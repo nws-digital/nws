@@ -46,7 +46,7 @@ export const article = defineType({
         list: [
           {title: 'World Exclusive', value: 'world-exclusive'},
           {title: 'India Exclusive', value: 'india-exclusive'},
-          {title: 'ISSOT Exclusive', value: 'issot-exclusive'},
+          {title: 'OSINT Exclusive', value: 'osint-exclusive'},
           {title: 'Commentary', value: 'commentary'},
         ],
         layout: 'radio',

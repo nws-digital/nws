@@ -36,8 +36,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/issot-exclusive" className="hover:text-red-500 transition-colors">
-                  ISSOT Exclusive
+                <Link href="/osint-exclusive" className="hover:text-red-500 transition-colors">
+                  OSINT Exclusive
                 </Link>
               </li>
               <li>

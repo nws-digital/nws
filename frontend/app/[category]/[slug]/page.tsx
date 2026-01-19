@@ -22,14 +22,14 @@ type Props = {
 const validCategories = [
   'world-exclusive',
   'india-exclusive',
-  'issot-exclusive',
+  'osint-exclusive',
   'commentary',
 ]
 
 const categoryLabels: Record<string, string> = {
   'world-exclusive': 'World Exclusive',
   'india-exclusive': 'India Exclusive',
-  'issot-exclusive': 'ISSOT Exclusive',
+  'osint-exclusive': 'OSINT Exclusive',
   'commentary': 'Commentary',
 }
 

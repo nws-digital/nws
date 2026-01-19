@@ -21,7 +21,7 @@ interface LatestArticlesProps {
 const categoryLabels: Record<string, string> = {
   'world-exclusive': 'World Exclusive',
   'india-exclusive': 'India Exclusive',
-  'issot-exclusive': 'ISSOT Exclusive',
+  'osint-exclusive': 'OSINT Exclusive',
   'commentary': 'Commentary',
 }
 

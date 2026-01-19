@@ -46,12 +46,18 @@ export async function generateStaticParams() {
     stega: false,
   })
   
-  return (data || [])
+  const params = (data || [])
     .filter((post: any) => post.category && validCategories.includes(post.category))
     .map((post: any) => ({
       category: post.category,
       slug: post.slug,
     }))
+  
+  // Log for debugging
+  console.log('Generated static params:', params.length, 'articles')
+  console.log('Sample:', params.slice(0, 3))
+  
+  return params
 }
 
 /**
@@ -93,11 +99,17 @@ export default async function ArticlePage(props: Props) {
   ])
 
   if (!post?._id) {
+    console.log('Article not found for slug:', params.slug)
     return notFound()
   }
 
-  // Verify the article belongs to this category
+  // Debug: log the category mismatch
   if (post.category !== params.category) {
+    console.log('Category mismatch:', {
+      urlCategory: params.category,
+      articleCategory: post.category,
+      slug: params.slug
+    })
     notFound()
   }
 

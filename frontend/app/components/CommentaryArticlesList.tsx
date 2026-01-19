@@ -65,6 +65,12 @@ export function CommentaryArticlesList({initialArticles, totalCount}: Commentary
           const authorName = article.author 
             ? `${article.author.firstName} ${article.author.lastName}`
             : 'Anonymous'
+          const authorImageBuilder = article.author?.picture ? urlForImage(article.author.picture) : null
+          const authorImageUrl = authorImageBuilder
+            ?.width(48)
+            .height(48)
+            .fit('crop')
+            .url()
           
           const timeAgo = formatDistanceToNow(new Date(article.date), {
             addSuffix: true,
@@ -78,13 +84,9 @@ export function CommentaryArticlesList({initialArticles, totalCount}: Commentary
             >
               {/* Author Info */}
               <div className="flex items-center gap-3 mb-4">
-                {article.author?.picture ? (
+                {authorImageUrl ? (
                   <Image
-                    src={urlForImage(article.author.picture)
-                      .width(48)
-                      .height(48)
-                      .fit('crop')
-                      .url()}
+                    src={authorImageUrl}
                     alt={authorName}
                     width={48}
                     height={48}

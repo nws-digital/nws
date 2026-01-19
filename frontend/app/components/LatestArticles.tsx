@@ -48,6 +48,13 @@ export function LatestArticles({articles}: LatestArticlesProps) {
             const categoryLabel = article.category 
               ? categoryLabels[article.category] || article.category
               : ''
+            
+            const coverBuilder = article.coverImage ? urlForImage(article.coverImage) : null
+            const coverImageUrl = coverBuilder
+              ?.width(600)
+              .height(400)
+              .fit('crop')
+              .url()
 
             return (
               <Link
@@ -56,15 +63,11 @@ export function LatestArticles({articles}: LatestArticlesProps) {
                 className="group flex flex-col bg-white rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-red-600"
               >
                 {/* Cover Image */}
-                {article.coverImage ? (
+                {coverImageUrl ? (
                   <div className="relative w-full h-48 bg-gray-200">
                     <Image
-                      src={urlForImage(article.coverImage)
-                        .width(600)
-                        .height(400)
-                        .fit('crop')
-                        .url()}
-                      alt={article.title}
+                      src={coverImageUrl}
+                      alt={article.title || 'Article image'}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />

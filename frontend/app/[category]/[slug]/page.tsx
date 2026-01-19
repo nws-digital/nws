@@ -5,7 +5,6 @@ import {Suspense} from 'react'
 
 import Avatar from '@/app/components/Avatar'
 import CoverImage from '@/app/components/CoverImage'
-import {MorePosts} from '@/app/components/Posts'
 import PortableText from '@/app/components/PortableText'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
 import {sanityFetch} from '@/sanity/lib/live'
@@ -17,6 +16,24 @@ type Props = {
     category: string
     slug: string
   }>
+}
+
+type ArticleAuthor = {
+  firstName?: string | null
+  lastName?: string | null
+  picture?: any
+}
+
+type ArticlePost = {
+  _id?: string
+  title?: string
+  slug?: string
+  excerpt?: string
+  coverImage?: any
+  date?: string
+  category?: string
+  content?: PortableTextBlock[]
+  author?: ArticleAuthor | null
 }
 
 const validCategories = [
@@ -61,18 +78,19 @@ export async function generateStaticParams() {
  */
 export async function generateMetadata(props: Props, parent: ResolvingMetadata): Promise<Metadata> {
   const params = await props.params
-  const {data: post} = await sanityFetch({
+  const postResponse = await sanityFetch({
     query: postQuery,
     params: {slug: params.slug},
     stega: false,
   })
+  const post = postResponse.data as ArticlePost | null
   const previousImages = (await parent).openGraph?.images || []
   const ogImage = resolveOpenGraphImage(post?.coverImage)
 
   return {
     authors:
       post?.author?.firstName && post?.author?.lastName
-        ? [{name: `${post.author.firstName} ${post.author.lastName}`}]
+        ? [{name: `${post.author.firstName ?? ''} ${post.author.lastName ?? ''}`.trim()}]
         : [],
     title: post?.title,
     description: post?.excerpt,
@@ -90,9 +108,10 @@ export default async function ArticlePage(props: Props) {
     notFound()
   }
 
-  const [{data: post}] = await Promise.all([
+  const [{data: postResponse}] = await Promise.all([
     sanityFetch({query: postQuery, params: {slug: params.slug}}),
   ])
+  const post = postResponse as ArticlePost | null
 
   if (!post?._id) {
     console.log('Article not found for slug:', params.slug)
@@ -114,6 +133,14 @@ export default async function ArticlePage(props: Props) {
   }
 
   const categoryLabel = categoryLabels[params.category] || params.category
+
+  const authorForAvatar = post.author
+    ? {
+        firstName: post.author.firstName ?? null,
+        lastName: post.author.lastName ?? null,
+        picture: post.author.picture,
+      }
+    : null
 
   // Format slug for display (remove hyphens, capitalize)
   const articleSlug =
@@ -143,8 +170,8 @@ export default async function ArticlePage(props: Props) {
                 </h2>
               </div>
               <div className="max-w-3xl flex gap-4 items-center mt-2">
-                {post.author && post.author.firstName && post.author.lastName && (
-                  <Avatar person={post.author} date={post.date} small />
+                {authorForAvatar?.firstName && authorForAvatar?.lastName && (
+                  <Avatar person={authorForAvatar} date={post.date} small />
                 )}
               </div>
             </div>

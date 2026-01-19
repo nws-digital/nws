@@ -16,6 +16,24 @@ type Props = {
   params: Promise<{slug: string}>
 }
 
+type PostAuthor = {
+  firstName?: string | null
+  lastName?: string | null
+  picture?: any
+}
+
+type PostData = {
+  _id?: string
+  title?: string
+  slug?: string
+  excerpt?: string
+  coverImage?: any
+  date?: string
+  category?: string
+  content?: PortableTextBlock[]
+  author?: PostAuthor | null
+}
+
 const categoryLabels: Record<string, string> = {
   'world-exclusive': 'World Exclusive',
   'india-exclusive': 'India Exclusive',
@@ -43,19 +61,20 @@ export async function generateStaticParams() {
  */
 export async function generateMetadata(props: Props, parent: ResolvingMetadata): Promise<Metadata> {
   const params = await props.params
-  const {data: post} = await sanityFetch({
+  const postResponse = await sanityFetch({
     query: postQuery,
     params,
     // Metadata should never contain stega
     stega: false,
   })
+  const post = postResponse.data as PostData | null
   const previousImages = (await parent).openGraph?.images || []
   const ogImage = resolveOpenGraphImage(post?.coverImage)
 
   return {
     authors:
       post?.author?.firstName && post?.author?.lastName
-        ? [{name: `${post.author.firstName} ${post.author.lastName}`}]
+        ? [{name: `${post.author.firstName ?? ''} ${post.author.lastName ?? ''}`.trim()}]
         : [],
     title: post?.title,
     description: post?.excerpt,
@@ -67,7 +86,8 @@ export async function generateMetadata(props: Props, parent: ResolvingMetadata):
 
 export default async function PostPage(props: Props) {
   const params = await props.params
-  const [{data: post}] = await Promise.all([sanityFetch({query: postQuery, params})])
+  const [{data: postResponse}] = await Promise.all([sanityFetch({query: postQuery, params})])
+  const post = postResponse as PostData | null
 
   if (!post?._id) {
     return notFound()
@@ -77,6 +97,14 @@ export default async function PostPage(props: Props) {
 
   // Format slug for display (remove hyphens, capitalize)
   const articleSlug = post.slug?.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || 'Article'
+
+  const authorForAvatar = post.author
+    ? {
+        firstName: post.author.firstName ?? null,
+        lastName: post.author.lastName ?? null,
+        picture: post.author.picture,
+      }
+    : null
 
   return (
     <>
@@ -102,8 +130,8 @@ export default async function PostPage(props: Props) {
                 </h2>
               </div>
               <div className="max-w-3xl flex gap-4 items-center">
-                {post.author && post.author.firstName && post.author.lastName && (
-                  <Avatar person={post.author} date={post.date} />
+                {authorForAvatar?.firstName && authorForAvatar?.lastName && (
+                  <Avatar person={authorForAvatar} date={post.date} />
                 )}
               </div>
             </div>

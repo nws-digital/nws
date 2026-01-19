@@ -1,6 +1,6 @@
 'use client'
 
-import {useState, useEffect, useRef} from 'react'
+import {useState, useEffect, useRef, useMemo} from 'react'
 import {createPortal} from 'react-dom'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -38,7 +38,7 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
   const [mounted, setMounted] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const activeRequestRef = useRef(0)
-  const trimmedQuery = searchTerm.trim()
+  const trimmedQuery = useMemo(() => searchTerm.trim(), [searchTerm])
 
   useEffect(() => {
     setMounted(true)
@@ -75,14 +75,12 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
   }
 
   useEffect(() => {
-    const nextQuery = searchTerm.trim()
-
     if (debounceRef.current) {
       clearTimeout(debounceRef.current)
       debounceRef.current = null
     }
 
-    if (nextQuery.length < 2) {
+    if (trimmedQuery.length < 2) {
       activeRequestRef.current += 1
       setLoading(false)
       setResults((prev) => (prev.length ? [] : prev))
@@ -93,7 +91,7 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
     setLoading(true)
 
     debounceRef.current = setTimeout(() => {
-      runSearch(nextQuery, requestId)
+      runSearch(trimmedQuery, requestId)
       debounceRef.current = null
     }, 300)
 
@@ -103,7 +101,7 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
         debounceRef.current = null
       }
     }
-  }, [searchTerm])
+  }, [trimmedQuery])
 
   useEffect(() => {
     if (!isOpen) {
@@ -217,6 +215,8 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
                 const timeAgo = formatDistanceToNow(new Date(result.date), {
                   addSuffix: true,
                 })
+                const coverBuilder = result.coverImage ? urlForImage(result.coverImage) : null
+                const coverImageUrl = coverBuilder?.width(200).height(200).fit('crop').url()
 
                 return (
                   <Link
@@ -225,14 +225,10 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
                     onClick={onClose}
                     className="flex gap-4 p-4 hover:bg-gray-50 rounded-lg transition-colors group"
                   >
-                    {result.coverImage && (
+                    {coverImageUrl && (
                       <div className="relative w-24 h-24 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
                         <Image
-                          src={urlForImage(result.coverImage)
-                            .width(200)
-                            .height(200)
-                            .fit('crop')
-                            .url()}
+                          src={coverImageUrl}
                           alt={result.title}
                           fill
                           className="object-cover"

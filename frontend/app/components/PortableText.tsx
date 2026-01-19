@@ -86,10 +86,15 @@ export default function CustomPortableText({
         if (!value?.asset?._ref) {
           return null
         }
+        const imageBuilder = urlForImage(value)
+        const imageUrl = imageBuilder?.width(800).height(600).fit('max').url()
+        if (!imageUrl) {
+          return null
+        }
         return (
           <figure className="my-8">
             <Image
-              src={urlForImage(value).width(800).height(600).fit('max').url()}
+              src={imageUrl}
               alt={value.alt || 'Article image'}
               width={800}
               height={600}

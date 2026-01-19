@@ -24,7 +24,7 @@ export function FeaturedPlaceholder() {
                 clipRule="evenodd"
               />
             </svg>
-            Mark an article as "Featured" in Sanity Studio to display it here
+            Mark an article as &ldquo;Featured&rdquo; in Sanity Studio to display it here
           </div>
         </div>
       </div>

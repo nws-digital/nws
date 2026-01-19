@@ -96,6 +96,7 @@ Now that you’ve deployed your Next.js application and Sanity Studio, you can o
 
 They will be able to access the deployed Studio, where you can collaborate together on creating content.
 ## Resources
+
 - [Sanity documentation](https://www.sanity.io/docs)
 - [Next.js documentation](https://nextjs.org/docs)
 - [Join the Sanity Community](https://slack.sanity.io)

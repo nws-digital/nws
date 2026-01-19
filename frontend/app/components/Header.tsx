@@ -3,9 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import {useState} from 'react'
+import SearchModal from '@/app/components/SearchModal'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [searchModalOpen, setSearchModalOpen] = useState(false)
 
   return (
     <header className="fixed z-50 h-20 inset-0 bg-white/95 border-b border-gray-200 flex items-center backdrop-blur-lg">
@@ -55,6 +57,7 @@ export default function Header() {
             <button 
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label="Search"
+              onClick={() => setSearchModalOpen(true)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -155,6 +158,9 @@ export default function Header() {
           </nav>
         )}
       </div>
+
+      {/* Search Modal */}
+      <SearchModal isOpen={searchModalOpen} onClose={() => setSearchModalOpen(false)} />
     </header>
   )
 }

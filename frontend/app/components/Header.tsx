@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import {useState} from 'react'
 
 export default function Header() {
@@ -12,9 +13,14 @@ export default function Header() {
         <div className="flex items-center justify-between">
           {/* Logo/Title */}
           <Link className="flex items-center" href="/" onClick={() => setMobileMenuOpen(false)}>
-            <span className="text-2xl md:text-3xl font-bold text-black tracking-tight">
-              NWS
-            </span>
+            <Image 
+              src="/images/Logo_Dark.svg" 
+              alt="NWS" 
+              width={136}
+              height={56}
+              className="h-8 md:h-10 w-auto"
+              priority
+            />
           </Link>
 
           {/* Navigation - Hidden on mobile, shown on desktop */}

@@ -53,10 +53,6 @@ export async function generateStaticParams() {
       slug: post.slug,
     }))
   
-  // Log for debugging
-  console.log('Generated static params:', params.length, 'articles')
-  console.log('Sample:', params.slice(0, 3))
-  
   return params
 }
 
@@ -103,11 +99,15 @@ export default async function ArticlePage(props: Props) {
     return notFound()
   }
 
-  // Debug: log the category mismatch
-  if (post.category !== params.category) {
+  // Normalize and compare categories (trim whitespace and invisible characters)
+  const normalizedPostCategory = post.category?.trim().replace(/[\u200B-\u200D\uFEFF]/g, '')
+  const normalizedParamsCategory = params.category.trim()
+  
+  if (normalizedPostCategory !== normalizedParamsCategory) {
     console.log('Category mismatch:', {
       urlCategory: params.category,
       articleCategory: post.category,
+      normalizedArticleCategory: normalizedPostCategory,
       slug: params.slug
     })
     notFound()

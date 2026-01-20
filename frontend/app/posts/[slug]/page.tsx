@@ -43,6 +43,8 @@ const categoryLabels: Record<string, string> = {
 
 /**
  * Generate the static params for the page.
+ * Only pre-generate the 50 most recent articles.
+ * Other articles will be generated on-demand (ISR).
  * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-static-params
  */
 export async function generateStaticParams() {
@@ -52,8 +54,14 @@ export async function generateStaticParams() {
     perspective: 'published',
     stega: false,
   })
-  return data
+  // Only pre-generate the first 50 articles
+  return data.slice(0, 50)
 }
+
+/**
+ * Revalidate the page every 5 minutes to get fresh content
+ */
+export const revalidate = 300
 
 /**
  * Generate metadata for the page.

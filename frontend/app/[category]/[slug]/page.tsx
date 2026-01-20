@@ -50,6 +50,11 @@ const categoryLabels: Record<string, string> = {
   'commentary': 'Commentary',
 }
 
+/**
+ * Revalidate the page every 5 minutes to get fresh content
+ */
+export const revalidate = 300
+
 // Enable dynamic params in case a new article is published
 export const dynamicParams = true
 

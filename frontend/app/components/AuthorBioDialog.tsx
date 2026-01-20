@@ -59,7 +59,7 @@ export function AuthorBioDialog({isOpen, onClose, person}: Props) {
   return (
     <dialog
       ref={dialogRef}
-      className="backdrop:bg-black/50 rounded-lg shadow-2xl max-w-2xl w-full p-0 border-0"
+      className="backdrop:bg-black/40 backdrop:backdrop-blur-[2px] p-0 m-auto rounded-lg shadow-2xl max-w-2xl w-full border-0"
       onClose={onClose}
     >
       <div className="bg-white rounded-lg overflow-hidden">

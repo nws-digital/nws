@@ -28,7 +28,7 @@ export default function Avatar({person, date, small = false}: Props) {
     <>
       <div className="flex items-center font-mono">
         {picture?.asset?._ref ? (
-          <div className={`${small ? 'h-6 w-6 mr-2' : 'h-9 w-9 mr-4'}`}>
+          <div className={`${small ? 'h-12 w-12 mr-3' : 'h-16 w-16 mr-4'}`}>
             <button
               onClick={(e) => {
                 e.preventDefault()
@@ -46,12 +46,12 @@ export default function Avatar({person, date, small = false}: Props) {
               <Image
                 alt={picture?.alt || ''}
                 className="h-full w-full rounded-full object-cover"
-                height={small ? 32 : 48}
-                width={small ? 32 : 48}
+                height={small ? 56 : 72}
+                width={small ? 56 : 72}
                 src={
                   urlForImage(picture)
-                    ?.height(small ? 64 : 96)
-                    .width(small ? 64 : 96)
+                    ?.height(small ? 112 : 144)
+                    .width(small ? 112 : 144)
                     .fit('crop')
                     .url() as string
                 }

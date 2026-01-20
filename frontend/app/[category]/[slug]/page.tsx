@@ -7,6 +7,7 @@ import Avatar from '@/app/components/Avatar'
 import CoverImage from '@/app/components/CoverImage'
 import PortableText from '@/app/components/PortableText'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
+import {LatestArticlesSidebar} from '@/app/components/LatestArticlesSidebar'
 import {sanityFetch} from '@/sanity/lib/live'
 import {postQuery, allPostsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
@@ -171,25 +172,37 @@ export default async function ArticlePage(props: Props) {
             ]}
           />
 
-          <div>
-            <div className="pb-2 mb-2 border-b border-gray-100">
-              <div className="max-w-3xl flex flex-col gap-2">
-                <h2 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl lg:text-3xl">
-                  {post.title}
-                </h2>
+          {/* Grid Layout: Article (3/4) + Sidebar (1/4) */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Main Article - 3/4 width */}
+            <div className="lg:col-span-3">
+              <div className="pb-2 mb-2 border-b border-gray-100">
+                <div className="flex flex-col gap-2">
+                  <h2 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl lg:text-3xl">
+                    {post.title}
+                  </h2>
+                </div>
+                <div className="flex gap-4 items-center mt-2">
+                  {authorForAvatar?.firstName && authorForAvatar?.lastName && (
+                    <Avatar person={authorForAvatar} date={post.date} small />
+                  )}
+                </div>
               </div>
-              <div className="max-w-3xl flex gap-4 items-center mt-2">
-                {authorForAvatar?.firstName && authorForAvatar?.lastName && (
-                  <Avatar person={authorForAvatar} date={post.date} small />
+              <article className="gap-1 grid w-full">
+                <div className="">{post?.coverImage && <CoverImage image={post.coverImage} priority />}</div>
+                {post.content?.length && (
+                  <PortableText className="" value={post.content as PortableTextBlock[]} />
                 )}
-              </div>
+              </article>
             </div>
-            <article className="gap-1 grid max-w-4xl">
-              <div className="">{post?.coverImage && <CoverImage image={post.coverImage} priority />}</div>
-              {post.content?.length && (
-                <PortableText className="max-w-2xl" value={post.content as PortableTextBlock[]} />
-              )}
-            </article>
+
+            {/* Vertical Divider + Sidebar - 1/4 width */}
+            <aside className="hidden lg:block lg:col-span-1 border-l border-gray-200 pl-8">
+              <div className="sticky top-24">
+                <h3 className="text-lg font-bold mb-4">Latest Articles</h3>
+                <LatestArticlesSidebar currentArticleId={post._id} />
+              </div>
+            </aside>
           </div>
         </div>
       </div>

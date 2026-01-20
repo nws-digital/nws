@@ -69,7 +69,7 @@ export function CommentaryArticlesList({initialArticles, totalCount}: Commentary
                 lastName: article.author.lastName ?? null,
                 designation: article.author.designation ?? null,
                 picture: article.author.picture,
-                bio: article.author.bio,
+                bio: (article.author as any).bio,
               }
             : null
 

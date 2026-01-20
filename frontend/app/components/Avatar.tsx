@@ -1,52 +1,81 @@
+'use client'
+
+import {useState} from 'react'
 import {Image} from 'next-sanity/image'
 
 import {urlForImage} from '@/sanity/lib/utils'
 import DateComponent from '@/app/components/Date'
+import {AuthorBioDialog} from './AuthorBioDialog'
 
 type Props = {
   person: {
     firstName: string | null
     lastName: string | null
+    designation?: string | null
     picture?: any
+    bio?: any
   }
   date?: string
   small?: boolean
 }
 
 export default function Avatar({person, date, small = false}: Props) {
-  const {firstName, lastName, picture} = person
+  const {firstName, lastName, picture, bio} = person
+  const [showBio, setShowBio] = useState(false)
+  const hasBio = bio && Array.isArray(bio) && bio.length > 0
 
   return (
-    <div className="flex items-center font-mono">
-      {picture?.asset?._ref ? (
-        <div className={`${small ? 'h-6 w-6 mr-2' : 'h-9 w-9 mr-4'}`}>
-          <Image
-            alt={picture?.alt || ''}
-            className="h-full rounded-full object-cover"
-            height={small ? 32 : 48}
-            width={small ? 32 : 48}
-            src={
-              urlForImage(picture)
-                ?.height(small ? 64 : 96)
-                .width(small ? 64 : 96)
-                .fit('crop')
-                .url() as string
-            }
-          />
-        </div>
-      ) : (
-        <div className="mr-1">By </div>
-      )}
-      <div className="flex flex-col">
-        {firstName && lastName && (
-          <div className={`${small ? 'text-sm' : ''}`}>
-            {firstName} {lastName}
+    <>
+      <div className="flex items-center font-mono">
+        {picture?.asset?._ref ? (
+          <div className={`${small ? 'h-6 w-6 mr-2' : 'h-9 w-9 mr-4'}`}>
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                if (hasBio) setShowBio(true)
+              }}
+              disabled={!hasBio}
+              className={`h-full w-full ${
+                hasBio
+                  ? 'cursor-pointer hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 transition-all duration-200 hover:scale-105'
+                  : ''
+              } rounded-full`}
+              aria-label={hasBio ? `View ${firstName} ${lastName}'s bio` : undefined}
+            >
+              <Image
+                alt={picture?.alt || ''}
+                className="h-full w-full rounded-full object-cover"
+                height={small ? 32 : 48}
+                width={small ? 32 : 48}
+                src={
+                  urlForImage(picture)
+                    ?.height(small ? 64 : 96)
+                    .width(small ? 64 : 96)
+                    .fit('crop')
+                    .url() as string
+                }
+              />
+            </button>
           </div>
+        ) : (
+          <div className="mr-1">By </div>
         )}
-        <div className={`text-gray-500 ${small ? 'text-xs' : 'text-sm'}`}>
-          <DateComponent dateString={date} />
+        <div className="flex flex-col">
+          {firstName && lastName && (
+            <div className={`${small ? 'text-sm' : ''}`}>
+              {firstName} {lastName}
+            </div>
+          )}
+          <div className={`text-gray-500 ${small ? 'text-xs' : 'text-sm'}`}>
+            <DateComponent dateString={date} />
+          </div>
         </div>
       </div>
-    </div>
+
+      {hasBio && (
+        <AuthorBioDialog isOpen={showBio} onClose={() => setShowBio(false)} person={person} />
+      )}
+    </>
   )
 }

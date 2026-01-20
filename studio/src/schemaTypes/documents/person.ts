@@ -32,6 +32,14 @@ export const person = defineType({
       placeholder: 'e.g., Senior Editor',
     }),
     defineField({
+      name: 'bio',
+      title: 'Bio',
+      type: 'array',
+      of: [{type: 'block'}],
+      description: 'About the person, their experience, and background',
+      validation: (rule) => rule.max(3000),
+    }),
+    defineField({
       name: 'picture',
       title: 'Picture',
       type: 'image',

@@ -19,7 +19,9 @@ type Props = {
 type PostAuthor = {
   firstName?: string | null
   lastName?: string | null
+  designation?: string | null
   picture?: any
+  bio?: any
 }
 
 type PostData = {

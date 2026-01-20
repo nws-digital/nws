@@ -1,7 +1,10 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
 import {urlForImage} from '@/sanity/lib/utils'
+import Avatar from '@/app/components/Avatar'
 
 interface CommentaryArticle {
   _id: string
@@ -38,16 +41,16 @@ export function CommentarySection({articles}: CommentarySectionProps) {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {articles.slice(0, 3).map((article) => {
-            const authorName = article.author 
-              ? `${article.author.firstName} ${article.author.lastName}`
-              : 'Anonymous'
-            const authorImageBuilder = article.author?.picture ? urlForImage(article.author.picture) : null
-            const authorImageUrl = authorImageBuilder
-              ?.width(48)
-              .height(48)
-              .fit('crop')
-              .url()
-            
+            const authorForAvatar = article.author
+              ? {
+                  firstName: article.author.firstName ?? null,
+                  lastName: article.author.lastName ?? null,
+                  designation: article.author.designation ?? null,
+                  picture: article.author.picture,
+                  bio: article.author.bio,
+                }
+              : null
+
             const timeAgo = formatDistanceToNow(new Date(article.date), {
               addSuffix: true,
             })
@@ -59,28 +62,10 @@ export function CommentarySection({articles}: CommentarySectionProps) {
                 className="group flex flex-col bg-white border-2 border-gray-200 rounded-lg p-6 hover:shadow-xl transition-all duration-300 hover:border-red-600"
               >
                 {/* Author Info */}
-                <div className="flex items-center gap-3 mb-4">
-                  {authorImageUrl ? (
-                    <Image
-                      src={authorImageUrl}
-                      alt={authorName}
-                      width={48}
-                      height={48}
-                      className="rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
-                      <span className="text-gray-600 font-semibold text-lg">
-                        {authorName.charAt(0)}
-                      </span>
-                    </div>
+                <div className="mb-4">
+                  {authorForAvatar && (
+                    <Avatar person={authorForAvatar} date={article.date} small />
                   )}
-                  <div>
-                    <p className="font-semibold text-black">{authorName}</p>
-                    <p className="text-xs text-gray-500">
-                      {article.author?.designation || 'Contributor'}
-                    </p>
-                  </div>
                 </div>
 
                 {/* Title */}

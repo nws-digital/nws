@@ -23,7 +23,7 @@ export const commentaryArticlesQuery = defineQuery(`
     excerpt,
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
-    "author": author->{firstName, lastName, designation, picture}
+    "author": author->{firstName, lastName, designation, picture, bio}
   }
 `)
 
@@ -36,7 +36,8 @@ export const latestArticlesQuery = defineQuery(`
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
     category,
-    coverImage
+    coverImage,
+    "author": author->{firstName, lastName, designation, picture, bio}
   }
 `)
 
@@ -49,7 +50,8 @@ export const categoryArticlesQuery = defineQuery(`
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
     category,
-    coverImage
+    coverImage,
+    "author": author->{firstName, lastName, designation, picture, bio}
   }
 `)
 
@@ -65,7 +67,7 @@ export const commentaryArticlesPageQuery = defineQuery(`
     excerpt,
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
-    "author": author->{firstName, lastName, designation, picture}
+    "author": author->{firstName, lastName, designation, picture, bio}
   }
 `)
 
@@ -77,7 +79,7 @@ const postFields = /* groq */ `
   excerpt,
   coverImage,
   "date": coalesce(date, _updatedAt),
-  "author": author->{firstName, lastName, picture},
+  "author": author->{firstName, lastName, designation, picture, bio},
   category,
 `
 

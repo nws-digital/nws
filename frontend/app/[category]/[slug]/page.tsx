@@ -21,7 +21,9 @@ type Props = {
 type ArticleAuthor = {
   firstName?: string | null
   lastName?: string | null
+  designation?: string | null
   picture?: any
+  bio?: any
 }
 
 type ArticlePost = {
@@ -143,7 +145,9 @@ export default async function ArticlePage(props: Props) {
     ? {
         firstName: post.author.firstName ?? null,
         lastName: post.author.lastName ?? null,
+        designation: post.author.designation ?? null,
         picture: post.author.picture,
+        bio: post.author.bio,
       }
     : null
 

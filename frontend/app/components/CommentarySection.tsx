@@ -18,6 +18,7 @@ interface CommentaryArticle {
     lastName: string
     designation?: string
     picture?: any
+    bio?: any
   }
 }
 

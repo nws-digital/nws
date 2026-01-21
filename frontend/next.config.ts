@@ -19,8 +19,12 @@ const nextConfig: NextConfig = {
         source: '/:path*',
         headers: [
           {
+            key: 'X-Frame-Options',
+            value: 'ALLOWALL',
+          },
+          {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://*.vercel.app https://nws-studio-git-staging-durga-charan-potukurus-projects.vercel.app",
+            value: "frame-ancestors *",
           },
         ],
       },

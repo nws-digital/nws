@@ -73,15 +73,14 @@ function ArticleTitle({article}: {article: RssArticle}) {
       className="block px-4 py-3 border-b border-gray-800 hover:bg-red-950/30 transition-colors group"
     >
       <div className="flex items-start gap-2">
-        <div className="w-1 h-4 bg-red-600 flex-shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
           <p className="text-sm leading-relaxed text-white group-hover:text-red-400 transition-colors">
             {article.title}
           </p>
+          <div className="text-xs text-gray-400 mt-2">
+            {getTimeAgo(article.pub_date)}
+          </div>
         </div>
-        <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
-          {getTimeAgo(article.pub_date)}
-        </span>
       </div>
     </Link>
   )

@@ -1,3 +1,6 @@
+'use client'
+
+import {useState, useRef, useEffect} from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
@@ -26,6 +29,27 @@ const categoryLabels: Record<string, string> = {
 }
 
 export function LatestArticles({articles}: LatestArticlesProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const dropdownOptions = [
+    {label: 'World Exclusive', href: '/world-exclusive'},
+    {label: 'India Exclusive', href: '/india-exclusive'},
+    {label: 'OSINT Exclusive', href: '/osint-exclusive'},
+  ]
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [dropdownRef])
+
   if (!articles || articles.length === 0) {
     return null
   }
@@ -33,10 +57,39 @@ export function LatestArticles({articles}: LatestArticlesProps) {
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        {/* Section Heading with Red Line */}
-        <div className="mb-8">
-          <h6 className="text-2xl font-bold text-black whitespace-nowrap mb-2">Latest</h6>
-          <div className="w-8 h-1.5 bg-red-600"></div>
+        {/* Section Heading with Dropdown */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h6 className="text-2xl font-bold text-black whitespace-nowrap mb-2">Latest</h6>
+            <div className="w-8 h-1.5 bg-red-600"></div>
+          </div>
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-red-600"
+            >
+              View All
+              <svg className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {isOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20">
+                <div className="py-1">
+                  {dropdownOptions.map((option) => (
+                    <Link
+                      key={option.href}
+                      href={option.href}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-600"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {option.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -43,7 +43,7 @@ export default async function Page() {
         </div>
 
         {/* News Ticker - Overlaid on top right */}
-        <aside className="hidden lg:block absolute top-20 bottom-0 right-8 w-96 z-10 py-6">
+        <aside className="hidden lg:block absolute top-20 bottom-0 right-52 w-96 z-10 py-6">
           <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-full w-full animate-pulse" />}>
             <NewsTicker />
           </Suspense>

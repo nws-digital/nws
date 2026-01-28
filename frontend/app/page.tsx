@@ -66,6 +66,13 @@ export default async function Page() {
       {/* Latest Articles Section */}
       <LatestArticles articles={latestArticles || []} />
 
+      {/* Separator */}
+      <div className="bg-gray-50 pt-12">
+        <div className="container mx-auto px-4">
+          <div className="border-t border-gray-200" />
+        </div>
+      </div>
+
       {/* Commentary Section */}
       <CommentarySection articles={commentaryArticles || []} />
 

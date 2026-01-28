@@ -32,7 +32,7 @@ export function CommentarySection({articles}: CommentarySectionProps) {
   }
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-8 bg-white">
       <div className="container mx-auto px-4">
         {/* Section Heading with Red Line */}
         <div className="mb-8">

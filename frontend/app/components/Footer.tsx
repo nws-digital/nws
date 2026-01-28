@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Footer() {
   return (
@@ -23,8 +23,11 @@ export default function Footer() {
 
           {/* Sections Column */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Sections</h3>
-            <ul className="space-y-2">
+            <div className="mb-8">
+              <h6 className="text-lg font-bold whitespace-nowrap mb-2">Sections</h6>
+              <div className="w-4 h-1 bg-red-600"></div>
+            </div>
+            <ul className="space-y-2 text-gray-400 text-sm leading-relaxed">
               <li>
                 <Link href="/world-exclusive" className="hover:text-red-500 transition-colors">
                   World Exclusive
@@ -50,8 +53,11 @@ export default function Footer() {
 
           {/* About Column */}
           <div>
-            <h3 className="font-bold text-lg mb-4">About</h3>
-            <ul className="space-y-2">
+            <div className="mb-8">
+              <h6 className="text-lg font-bold whitespace-nowrap mb-2">Links</h6>
+              <div className="w-4 h-1 bg-red-600"></div>
+            </div>
+            <ul className="space-y-2 text-gray-400 text-sm leading-relaxed">
               <li>
                 <Link href="/about" className="hover:text-red-500 transition-colors">
                   About Us
@@ -77,8 +83,11 @@ export default function Footer() {
 
           {/* Follow Us Column */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Follow Us</h3>
-            <ul className="space-y-2">
+            <div className="mb-8">
+              <h6 className="text-lg font-bold whitespace-nowrap mb-2">Social</h6>
+              <div className="w-4 h-1 bg-red-600"></div>
+            </div>
+            <ul className="space-y-2 text-gray-400 text-sm leading-relaxed">
               <li>
                 <a 
                   href="https://twitter.com" 

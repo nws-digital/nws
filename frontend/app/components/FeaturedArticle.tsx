@@ -58,12 +58,12 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
         )}
       </div>
 
-            {/* Content overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 lg:p-12 text-white">
-              <div className="container mx-auto px-4">
-                <div>
-                  {/* Featured badge */}
-                  <div className="inline-flex items-center gap-2 bg-red-600 px-3 py-1 rounded-full text-xs font-semibold mb-4">
+      {/* Content overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 lg:p-12 text-white">
+        <div className="container mx-auto px-4">
+          <div className="lg:pr-[420px]">
+            {/* Featured badge */}
+            <div className="inline-flex items-center gap-2 bg-red-600 px-3 py-1 rounded-full text-xs font-semibold mb-4">
                     <svg 
                       className="w-4 h-4" 
                       fill="currentColor" 

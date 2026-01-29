@@ -32,6 +32,9 @@ export function LatestArticles({articles}: LatestArticlesProps) {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  // Limit to 6 articles
+  const displayArticles = articles.slice(0, 6)
+
   const dropdownOptions = [
     {label: 'World Exclusive', href: '/world-exclusive'},
     {label: 'India Exclusive', href: '/india-exclusive'},
@@ -93,7 +96,7 @@ export function LatestArticles({articles}: LatestArticlesProps) {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles.map((article) => {
+          {displayArticles.map((article) => {
             const timeAgo = formatDistanceToNow(new Date(article.date), {
               addSuffix: true,
             })

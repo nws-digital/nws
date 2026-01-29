@@ -2,7 +2,7 @@ import Link from 'next/link'
 import {Image} from 'next-sanity/image'
 import {urlForImage} from '@/sanity/lib/utils'
 import {formatDistanceToNow} from 'date-fns'
-import {latestArticlesQuery} from '@/sanity/lib/queries'
+import {sidebarArticlesQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
 
 interface LatestArticlesSidebarProps {
@@ -30,11 +30,14 @@ interface SidebarArticle {
 
 export async function LatestArticlesSidebar({currentArticleId}: LatestArticlesSidebarProps) {
   const {data: articles} = await sanityFetch({
-    query: latestArticlesQuery,
+    query: sidebarArticlesQuery,
+    params: {
+      excludeId: currentArticleId || '',
+    },
   })
 
-  // Filter out current article and limit to 12
-  const sidebarArticles = (articles as SidebarArticle[] | null)?.filter(article => article._id !== currentArticleId).slice(0, 12) || []
+  // Show all 12 articles
+  const sidebarArticles = (articles as SidebarArticle[] | null) || []
 
   if (sidebarArticles.length === 0) {
     return <p className="text-gray-500 text-sm">No articles available</p>

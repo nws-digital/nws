@@ -28,6 +28,9 @@ export default async function Page() {
 
   const {data: latestArticles} = await sanityFetch({
     query: latestArticlesQuery,
+    params: {
+      excludeId: (featuredArticle as any)?._id ?? '',
+    },
   })
 
   return (

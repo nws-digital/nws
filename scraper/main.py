@@ -122,9 +122,14 @@ async def fetch_and_save_articles(topic: str, feed_url: str):
         saved_count = 0
         skipped_count = 0
         error_count = 0
+        target_count = 10  # Target number of articles to insert
         
-        # Process each article (limit to 15)
-        for item in items[:30]:
+        # Process articles until we insert 10 new ones or run out of articles
+        for item in items:
+            # Stop if we've successfully inserted 10 articles
+            if saved_count >= target_count:
+                break
+                
             try:
                 # Parse article data
                 article_data = parse_article(item)
@@ -143,6 +148,9 @@ async def fetch_and_save_articles(topic: str, feed_url: str):
                 else:
                     print(f"❌ Error: {str(e)[:100]}")
                     error_count += 1
+        
+        if saved_count == 0 and skipped_count > 0:
+            print(f"ℹ️  All articles already exist in database for {topic.upper()}")
         
         print(f"📊 {topic.upper()}: Saved {saved_count}, Skipped {skipped_count}, Errors {error_count}")
         

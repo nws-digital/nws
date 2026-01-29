@@ -66,23 +66,23 @@ function ArticleTitle({article}: {article: RssArticle}) {
   }
 
   return (
-    <Link
-      href={article.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block px-4 py-3 border-b border-gray-800 hover:bg-red-950/30 transition-colors group"
-    >
-      <div className="flex items-start gap-2">
+    // <Link
+    //   href={article.link}
+    //   target="_blank"
+    //   rel="noopener noreferrer"
+    //   className="block px-4 py-3 border-b border-gray-800 hover:bg-red-950/30 transition-colors group"
+    // >
+      <div className="flex items-start gap-2 block px-4 py-3 border-b border-gray-800 hover:bg-red-950/30 transition-colors group">
         <div className="flex-1 min-w-0">
           <p className="text-sm leading-relaxed text-white group-hover:text-red-400 transition-colors">
-            {article.title}
+            {article.generated_title}
           </p>
           <div className="text-xs text-gray-400 mt-2">
             {getTimeAgo(article.pub_date)}
           </div>
         </div>
       </div>
-    </Link>
+    // </Link>
   )
 }
 

@@ -15,4 +15,5 @@ export type RssArticle = {
   source: string | null
   topic: 'nation' | 'world'
   created_at: string
+  generated_title: string
 }

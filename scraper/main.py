@@ -13,6 +13,7 @@ import httpx
 import xmltodict
 from supabase import create_client, Client
 from dotenv import load_dotenv
+from anthropic import Anthropic
 
 # Load environment variables
 load_dotenv()
@@ -22,6 +23,9 @@ supabase: Client = create_client(
     os.getenv('SUPABASE_URL'),
     os.getenv('SUPABASE_SERVICE_KEY')
 )
+
+# Initialize Claude client
+anthropic_client = Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
 
 # Google News RSS feed URLs (India-based)
 RSS_FEEDS = {
@@ -105,6 +109,65 @@ def count_links_in_description(description: str) -> int:
     return description.lower().count('<a href=')
 
 
+async def generate_unique_title_with_gemini(original_title: str, link: str, description: str) -> str:
+    """
+    Generate a unique professional title using Claude AI
+    
+    Args:
+        original_title: Original article title
+        link: Article link
+        description: Article description with similar article links
+        
+    Returns:
+        New professionally crafted title
+    """
+    try:
+        prompt = f"""You are a professional journalist. Based on the following article information, create a unique, self-explanatory news headline that tells the complete story.
+
+Original Title: {original_title}
+Article Link: {link}
+Description (with similar articles): {description[:800]}
+
+Requirements:
+1. Make it COMPLETELY SELF-EXPLANATORY - readers should understand the full story from just the title
+2. Include WHO, WHAT, WHERE, and WHY/WHEN if relevant
+3. Be specific with names, places, and numbers
+4. Keep it under 150 characters but prioritize clarity over brevity
+5. Use active voice and present tense
+6. Sound professional and journalistic, not clickbait
+7. Return ONLY the headline, nothing else
+
+New Headline:"""
+
+        response = await asyncio.to_thread(
+            anthropic_client.messages.create,
+            model="claude-sonnet-4-20250514",
+            max_tokens=200,
+            messages=[{
+                "role": "user",
+                "content": prompt
+            }]
+        )
+        
+        new_title = response.content[0].text.strip()
+        
+        # Remove quotes if present
+        if new_title.startswith('"') and new_title.endswith('"'):
+            new_title = new_title[1:-1]
+        if new_title.startswith("'") and new_title.endswith("'"):
+            new_title = new_title[1:-1]
+        
+        # Limit to 200 characters
+        if len(new_title) > 200:
+            new_title = new_title[:197] + "..."
+            
+        return new_title
+        
+    except Exception as e:
+        print(f"⚠️  Claude API error: {str(e)[:100]}")
+        return original_title  # Fallback to original title
+
+
 async def fetch_and_save_articles(topic: str, feed_url: str):
     """
     Fetch RSS feed and save articles to Supabase
@@ -164,8 +227,32 @@ async def fetch_and_save_articles(topic: str, feed_url: str):
                 
                 # Insert into Supabase
                 result = supabase.table('rss_articles').insert(article_data).execute()
-                print(f"✅ Saved ({link_count} sources): {article_data['title'][:60]}...")
-                saved_count += 1
+                
+                # Get the inserted article ID
+                inserted_article = result.data[0] if result.data else None
+                
+                if inserted_article:
+                    article_id = inserted_article.get('id')
+                    print(f"✅ Saved ({link_count} sources): {article_data['title'][:60]}...")
+                    
+                    # Generate unique title with Claude
+                    print(f"🤖 Generating unique title with Claude...")
+                    new_title = await generate_unique_title_with_gemini(
+                        article_data['title'],
+                        article_data['link'],
+                        article_data['description']
+                    )
+                    
+                    # Update article with generated title
+                    if new_title != article_data['title']:
+                        supabase.table('rss_articles').update({
+                            'generated_title': new_title
+                        }).eq('id', article_id).execute()
+                        print(f"✨ Generated title: {new_title[:60]}...")
+                    else:
+                        print(f"ℹ️  Kept original title")
+                    
+                    saved_count += 1
                 
             except Exception as e:
                 error_msg = str(e).lower()

@@ -59,22 +59,22 @@ export default function Footer() {
             </div>
             <ul className="space-y-2 text-gray-400 text-sm leading-relaxed">
               <li>
-                <Link href="/about" className="hover:text-red-500 transition-colors">
+                <Link href="/pages/about" className="hover:text-red-500 transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-red-500 transition-colors">
+                <Link href="/pages/contact" className="hover:text-red-500 transition-colors">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="hover:text-red-500 transition-colors">
+                <Link href="/pages/careers" className="hover:text-red-500 transition-colors">
                   Careers
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-red-500 transition-colors">
+                <Link href="/pages/privacy" className="hover:text-red-500 transition-colors">
                   Privacy Policy
                 </Link>
               </li>

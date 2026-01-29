@@ -102,28 +102,28 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
           {/* About, Contact, etc. */}
           <div className="space-y-3">
             <Link 
-              href="/about" 
+              href="/pages/about" 
               className="block text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >
               ABOUT US
             </Link>
             <Link 
-              href="/contact" 
+              href="/pages/contact" 
               className="block text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >
               CONTACT
             </Link>
             <Link 
-              href="/careers" 
+              href="/pages/careers" 
               className="block text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >
               CAREERS
             </Link>
             <Link 
-              href="/privacy" 
+              href="/pages/privacy" 
               className="block text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >

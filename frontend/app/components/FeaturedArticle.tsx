@@ -36,18 +36,19 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
       className="group block relative overflow-hidden shadow-2xl"
     >
       {/* Image */}
-      <div className="relative aspect-[16/9] lg:aspect-[21/9] overflow-hidden bg-gray-800">
+      <div className="relative aspect-[16/9] sm:aspect-[21/9] lg:aspect-[2.5/1] overflow-hidden bg-gray-800">
         {imageUrl ? (
           <>
             <Image
               src={imageUrl}
               alt={article.coverImage?.alt || article.title}
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
               priority
+              sizes="100vw"
             />
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            {/* Gradient overlay - stronger on mobile */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent sm:from-black/80 sm:via-black/40" />
           </>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -59,13 +60,13 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
       </div>
 
       {/* Content overlay */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 lg:p-12 text-white">
+      <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-12 text-white">
         <div className="container mx-auto px-4">
           <div className="lg:pr-[420px]">
             {/* Featured badge */}
-            <div className="inline-flex items-center gap-2 bg-red-600 px-3 py-1 rounded-full text-xs font-semibold mb-4">
+            <div className="inline-flex items-center gap-2 bg-red-600 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold mb-2 sm:mb-3 lg:mb-4">
                     <svg 
-                      className="w-4 h-4" 
+                      className="w-3 h-3 sm:w-4 sm:h-4" 
                       fill="currentColor" 
                       viewBox="0 0 20 20"
                     >
@@ -76,22 +77,22 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
                   </div>
       
                   {/* Title */}
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 md:mb-4 leading-tight group-hover:text-red-400 transition-colors">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 leading-tight line-clamp-2 sm:line-clamp-3 group-hover:text-red-400 transition-colors drop-shadow-lg">
                     {article.title}
                   </h2>
       
-                  {/* Excerpt */}
+                  {/* Excerpt - hide on very small screens */}
                   {article.excerpt && (
-                    <p className="text-sm md:text-base lg:text-lg text-gray-200 mb-4 line-clamp-2 md:line-clamp-3">
+                    <p className="hidden sm:block text-sm md:text-base lg:text-lg text-gray-200 mb-3 sm:mb-4 line-clamp-2 md:line-clamp-3 max-w-3xl drop-shadow-md">
                       {article.excerpt}
                     </p>
                   )}
       
                   {/* Meta */}
-                  <div className="flex items-center gap-4 text-xs md:text-sm text-gray-300">
+                  <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-300">
                     {authorName && (
                       <span className="flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                         </svg>
                         {authorName}

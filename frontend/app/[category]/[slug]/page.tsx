@@ -196,13 +196,19 @@ export default async function ArticlePage(props: Props) {
               </article>
             </div>
 
-            {/* Vertical Divider + Sidebar - 1/4 width */}
+            {/* Vertical Divider + Sidebar - 1/4 width (Desktop only) */}
             <aside className="hidden lg:block lg:col-span-1 border-l border-gray-200 pl-8">
               <div className="sticky top-24">
                 <h3 className="text-lg font-bold mb-4">Latest Articles</h3>
                 <LatestArticlesSidebar currentArticleId={post._id} />
               </div>
             </aside>
+          </div>
+
+          {/* Mobile Latest Articles - Below article content */}
+          <div className="lg:hidden mt-12 pt-8 border-t border-gray-200">
+            <h3 className="text-xl font-bold mb-6">Latest Articles</h3>
+            <LatestArticlesSidebar currentArticleId={post._id} />
           </div>
         </div>
       </div>

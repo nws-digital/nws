@@ -59,7 +59,7 @@ export function LatestArticles({articles}: LatestArticlesProps) {
 
   return (
     <section className="pt-16 bg-gray-50">
-      <div className="container mx-auto px-4">
+      <div className="max-w-[1366px] mx-auto px-4">
         {/* Section Heading with Dropdown */}
         <div className="flex justify-between items-center mb-8">
           <div>

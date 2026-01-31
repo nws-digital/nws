@@ -119,7 +119,7 @@ export default async function PostPage(props: Props) {
   return (
     <>
       <div className="pt-20">
-        <div className="container my-8 lg:my-12 grid gap-12">
+        <div className="max-w-[1366px] mx-auto px-4 my-8 lg:my-12 grid gap-12">
           {/* Breadcrumb Navigation */}
           <Breadcrumb 
             items={[
@@ -157,7 +157,7 @@ export default async function PostPage(props: Props) {
         </div>
       </div>
       <div className="border-t border-gray-100 bg-gray-50">
-        <div className="container py-12 lg:py-24 grid gap-12">
+        <div className="max-w-[1366px] mx-auto px-4 py-12 lg:py-24 grid gap-12">
           <aside>
             <Suspense>{await MorePosts({skip: post._id, limit: 2})}</Suspense>
           </aside>

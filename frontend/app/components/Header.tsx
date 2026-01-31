@@ -25,7 +25,7 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
 
   return (
     <header className="fixed z-50 h-20 inset-0 bg-white/95 border-b border-gray-200 flex items-center backdrop-blur-lg">
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="max-w-[1366px] mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
           {/* Logo/Title */}
           <Link className="flex items-center" href="/" onClick={() => setSideMenuOpen(false)}>

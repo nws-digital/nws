@@ -61,7 +61,7 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
 
       {/* Content overlay */}
       <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-12 text-white">
-        <div className="container mx-auto px-4">
+        <div className="max-w-[1366px] mx-auto px-4">
           <div className="lg:pr-[420px]">
             {/* Featured badge */}
             <div className="inline-flex items-center gap-2 bg-red-600 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold mb-2 sm:mb-3 lg:mb-4">

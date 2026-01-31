@@ -10,7 +10,7 @@ type CtaProps = {
 
 export default function CTA({block}: CtaProps) {
   return (
-    <div className="container my-12">
+    <div className="max-w-[1366px] mx-auto px-4 my-12">
       <div className="bg-gray-50 border border-gray-100 rounded-2xl max-w-3xl">
         <div className="px-12 py-12 flex flex-col gap-6">
           <div className="max-w-xl flex flex-col gap-3">

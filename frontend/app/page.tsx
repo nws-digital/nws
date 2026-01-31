@@ -49,7 +49,7 @@ export default async function Page() {
 
           {/* News Ticker - Overlaid on featured article right side (desktop only) */}
           <div className="hidden lg:block absolute inset-0 pointer-events-none">
-            <div className="container mx-auto h-full relative">
+            <div className="max-w-[1366px] mx-auto px-4 h-full relative">
               <div className="absolute top-6 bottom-6 right-0 w-96 pointer-events-auto">
                 <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-[500px] w-full animate-pulse" />}>
                   <NewsTicker />
@@ -60,7 +60,7 @@ export default async function Page() {
         </div>
 
         {/* News Ticker - Below featured article on mobile */}
-        <div className="lg:hidden container mx-auto px-4 mt-8">
+        <div className="lg:hidden max-w-[1366px] mx-auto px-4 mt-8">
           <div className="h-[500px]">
             <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-full w-full animate-pulse" />}>
               <NewsTicker />
@@ -74,7 +74,7 @@ export default async function Page() {
 
       {/* Separator */}
       <div className="bg-gray-50 pt-12">
-        <div className="container mx-auto px-4">
+        <div className="max-w-[1366px] mx-auto px-4">
           <div className="border-t border-gray-200" />
         </div>
       </div>
@@ -83,7 +83,7 @@ export default async function Page() {
       <CommentarySection articles={commentaryArticles || []} />
 
       <div className="border-t border-gray-100 bg-gray-50">
-        <div className="container">
+        <div className="max-w-[1366px] mx-auto px-4">
           <aside className="py-12 sm:py-20">
             {/* <Suspense>{await AllPosts()}</Suspense> */}
           </aside>

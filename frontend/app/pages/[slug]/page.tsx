@@ -86,7 +86,7 @@ export default async function Page(props: Props) {
   return (
     <>
       <div className="pt-20">
-        <div className="container px-4 py-8">
+        <div className="max-w-[1366px] mx-auto px-4 py-8">
           {/* Breadcrumb Navigation */}
           <Breadcrumb
             items={[

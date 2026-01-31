@@ -33,7 +33,7 @@ export function CommentarySection({articles}: CommentarySectionProps) {
 
   return (
     <section className="py-8 bg-white">
-      <div className="container mx-auto px-4">
+      <div className="max-w-[1366px] mx-auto px-4">
         {/* Section Heading with Red Line */}
         <div className="mb-8">
           <h6 className="text-2xl font-bold text-black whitespace-nowrap mb-2">Commentary</h6>

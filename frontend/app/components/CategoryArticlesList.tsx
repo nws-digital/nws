@@ -56,7 +56,7 @@ export function CategoryArticlesList({initialArticles, category, totalCount}: Ca
   const categoryLabel = categoryLabels[category] || category
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-[1366px] mx-auto px-4 py-8">
       {/* Breadcrumb Navigation */}
       <Breadcrumb 
         items={[

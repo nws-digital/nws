@@ -39,7 +39,7 @@ export default async function Page() {
         {/* Featured Article Section with News Ticker Overlay */}
         <div className="relative w-full">
           {/* Featured Article - Full width */}
-          <div className="w-full">
+          <div className="w-full h-[600px]">
             {featuredArticle ? (
               <FeaturedArticle article={featuredArticle} />
             ) : (
@@ -82,13 +82,13 @@ export default async function Page() {
       {/* Commentary Section */}
       <CommentarySection articles={commentaryArticles || []} />
 
-      <div className="border-t border-gray-100 bg-gray-50">
+      {/* <div className="border-t border-gray-100 bg-gray-50">
         <div className="max-w-[1366px] mx-auto px-4">
-          <aside className="py-12 sm:py-20">
+          <aside className="py-12 sm:py-20"> */}
             {/* <Suspense>{await AllPosts()}</Suspense> */}
-          </aside>
+          {/* </aside>
         </div>
-      </div>
+      </div> */}
     </>
   )
 }

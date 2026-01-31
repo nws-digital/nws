@@ -59,7 +59,7 @@ export function CommentarySection({articles}: CommentarySectionProps) {
       viewport={{once: true, amount: 0.1}}
       variants={sectionVariants}
     >
-      <div className="max-w-[1366px] mx-auto px-4">
+      <div className="max-w-[1366px] mx-auto px-4 py-4">
         <motion.div className="mb-8" variants={itemVariants}>
           <h6 className="text-2xl font-bold text-black whitespace-nowrap mb-2">Commentary</h6>
           <motion.div

@@ -48,7 +48,7 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
               sizes="100vw"
             />
             {/* Gradient overlay - stronger on mobile */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent sm:from-black/80 sm:via-black/40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent sm:from-black/60 sm:via-black/25" />
           </>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">

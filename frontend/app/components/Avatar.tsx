@@ -38,7 +38,7 @@ export default function Avatar({person, date, small = false}: Props) {
               disabled={!hasBio}
               className={`h-full w-full ${
                 hasBio
-                  ? 'cursor-pointer hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 transition-all duration-200 hover:scale-105'
+                  ? 'cursor-pointer hover:ring-2 hover:ring-red-500 hover:ring-offset-2 transition-all duration-200 hover:scale-105'
                   : ''
               } rounded-full`}
               aria-label={hasBio ? `View ${firstName} ${lastName}'s bio` : undefined}

@@ -52,7 +52,7 @@ export function NewsTicker() {
       <div className="bg-red-600 rounded-t-3xl px-6 py-3">
         <h2 className="text-white text-2xl font-semibold">Breaking</h2>
       </div>
-      <div className="bg-black/70 backdrop-blur rounded-b-3xl overflow-hidden flex-1">
+      <div className="bg-black/65 backdrop-blur rounded-b-3xl overflow-hidden flex-1">
         <div className="animate-scroll">
           {[...breakingNews, ...breakingNews].map((news, index) => (
             <Link

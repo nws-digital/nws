@@ -103,7 +103,7 @@ export function CommentaryArticlesList({
             >
               <Link
                 href={`/commentary/${article.slug.current}`}
-                className="group flex flex-col bg-white border-2 border-gray-200 rounded-lg p-6 h-full transition-all duration-300 hover:border-red-600"
+                className="group flex flex-col bg-white border-2 border-gray-200 rounded-lg p-6 h-full transition-all duration-300"
               >
                 {/* Author Info */}
                 <div className="mb-4">

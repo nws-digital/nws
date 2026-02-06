@@ -32,3 +32,24 @@ export async function searchArticles(searchTerm: string) {
 
   return data || []
 }
+
+const latestArticlesQuery = defineQuery(`
+  *[_type == "article" && category != "commentary"] | order(date desc) [0...3] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    category,
+    date,
+    coverImage,
+    "author": author->{firstName, lastName}
+  }
+`)
+
+export async function getLatestArticles() {
+  const {data} = await sanityFetch({
+    query: latestArticlesQuery,
+  })
+
+  return data || []
+}

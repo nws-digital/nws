@@ -256,7 +256,7 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
               </div>
 
               {/* Results */}
-              <div className="overflow-y-auto max-h-[50vh] p-6">
+              <div className="overflow-y-auto max-h-[calc(90vh-240px)] p-6">
             {/* Show "No results" only when there's a search query and no results */}
             {results.length === 0 && !loading && trimmedQuery.length >= 2 && (
               <div className="text-center py-8 text-gray-500">
@@ -270,23 +270,23 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
                 <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">
                   Recent News
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {latestArticles.map((article) => {
                     const timeAgo = formatDistanceToNow(new Date(article.date), {
                       addSuffix: true,
                     })
                     const coverBuilder = article.coverImage ? urlForImage(article.coverImage) : null
-                    const coverImageUrl = coverBuilder?.width(200).height(200).fit('crop').url()
+                    const coverImageUrl = coverBuilder?.width(160).height(160).fit('crop').url()
 
                     return (
                       <Link
                         key={article._id}
                         href={`/${article.category}/${article.slug.current}`}
                         onClick={onClose}
-                        className="flex gap-4 p-4 hover:bg-gray-50 rounded-lg transition-colors group"
+                        className="flex gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group"
                       >
                         {coverImageUrl && (
-                          <div className="relative w-24 h-24 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
+                          <div className="relative w-20 h-20 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
                             <Image
                               src={coverImageUrl}
                               alt={article.title}
@@ -296,16 +296,16 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-1">
+                          <h3 className="text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-1.5">
                             {article.title}
                           </h3>
                           {article.excerpt && (
-                            <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                            <p className="text-xs text-gray-600 line-clamp-2 mb-1.5">
                               {article.excerpt}
                             </p>
                           )}
-                          <div className="flex items-center gap-3 text-xs text-gray-500">
-                            <span className="px-2 py-1 bg-gray-100 rounded">
+                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <span className="px-2 py-0.5 bg-gray-100 rounded">
                               {categoryLabels[article.category] || article.category}
                             </span>
                             <span>{timeAgo}</span>
@@ -320,23 +320,23 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
 
             {/* Show search results when there's a search term */}
             {trimmedQuery.length >= 2 && (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {results.map((result) => {
                   const timeAgo = formatDistanceToNow(new Date(result.date), {
                     addSuffix: true,
                   })
                   const coverBuilder = result.coverImage ? urlForImage(result.coverImage) : null
-                  const coverImageUrl = coverBuilder?.width(200).height(200).fit('crop').url()
+                  const coverImageUrl = coverBuilder?.width(160).height(160).fit('crop').url()
 
                   return (
                     <Link
                       key={result._id}
                       href={`/${result.category}/${result.slug.current}`}
                       onClick={onClose}
-                      className="flex gap-4 p-4 hover:bg-gray-50 rounded-lg transition-colors group"
+                      className="flex gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group"
                     >
                       {coverImageUrl && (
-                        <div className="relative w-24 h-24 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
+                        <div className="relative w-20 h-20 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
                           <Image
                             src={coverImageUrl}
                             alt={result.title}
@@ -346,16 +346,16 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-1">
+                        <h3 className="text-sm font-semibold text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-1.5">
                           {result.title}
                         </h3>
                         {result.excerpt && (
-                          <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                          <p className="text-xs text-gray-600 line-clamp-2 mb-1.5">
                             {result.excerpt}
                           </p>
                         )}
-                        <div className="flex items-center gap-3 text-xs text-gray-500">
-                          <span className="px-2 py-1 bg-red-100 text-red-700 rounded">
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded">
                             {categoryLabels[result.category] || result.category}
                           </span>
                           <span>{timeAgo}</span>

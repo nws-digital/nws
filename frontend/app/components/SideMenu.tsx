@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
 import {urlForImage} from '@/sanity/lib/utils'
+import {motion, AnimatePresence} from 'framer-motion'
 
 interface Article {
   _id: string
@@ -21,18 +22,28 @@ interface SideMenuProps {
 }
 
 export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProps) {
-  if (!isOpen) return null
-
   return (
-    <>
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/50 z-[100] transition-opacity"
-        onClick={onClose}
-      />
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
+            transition={{duration: 0.2}}
+            className="fixed inset-0 bg-black/50 z-[100]"
+            onClick={onClose}
+          />
 
-      {/* Slide-in Menu */}
-      <div className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white z-[101] shadow-2xl overflow-y-auto">
+          {/* Slide-in Menu */}
+          <motion.div
+            initial={{opacity: 0, x: 50}}
+            animate={{opacity: 1, x: 0}}
+            exit={{opacity: 0, x: 50}}
+            transition={{duration: 0.3, ease: 'easeOut'}}
+            className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white z-[101] shadow-2xl overflow-y-auto"
+          >
         {/* Header with Close Button */}
         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between z-10">
           <Link href="/" onClick={onClose}>
@@ -67,7 +78,12 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
 
         <div className="p-6 space-y-8">
           {/* Mobile Navigation (only on small screens) */}
-          <div className="md:hidden space-y-2">
+          <motion.div
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.1, duration: 0.3}}
+            className="md:hidden space-y-2"
+          >
             <Link 
               href="/world-exclusive" 
               className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
@@ -97,10 +113,15 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
               Commentary
             </Link>
             <div className="border-t border-gray-200 my-4"></div>
-          </div>
+          </motion.div>
 
           {/* About, Contact, etc. */}
-          <div className="space-y-3">
+          <motion.div
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.2, duration: 0.3}}
+            className="space-y-3"
+          >
             <Link 
               href="/pages/about" 
               className="block text-sm font-medium hover:text-red-600 transition-colors"
@@ -129,10 +150,14 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
             >
               PRIVACY POLICY
             </Link>
-          </div>
+          </motion.div>
 
           {/* Latest News */}
-          <div>
+          <motion.div
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.3, duration: 0.3}}
+          >
             <h3 className="text-lg font-bold mb-4">
               <span className="relative inline-block">
                 <span className="relative">L</span>
@@ -177,10 +202,14 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
                 )
               })}
             </div>
-          </div>
+          </motion.div>
 
           {/* Social */}
-          <div>
+          <motion.div
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.4, duration: 0.3}}
+          >
             <h3 className="text-lg font-bold mb-4">
               <span className="relative inline-block">
                 <span className="relative">
@@ -228,9 +257,11 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
                 LINKEDIN
               </a>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
-    </>
+        </motion.div>
+      </>
+      )}
+    </AnimatePresence>
   )
 }

@@ -177,7 +177,7 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
               animate={{opacity: 1, scale: 1, y: 0}}
               exit={{opacity: 0, scale: 0.95, y: 20}}
               transition={{type: 'spring', duration: 0.3, bounce: 0.2}}
-              className="bg-white/95 backdrop-blur-sm rounded-lg shadow-2xl w-full max-w-[800px] max-h-[90vh] overflow-hidden"
+              className="bg-white rounded-lg shadow-2xl w-full max-w-[800px] max-h-[90vh] overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -206,47 +206,57 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
                 </motion.button>
               </div>
 
-          {/* Search Input */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="Type at least 2 characters to search..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                autoFocus
-              />
-              <button
-                onClick={handleSearch}
-                disabled={loading || trimmedQuery.length < 2}
-                className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
-              >
-                {loading ? (
-                  <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-5 h-5"
+              {/* Search Input */}
+              <div className="p-6 border-b border-gray-200">
+                <motion.div
+                  initial={{opacity: 0, y: -10}}
+                  animate={{opacity: 1, y: 0}}
+                  transition={{delay: 0.15}}
+                  className="relative"
+                >
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Search ..."
+                    className="w-full bg-[#f0f2f5] rounded px-3 py-3 pr-12 text-sm text-black placeholder:text-[#666] focus:outline-none focus:ring-2 focus:ring-gray-300 focus:bg-white transition-all"
+                    autoFocus
+                  />
+                  <motion.div
+                    whileHover={{scale: 1.1}}
+                    whileTap={{scale: 0.9}}
+                    onClick={handleSearch}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
                   >
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                  </svg>
-                )}
-                Search
-              </button>
-            </div>
-          </div>
+                    {loading ? (
+                      <div className="animate-spin h-6 w-6 border-2 border-gray-600 border-t-transparent rounded-full" />
+                    ) : (
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8" stroke="#1F1F1F" strokeWidth="2" />
+                        <path d="m21 21-4.35-4.35" stroke="#1F1F1F" strokeWidth="2" strokeLinecap="round" />
+                      </svg>
+                    )}
+                  </motion.div>
 
-          {/* Results */}
-          <div className="overflow-y-auto max-h-[50vh] p-6">
+                  {/* Search Query Indicator */}
+                  <AnimatePresence>
+                    {trimmedQuery.length >= 2 && (
+                      <motion.div
+                        initial={{opacity: 0, y: -5}}
+                        animate={{opacity: 1, y: 0}}
+                        exit={{opacity: 0, y: -5}}
+                        className="absolute -bottom-6 left-0 text-xs text-[#666]"
+                      >
+                        {results.length} result{results.length !== 1 ? 's' : ''} found
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              </div>
+
+              {/* Results */}
+              <div className="overflow-y-auto max-h-[50vh] p-6">
             {/* Show "No results" only when there's a search query and no results */}
             {results.length === 0 && !loading && trimmedQuery.length >= 2 && (
               <div className="text-center py-8 text-gray-500">

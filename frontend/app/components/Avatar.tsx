@@ -26,7 +26,7 @@ export default function Avatar({person, date, small = false}: Props) {
 
   return (
     <>
-      <div className="flex items-center font-mono">
+      <div className="flex items-center">
         {picture?.asset?._ref ? (
           <div className={`${small ? 'h-12 w-12 mr-3' : 'h-16 w-16 mr-4'}`}>
             <button

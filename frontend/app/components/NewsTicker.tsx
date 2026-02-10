@@ -55,21 +55,12 @@ export function NewsTicker() {
       <div className="bg-black/65 backdrop-blur rounded-b-3xl overflow-hidden flex-1">
         <div className="animate-scroll">
           {[...breakingNews, ...breakingNews].map((news, index) => (
-            <Link
-              href={news.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              key={news.id + '-' + index}
-              className="block"
-            >
               <div className="px-6 py-3 cursor-pointer transition-colors hover:bg-white/10">
                 <h3 className="text-sm font-semibold mb-2 text-white">
                   {news.generated_title}
                 </h3>
                 <p className="text-[#d0d2d6] text-xs">{getTimeAgo(news.pub_date)}</p>
               </div>
-              {index < breakingNews.length * 2 - 1 && <div className="h-px bg-[#666666]" />}
-            </Link>
           ))}
         </div>
         {breakingNews.length === 0 && (

@@ -57,7 +57,7 @@ export function NewsTicker() {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black via-black/90 to-transparent/40 z-10" />
         <div className="animate-scroll py-6">
           {[...breakingNews, ...breakingNews].map((news, index) => (
-              <div className="px-6 py-3 cursor-pointer transition-colors hover:bg-white/10">
+              <div key={`${news.id}-${index}`} className="px-6 py-3 cursor-pointer transition-colors hover:bg-white/10">
                 <h3 className="text-sm font-semibold mb-2 text-white">
                   {news.generated_title}
                 </h3>

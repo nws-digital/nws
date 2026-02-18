@@ -7,7 +7,9 @@ const searchArticlesQuery = defineQuery(`
   *[_type == "article" && (
     title match $searchTerm + "*" ||
     excerpt match $searchTerm + "*" ||
-    pt::text(content) match $searchTerm + "*"
+    pt::text(content) match $searchTerm + "*" ||
+    author->firstName match $searchTerm + "*" ||
+    author->lastName match $searchTerm + "*"
   )] | order(_score desc, date desc) [0...10] {
     _id,
     title,

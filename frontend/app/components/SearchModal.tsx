@@ -308,6 +308,7 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
                             <span className="px-2 py-0.5 bg-gray-100 rounded">
                               {categoryLabels[article.category] || article.category}
                             </span>
+                            <span>{article.author?.firstName} {article.author?.lastName}</span>
                             <span>{timeAgo}</span>
                           </div>
                         </div>
@@ -358,6 +359,7 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
                           <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded">
                             {categoryLabels[result.category] || result.category}
                           </span>
+                            <span>{result.author?.firstName} {result.author?.lastName}</span>
                           <span>{timeAgo}</span>
                         </div>
                       </div>

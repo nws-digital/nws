@@ -2,7 +2,6 @@ import type {Metadata, ResolvingMetadata} from 'next'
 import {notFound} from 'next/navigation'
 import {type PortableTextBlock} from 'next-sanity'
 import {Suspense} from 'react'
-
 import Avatar from '@/app/components/Avatar'
 import CoverImage from '@/app/components/CoverImage'
 import PortableText from '@/app/components/PortableText'
@@ -178,7 +177,7 @@ export default async function ArticlePage(props: Props) {
             <div className="lg:col-span-3">
               <div className="pb-2 mb-2 border-b border-gray-100">
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl lg:text-3xl">
+                  <h2 className="text-xl font-bold tracking-tight text-black sm:text-2xl lg:text-3xl">
                     {post.title}
                   </h2>
                 </div>

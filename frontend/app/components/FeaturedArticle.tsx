@@ -77,7 +77,7 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
                   </div>
       
                   {/* Title */}
-                  <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 md:mb-4 leading-tight line-clamp-2 sm:line-clamp-3 group-hover:text-red-400 transition-colors drop-shadow-lg">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 md:mb-4 leading-tight line-clamp-2 sm:line-clamp-3 group-hover:text-red-400 transition-colors drop-shadow-lg">
                     {article.title}
                   </h2>
       

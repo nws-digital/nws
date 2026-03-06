@@ -28,7 +28,7 @@ export const commentaryArticlesQuery = defineQuery(`
 `)
 
 export const latestArticlesQuery = defineQuery(`
-  *[_type == "article" && category != "commentary" && (_id != $excludeId)] | order(date desc)[0...6] {
+  *[_type == "article" && category != "commentary" && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...12] {
     _id,
     title,
     slug,

@@ -33,8 +33,8 @@ export function LatestArticles({articles}: LatestArticlesProps) {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Limit to 6 articles
-  const displayArticles = articles.slice(0, 6)
+  // Limit to 6 articles, filtering out those without valid slugs
+  const displayArticles = articles.filter(article => article.slug?.current).slice(0, 6)
 
   const dropdownOptions = [
     {label: 'World Exclusive', href: '/world-exclusive'},

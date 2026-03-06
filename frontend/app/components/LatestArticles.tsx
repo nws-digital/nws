@@ -55,7 +55,7 @@ export function LatestArticles({articles}: LatestArticlesProps) {
   }, [dropdownRef])
 
   if (!articles || articles.length === 0) {
-    return null
+    return null;
   }
 
   const sectionVariants = {

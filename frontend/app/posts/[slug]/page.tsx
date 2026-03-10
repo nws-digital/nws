@@ -31,6 +31,7 @@ type PostData = {
   excerpt?: string
   coverImage?: any
   date?: string
+  lastPublishedDate?: string
   category?: string
   content?: PortableTextBlock[]
   author?: PostAuthor | null

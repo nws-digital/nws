@@ -20,7 +20,7 @@ type Props = {
 }
 
 export default function Avatar({person, date, small = false}: Props) {
-  const {firstName, lastName, picture, bio} = person
+  const {firstName, lastName, designation, picture, bio} = person
   const [showBio, setShowBio] = useState(false)
   const hasBio = bio && Array.isArray(bio) && bio.length > 0
 
@@ -63,13 +63,18 @@ export default function Avatar({person, date, small = false}: Props) {
         )}
         <div className="flex flex-col">
           {firstName && lastName && (
-            <div className={`${small ? 'text-sm' : ''}`}>
+            <div className={`font-semibold ${small ? 'text-sm' : 'text-base'}`}>
               {firstName} {lastName}
             </div>
           )}
-          <div className={`text-gray-500 ${small ? 'text-xs' : 'text-sm'}`}>
-            <DateComponent dateString={date} />
-          </div>
+          {designation && (
+            <div className={`text-gray-600 ${small ? 'text-xs' : 'text-sm'}`}>{designation}</div>
+          )}
+          {date && (
+            <div className={`text-gray-500 ${small ? 'text-xs' : 'text-sm'}`}>
+              <DateComponent dateString={date} />
+            </div>
+          )}
         </div>
       </div>
 

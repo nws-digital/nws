@@ -8,6 +8,7 @@ import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './src/schemaTypes'
 import {structure} from './src/structure'
+import {publishWithDates} from './src/actions/publishWithDates'
 import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
 import {
   presentationTool,
@@ -131,5 +132,18 @@ export default defineConfig({
   // Schema configuration, imported from ./src/schemaTypes/index.ts
   schema: {
     types: schemaTypes,
+  },
+
+  // Document actions configuration
+  document: {
+    actions: (prev, context) => {
+      // Only use custom publish action for articles
+      if (context.schemaType === 'article') {
+        return prev.map((originalAction) =>
+          originalAction.action === 'publish' ? publishWithDates : originalAction
+        )
+      }
+      return prev
+    },
   },
 })

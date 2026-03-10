@@ -110,9 +110,19 @@ export const article = defineType({
     }),
     defineField({
       name: 'date',
-      title: 'Date',
+      title: 'Published Date',
       type: 'datetime',
-      initialValue: () => new Date().toISOString(),
+      description: 'Automatically set when article is first published',
+      readOnly: true,
+      hidden: true,
+    }),
+    defineField({
+      name: 'lastPublishedDate',
+      title: 'Last Published Date',
+      type: 'datetime',
+      description: 'Automatically updated each time article is published',
+      readOnly: true,
+      hidden: true,
     }),
     defineField({
       name: 'author',

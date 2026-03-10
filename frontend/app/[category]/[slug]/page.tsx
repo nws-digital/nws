@@ -7,6 +7,7 @@ import CoverImage from '@/app/components/CoverImage'
 import PortableText from '@/app/components/PortableText'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
 import {LatestArticlesSidebar} from '@/app/components/LatestArticlesSidebar'
+import {ArticleDates} from '@/app/components/ArticleDates'
 import {sanityFetch} from '@/sanity/lib/live'
 import {postQuery, allPostsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
@@ -28,11 +29,13 @@ type ArticleAuthor = {
 
 type ArticlePost = {
   _id?: string
+  _updatedAt?: string
   title?: string
   slug?: string
   excerpt?: string
   coverImage?: any
   date?: string
+  lastPublishedDate?: string
   category?: string
   content?: PortableTextBlock[]
   author?: ArticleAuthor | null
@@ -181,9 +184,9 @@ export default async function ArticlePage(props: Props) {
                     {post.title}
                   </h2>
                 </div>
-                <div className="flex gap-4 items-center mt-2">
+                <div className="flex flex-col gap-3 mt-3">
                   {authorForAvatar?.firstName && authorForAvatar?.lastName && (
-                    <Avatar person={authorForAvatar} date={post.date} small />
+                    <Avatar person={authorForAvatar} small />
                   )}
                 </div>
               </div>
@@ -193,6 +196,15 @@ export default async function ArticlePage(props: Props) {
                   <PortableText className="" value={post.content as PortableTextBlock[]} />
                 )}
               </article>
+
+              <div className="flex flex-col gap-3 mt-3 top-8 pt-8">
+                  {post.date && (
+                    <ArticleDates 
+                      date={post.date} 
+                      lastPublishedDate={post.lastPublishedDate}
+                    />
+                  )}
+                </div>
             </div>
 
             {/* Vertical Divider + Sidebar - 1/4 width (Desktop only) */}

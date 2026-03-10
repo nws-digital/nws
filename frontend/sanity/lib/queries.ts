@@ -5,10 +5,12 @@ export const settingsQuery = defineQuery(`*[_type == "settings"][0]`)
 export const featuredArticleQuery = defineQuery(`
   *[_type == "article" && featured == true] | order(date desc)[0] {
     _id,
+    _updatedAt,
     title,
     slug,
     excerpt,
     date,
+    lastPublishedDate,
     category,
     "author": author->{firstName, lastName},
     coverImage
@@ -18,11 +20,13 @@ export const featuredArticleQuery = defineQuery(`
 export const commentaryArticlesQuery = defineQuery(`
   *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {
     _id,
+    _updatedAt,
     title,
     slug,
     excerpt,
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
+    lastPublishedDate,
     "author": author->{firstName, lastName, designation, picture, bio}
   }
 `)
@@ -30,11 +34,13 @@ export const commentaryArticlesQuery = defineQuery(`
 export const latestArticlesQuery = defineQuery(`
   *[_type == "article" && category != "commentary" && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...12] {
     _id,
+    _updatedAt,
     title,
     slug,
     excerpt,
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
+    lastPublishedDate,
     category,
     coverImage,
     "author": author->{firstName, lastName, designation, picture, bio}
@@ -49,6 +55,7 @@ export const sidebarArticlesQuery = defineQuery(`
     excerpt,
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
+    lastPublishedDate,
     category,
     coverImage,
     "author": author->{firstName, lastName, designation, picture, bio}
@@ -63,6 +70,7 @@ export const categoryArticlesQuery = defineQuery(`
     excerpt,
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
+    lastPublishedDate,
     category,
     coverImage,
     "author": author->{firstName, lastName, designation, picture, bio}
@@ -81,18 +89,21 @@ export const commentaryArticlesPageQuery = defineQuery(`
     excerpt,
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
+    lastPublishedDate,
     "author": author->{firstName, lastName, designation, picture, bio}
   }
 `)
 
 const postFields = /* groq */ `
   _id,
+  _updatedAt,
   "status": select(_originalId in path("drafts.**") => "draft", "published"),
   "title": coalesce(title, "Untitled"),
   "slug": slug.current,
   excerpt,
   coverImage,
-  "date": coalesce(date, _updatedAt),
+  "date": coalesce(date, _createdAt),
+  lastPublishedDate,
   "author": author->{firstName, lastName, designation, picture, bio},
   category,
 `

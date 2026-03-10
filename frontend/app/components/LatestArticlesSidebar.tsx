@@ -71,13 +71,15 @@ export async function LatestArticlesSidebar({currentArticleId}: LatestArticlesSi
             {/* Details - Right */}
             <div className="flex-1 min-w-0">
               {/* Title */}
-              <h4 className="font-semibold text-sm text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-3 mb-1">
+              <h4 className="font-semibold text-sm text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-1">
                 {article.title}
               </h4>
 
               {/* Time ago and Category */}
               <div className="flex items-center gap-2 text-xs text-gray-500">
-                <span>{timeAgo}</span>
+                {/* <span>{timeAgo}</span> */}
+                {/* <br /> */}
+                <span className="block h-1" />
                 {article.category && (
                   <>
                     <span>•</span>

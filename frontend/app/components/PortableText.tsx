@@ -101,7 +101,7 @@ export default function CustomPortableText({
               className="rounded-lg w-full h-auto"
             />
             {value.caption && (
-                <figcaption className="mt-2 text-md text-gray-600 italic">
+                <figcaption className="mt-2 text-md text-gray-500 italic">
                 {value.caption}
                 </figcaption>
             )}

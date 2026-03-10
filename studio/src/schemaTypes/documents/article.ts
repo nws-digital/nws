@@ -106,6 +106,12 @@ export const article = defineType({
             })
           },
         },
+        {
+          name: 'caption',
+          type: 'string',
+          title: 'Caption',
+          description: 'Optional caption displayed below the cover image.',
+        },
       ],
     }),
     defineField({

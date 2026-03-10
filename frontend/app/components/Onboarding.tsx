@@ -146,7 +146,7 @@ export function PageOnboarding() {
       </svg>
       <OnboardingMessage
         message={{
-          title: 'About Page (/about) does not exist yet',
+          title: 'About Page (/pages/about) does not exist yet',
           description: 'Get started by creating an about page.',
         }}
         link={{

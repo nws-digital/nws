@@ -4,6 +4,7 @@ import {useState} from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
+import {motion} from 'framer-motion'
 import {urlForImage} from '@/sanity/lib/utils'
 import {loadMoreArticles} from '@/app/actions/articles'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
@@ -32,7 +33,11 @@ const categoryLabels: Record<string, string> = {
   'commentary': 'Commentary',
 }
 
-export function CategoryArticlesList({initialArticles, category, totalCount}: CategoryArticlesListProps) {
+export function CategoryArticlesList({
+  initialArticles,
+  category,
+  totalCount,
+}: CategoryArticlesListProps) {
   const [articles, setArticles] = useState<Article[]>(initialArticles)
   const [loading, setLoading] = useState(false)
   const [offset, setOffset] = useState(12)
@@ -43,7 +48,7 @@ export function CategoryArticlesList({initialArticles, category, totalCount}: Ca
     setLoading(true)
     try {
       const newArticles = await loadMoreArticles(category, offset, offset + 12)
-      
+
       setArticles([...articles, ...newArticles])
       setOffset(offset + 12)
     } catch (error) {
@@ -55,15 +60,21 @@ export function CategoryArticlesList({initialArticles, category, totalCount}: Ca
 
   const categoryLabel = categoryLabels[category] || category
 
+  const itemVariants = {
+    hidden: {opacity: 0, y: 20},
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-[1366px] mx-auto px-4 py-8">
       {/* Breadcrumb Navigation */}
-      <Breadcrumb 
-        items={[
-          {label: 'Home', href: '/'},
-          {label: categoryLabel},
-        ]}
-      />
+      <Breadcrumb items={[{label: 'Home', href: '/'}, {label: categoryLabel}]} />
 
       {/* Articles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -71,55 +82,64 @@ export function CategoryArticlesList({initialArticles, category, totalCount}: Ca
           const timeAgo = formatDistanceToNow(new Date(article.date), {
             addSuffix: true,
           })
+          const coverBuilder = article.coverImage ? urlForImage(article.coverImage) : null
+          const coverImageUrl = coverBuilder?.width(600).height(400).fit('crop').url()
 
           return (
-            <Link
+            <motion.div
               key={article._id}
-              href={`/${category}/${article.slug.current}`}
-              className="group flex flex-col bg-white rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-red-600"
+              variants={itemVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{once: true, amount: 0.2}}
+              className="h-full"
+              whileHover={{
+                y: -8,
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+              }}
+              transition={{type: 'spring', stiffness: 300}}
             >
-              {/* Cover Image */}
-              {article.coverImage ? (
-                <div className="relative w-full h-48 bg-gray-200">
-                  <Image
-                    src={urlForImage(article.coverImage)
-                      .width(600)
-                      .height(400)
-                      .fit('crop')
-                      .url()}
-                    alt={article.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-              ) : (
-                <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-400 text-sm">No image</span>
-                </div>
-              )}
+              <Link
+                href={`/${category}/${article.slug.current}`}
+                className="group flex flex-col bg-white rounded-lg overflow-hidden h-full border border-gray-200"
+              >
+                {/* Cover Image */}
+                {coverImageUrl ? (
+                  <div className="relative w-full h-48 bg-gray-200">
+                    <Image
+                      src={coverImageUrl}
+                      alt={article.title || 'Article image'}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-400 text-sm">No image</span>
+                  </div>
+                )}
 
-              {/* Content */}
-              <div className="flex flex-col flex-1 p-6">
-                {/* Headline */}
-                <h3 className="text-lg font-bold text-black mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
-                  {article.title}
-                </h3>
+                {/* Content */}
+                <div className="flex flex-col flex-1 p-6">
+                  {/* Headline */}
+                  <h3 className="text-lg font-bold text-black mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
+                    {article.title}
+                  </h3>
 
-                {/* Summary/Excerpt */}
-                <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                  {article.excerpt || article.contentPreview || 'No preview available...'}
-                  {(article.excerpt || article.contentPreview) && '...'}
-                </p>
+                  {/* Summary/Excerpt */}
+                  <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                    {article.excerpt || article.contentPreview || 'No preview available...'}
+                    {(article.excerpt || article.contentPreview) && '...'}
+                  </p>
 
-                {/* Time at bottom */}
-                <div className="flex items-center justify-between text-xs mt-auto pt-4 border-t border-gray-100">
-                  <span className="text-gray-400">{timeAgo}</span>
-                  <span className="text-red-600 font-semibold uppercase">
-                    {categoryLabel}
-                  </span>
+                  {/* Time at bottom */}
+                  <div className="flex items-center justify-between text-xs mt-auto pt-4 border-t border-gray-100">
+                    <span className="text-gray-400">{timeAgo}</span>
+                    <span className="text-red-600 font-semibold uppercase">{categoryLabel}</span>
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </motion.div>
           )
         })}
       </div>
@@ -139,9 +159,7 @@ export function CategoryArticlesList({initialArticles, category, totalCount}: Ca
 
       {/* No more articles message */}
       {!hasMore && articles.length > 0 && (
-        <div className="text-center text-gray-500 text-sm">
-          No more articles to load
-        </div>
+        <div className="text-center text-gray-500 text-sm">No more articles to load</div>
       )}
 
       {/* No articles at all */}

@@ -8,7 +8,7 @@ import {defineField, defineType} from 'sanity'
 
 export const person = defineType({
   name: 'person',
-  title: 'Person',
+  title: 'Author',
   icon: UserIcon,
   type: 'document',
   fields: [
@@ -30,6 +30,14 @@ export const person = defineType({
       type: 'string',
       description: 'Job title or role (e.g., Senior Editor, Columnist, Correspondent)',
       placeholder: 'e.g., Senior Editor',
+    }),
+    defineField({
+      name: 'bio',
+      title: 'Bio',
+      type: 'array',
+      of: [{type: 'block'}],
+      description: 'About the author, their experience, and background',
+      validation: (rule) => rule.max(3000),
     }),
     defineField({
       name: 'picture',

@@ -4,17 +4,31 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {useState} from 'react'
 import SearchModal from '@/app/components/SearchModal'
+import SideMenu from '@/app/components/SideMenu'
 
-export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+interface Article {
+  _id: string
+  title: string
+  slug: {current: string}
+  category: string
+  date: string
+  coverImage?: any
+}
+
+interface HeaderClientProps {
+  latestArticles: Article[]
+}
+
+export default function HeaderClient({latestArticles}: HeaderClientProps) {
+  const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [searchModalOpen, setSearchModalOpen] = useState(false)
 
   return (
     <header className="fixed z-50 h-20 inset-0 bg-white/95 border-b border-gray-200 flex items-center backdrop-blur-lg">
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="max-w-[1366px] mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
           {/* Logo/Title */}
-          <Link className="flex items-center" href="/" onClick={() => setMobileMenuOpen(false)}>
+          <Link className="flex items-center" href="/" onClick={() => setSideMenuOpen(false)}>
             <Image 
               src="/images/Logo_Dark.svg" 
               alt="NWS" 
@@ -74,93 +88,40 @@ export default function Header() {
               </svg>
             </button>
 
-            {/* Mobile Menu Button */}
+            {/* Menu Button - Always Visible */}
             <button 
-              className="md:hidden p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label="Menu"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => setSideMenuOpen(!sideMenuOpen)}
             >
-              {mobileMenuOpen ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-5 h-5"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-5 h-5"
-                >
-                  <line x1="3" y1="12" x2="21" y2="12"></line>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-              )}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-5 h-5"
+              >
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
             </button>
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <nav className="md:hidden absolute top-20 left-0 right-0 bg-white/98 backdrop-blur-lg border-b border-gray-200 shadow-lg">
-            <ul className="flex flex-col py-4">
-              <li>
-                <Link 
-                  href="/world-exclusive" 
-                  className="block px-6 py-3 hover:bg-gray-50 hover:text-red-600 transition-colors font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  World Exclusive
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/india-exclusive" 
-                  className="block px-6 py-3 hover:bg-gray-50 hover:text-red-600 transition-colors font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  India Exclusive
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/osint-exclusive" 
-                  className="block px-6 py-3 hover:bg-gray-50 hover:text-red-600 transition-colors font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  OSINT Exclusive
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/commentary" 
-                  className="block px-6 py-3 hover:bg-gray-50 hover:text-red-600 transition-colors font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Commentary
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        )}
       </div>
 
       {/* Search Modal */}
       <SearchModal isOpen={searchModalOpen} onClose={() => setSearchModalOpen(false)} />
+      
+      {/* Side Menu */}
+      <SideMenu 
+        isOpen={sideMenuOpen} 
+        onClose={() => setSideMenuOpen(false)}
+        latestArticles={latestArticles}
+      />
     </header>
   )
 }

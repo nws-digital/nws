@@ -23,11 +23,29 @@ export const page = defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      validation: (Rule) => Rule.required(),
+      description: 'Only lowercase letters, numbers, and hyphens are allowed.',
       options: {
         source: 'name',
         maxLength: 96,
+        slugify: (input) => 
+          input
+            .toLowerCase()
+            .replace(/\s+/g, '-')           // Replace spaces with -
+            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars except hyphens
+            .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+            .replace(/^-+/, '')             // Trim - from start of text
+            .replace(/-+$/, ''),            // Trim - from end of text
       },
+      validation: (Rule) => Rule.required().custom((slug) => {
+        if (!slug?.current) {
+          return 'Slug is required'
+        }
+        // Validate that the slug only contains allowed characters
+        if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug.current)) {
+          return 'Slug can only contain lowercase letters, numbers, and hyphens. No spaces or special characters allowed.'
+        }
+        return true
+      }),
     }),
     defineField({
       name: 'heading',

@@ -28,8 +28,8 @@
   --color-gray-900: #1b1d27;
   --color-gray-950: #13141b;
 
-  --font-display: 'Inter', 'sans-serif';
-  --font-sans: 'Inter', 'sans-serif';
+  --font-display: 'PT Serif', serif;
+  --font-sans: 'PT Serif', serif;
 
   --default-transition-duration: 250ms;
 }
@@ -45,9 +45,38 @@
 }
 
 .animate-scroll {
-  animation: scroll 360s linear infinite;
+  animation: scroll 90s linear infinite;
 }
 
 .animate-scroll:hover {
   animation-play-state: paused;
+}
+
+/* Article content font size customization */
+.prose {
+  font-size: 18px !important;
+}
+
+.prose p {
+  font-size: 18px !important;
+}
+
+/* Content protection - prevent text selection */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none; /* iOS Safari */
+}
+
+/* Apply to main content areas */
+article,
+.article-content,
+.post-content {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }

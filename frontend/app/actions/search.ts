@@ -7,7 +7,9 @@ const searchArticlesQuery = defineQuery(`
   *[_type == "article" && (
     title match $searchTerm + "*" ||
     excerpt match $searchTerm + "*" ||
-    pt::text(content) match $searchTerm + "*"
+    pt::text(content) match $searchTerm + "*" ||
+    author->firstName match $searchTerm + "*" ||
+    author->lastName match $searchTerm + "*"
   )] | order(_score desc, date desc) [0...10] {
     _id,
     title,
@@ -28,6 +30,27 @@ export async function searchArticles(searchTerm: string) {
   const {data} = await sanityFetch({
     query: searchArticlesQuery,
     params: {searchTerm: searchTerm.trim()},
+  })
+
+  return data || []
+}
+
+const latestArticlesQuery = defineQuery(`
+  *[_type == "article" && category != "commentary"] | order(date desc) [0...3] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    category,
+    date,
+    coverImage,
+    "author": author->{firstName, lastName}
+  }
+`)
+
+export async function getLatestArticles() {
+  const {data} = await sanityFetch({
+    query: latestArticlesQuery,
   })
 
   return data || []

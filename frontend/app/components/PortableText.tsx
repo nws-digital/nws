@@ -86,19 +86,24 @@ export default function CustomPortableText({
         if (!value?.asset?._ref) {
           return null
         }
+        const imageBuilder = urlForImage(value)
+        const imageUrl = imageBuilder?.width(800).height(600).fit('max').url()
+        if (!imageUrl) {
+          return null
+        }
         return (
           <figure className="my-8">
             <Image
-              src={urlForImage(value).width(800).height(600).fit('max').url()}
+              src={imageUrl}
               alt={value.alt || 'Article image'}
               width={800}
               height={600}
               className="rounded-lg w-full h-auto"
             />
             {value.caption && (
-              <figcaption className="mt-2 text-center text-sm text-gray-600">
+                <figcaption className="mt-2 text-md text-gray-600 italic">
                 {value.caption}
-              </figcaption>
+                </figcaption>
             )}
           </figure>
         )
@@ -107,7 +112,7 @@ export default function CustomPortableText({
   }
 
   return (
-    <div className={['prose prose-a:text-brand', className].filter(Boolean).join(' ')}>
+    <div className={['prose prose-a:text-brand max-w-none text-justify', className].filter(Boolean).join(' ')}>
       <PortableText components={components} value={value} />
     </div>
   )

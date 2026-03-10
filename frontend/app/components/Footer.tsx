@@ -1,10 +1,10 @@
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Footer() {
   return (
     <footer className="bg-black text-white">
-      <div className="container mx-auto px-6 py-12">
+      <div className="max-w-[1366px] mx-auto px-6 py-12">
         {/* Four column layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Logo and Description Column */}
@@ -23,8 +23,11 @@ export default function Footer() {
 
           {/* Sections Column */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Sections</h3>
-            <ul className="space-y-2">
+            <div className="mb-8">
+              <h6 className="text-lg font-bold whitespace-nowrap mb-2">Sections</h6>
+              <div className="w-4 h-1 bg-red-600"></div>
+            </div>
+            <ul className="space-y-2 text-gray-400 text-sm leading-relaxed">
               <li>
                 <Link href="/world-exclusive" className="hover:text-red-500 transition-colors">
                   World Exclusive
@@ -50,25 +53,28 @@ export default function Footer() {
 
           {/* About Column */}
           <div>
-            <h3 className="font-bold text-lg mb-4">About</h3>
-            <ul className="space-y-2">
+            <div className="mb-8">
+              <h6 className="text-lg font-bold whitespace-nowrap mb-2">Links</h6>
+              <div className="w-4 h-1 bg-red-600"></div>
+            </div>
+            <ul className="space-y-2 text-gray-400 text-sm leading-relaxed">
               <li>
-                <Link href="/about" className="hover:text-red-500 transition-colors">
+                <Link href="/pages/about" className="hover:text-red-500 transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-red-500 transition-colors">
+                <Link href="/pages/contact" className="hover:text-red-500 transition-colors">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="hover:text-red-500 transition-colors">
+                <Link href="/pages/careers" className="hover:text-red-500 transition-colors">
                   Careers
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-red-500 transition-colors">
+                <Link href="/pages/privacy" className="hover:text-red-500 transition-colors">
                   Privacy Policy
                 </Link>
               </li>
@@ -77,8 +83,11 @@ export default function Footer() {
 
           {/* Follow Us Column */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Follow Us</h3>
-            <ul className="space-y-2">
+            <div className="mb-8">
+              <h6 className="text-lg font-bold whitespace-nowrap mb-2">Social</h6>
+              <div className="w-4 h-1 bg-red-600"></div>
+            </div>
+            <ul className="space-y-2 text-gray-400 text-sm leading-relaxed">
               <li>
                 <a 
                   href="https://twitter.com" 

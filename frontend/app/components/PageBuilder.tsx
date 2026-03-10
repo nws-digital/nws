@@ -58,7 +58,7 @@ function renderEmptyState(page: GetPageQueryResult) {
     return null
   }
   return (
-    <div className="container">
+    <div className="max-w-[1366px] mx-auto px-4">
       <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">
         This page has no content!
       </h1>

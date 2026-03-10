@@ -17,6 +17,15 @@ const Post = ({post}: {post: AllPostsQueryResult[number]}) => {
     path: 'title',
   })
 
+  const authorForAvatar =
+    author && typeof author === 'object' && 'firstName' in author && 'lastName' in author
+      ? {
+          firstName: (author as any).firstName ?? null,
+          lastName: (author as any).lastName ?? null,
+          picture: 'picture' in author ? (author as any).picture : undefined,
+        }
+      : null
+
   return (
     <article
       data-sanity={attr()}
@@ -32,9 +41,9 @@ const Post = ({post}: {post: AllPostsQueryResult[number]}) => {
         <p className="line-clamp-3 text-sm leading-6 text-gray-600 max-w-[70ch]">{excerpt}</p>
       </div>
       <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
-        {author && author.firstName && author.lastName && (
+        {authorForAvatar?.firstName && authorForAvatar?.lastName && (
           <div className="flex items-center">
-            <Avatar person={author} small={true} />
+            <Avatar person={authorForAvatar} small={true} />
           </div>
         )}
         <time className="text-gray-500 text-xs font-mono" dateTime={date}>
@@ -75,10 +84,12 @@ export const MorePosts = async ({skip, limit}: {skip: string; limit: number}) =>
     return null
   }
 
+  const posts = data as AllPostsQueryResult
+
   return (
-    <Posts heading={`Recent Posts (${data?.length})`}>
-      {data?.map((post: any) => (
-        <Post key={post._id} post={post} />
+    <Posts heading={`Recent Posts (${posts?.length})`}>
+      {posts?.map((post) => (
+        <Post key={(post as any)._id} post={post} />
       ))}
     </Posts>
   )
@@ -91,13 +102,15 @@ export const AllPosts = async () => {
     return <OnBoarding />
   }
 
+  const posts = data as AllPostsQueryResult
+
   return (
     <Posts
       heading="Recent Posts"
-      subHeading={`${data.length === 1 ? 'This blog post is' : `These ${data.length} blog posts are`} populated from your Sanity Studio.`}
+      subHeading={`${posts.length === 1 ? 'This blog post is' : `These ${posts.length} blog posts are`} populated from your Sanity Studio.`}
     >
-      {data.map((post: any) => (
-        <Post key={post._id} post={post} />
+      {posts.map((post) => (
+        <Post key={(post as any)._id} post={post} />
       ))}
     </Posts>
   )

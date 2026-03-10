@@ -1,7 +1,9 @@
+'use client'
+
 import Link from 'next/link'
-import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
-import {urlForImage} from '@/sanity/lib/utils'
+import {motion} from 'framer-motion'
+import Avatar from '@/app/components/Avatar'
 
 interface CommentaryArticle {
   _id: string
@@ -15,6 +17,7 @@ interface CommentaryArticle {
     lastName: string
     designation?: string
     picture?: any
+    bio?: any
   }
 }
 
@@ -27,80 +30,105 @@ export function CommentarySection({articles}: CommentarySectionProps) {
     return null
   }
 
+  const sectionVariants = {
+    hidden: {opacity: 0},
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: {opacity: 0, y: 20},
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  }
+
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
-        {/* Section Heading with Red Line */}
-        <div className="flex items-center gap-4 mb-8">
-          <h2 className="text-3xl font-bold text-black whitespace-nowrap">COMMENTARY</h2>
-          <div className="flex-1 h-1 bg-red-600"></div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <motion.section
+      className="py-8 bg-white"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{once: true, amount: 0.1}}
+      variants={sectionVariants}
+    >
+      <div className="max-w-[1366px] mx-auto px-4 py-4">
+        <motion.div className="mb-8" variants={itemVariants}>
+          <h6 className="text-2xl font-bold text-black whitespace-nowrap mb-2">Commentary</h6>
+          <motion.div
+            className="w-8 h-1.5 bg-red-600"
+            initial={{width: 0}}
+            animate={{width: '2rem'}}
+            transition={{duration: 0.5, delay: 0.2}}
+          />
+        </motion.div>
+
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          variants={sectionVariants}
+        >
           {articles.slice(0, 3).map((article) => {
-            const authorName = article.author 
-              ? `${article.author.firstName} ${article.author.lastName}`
-              : 'Anonymous'
-            
+            const authorForAvatar = article.author
+              ? {
+                  firstName: article.author.firstName ?? null,
+                  lastName: article.author.lastName ?? null,
+                  designation: article.author.designation ?? null,
+                  picture: article.author.picture,
+                  bio: article.author.bio,
+                }
+              : null
+
             const timeAgo = formatDistanceToNow(new Date(article.date), {
               addSuffix: true,
             })
 
             return (
-              <Link
+              <motion.div
                 key={article._id}
-                href={`/commentary/${article.slug.current}`}
-                className="group flex flex-col bg-white border-2 border-gray-200 rounded-lg p-6 hover:shadow-xl transition-all duration-300 hover:border-red-600"
+                variants={itemVariants}
+                className="group bg-white border-2 border-gray-200 rounded-lg flex flex-col"
+                whileHover={{
+                  y: -8,
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                }}
+                transition={{type: 'spring', stiffness: 300}}
               >
-                {/* Author Info */}
-                <div className="flex items-center gap-3 mb-4">
-                  {article.author?.picture ? (
-                    <Image
-                      src={urlForImage(article.author.picture)
-                        .width(48)
-                        .height(48)
-                        .fit('crop')
-                        .url()}
-                      alt={authorName}
-                      width={48}
-                      height={48}
-                      className="rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
-                      <span className="text-gray-600 font-semibold text-lg">
-                        {authorName.charAt(0)}
-                      </span>
-                    </div>
-                  )}
-                  <div>
-                    <p className="font-semibold text-black">{authorName}</p>
-                    <p className="text-xs text-gray-500">
-                      {article.author?.designation || 'Contributor'}
-                    </p>
+                <Link
+                  href={`/commentary/${article.slug.current}`}
+                  className="flex flex-col h-full p-6"
+                >
+                  {/* Author Info */}
+                  <div className="mb-4">
+                    {authorForAvatar && <Avatar person={authorForAvatar} date={article.date} small />}
                   </div>
-                </div>
 
-                {/* Title */}
-                <h3 className="text-xl font-bold text-black mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
-                  {article.title}
-                </h3>
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-black mb-3 group-hover:text-red-600 transition-colors duration-300 line-clamp-2">
+                    {article.title}
+                  </h3>
 
-                {/* Excerpt */}
-                <p className="text-gray-600 text-sm line-clamp-4 mb-4">
-                  {article.excerpt || article.contentPreview || 'No preview available...'}
-                  {(article.excerpt || article.contentPreview) && '...'}
-                </p>
+                  {/* Excerpt */}
+                  <p className="text-gray-600 text-sm line-clamp-4 mb-4 flex-1">
+                    {article.excerpt || article.contentPreview || 'No preview available...'}
+                    {((article.excerpt || article.contentPreview) as any) && '...'}
+                  </p>
 
-                {/* Time ago at bottom */}
-                <p className="text-xs text-gray-400 mt-auto">
-                  {timeAgo}
-                </p>
-              </Link>
+                  {/* Time ago at bottom */}
+                  <p className="text-xs text-gray-400 mt-auto pt-4">{timeAgo}</p>
+                </Link>
+              </motion.div>
             )
           })}
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   )
 }
+

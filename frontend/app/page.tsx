@@ -28,29 +28,39 @@ export default async function Page() {
 
   const {data: latestArticles} = await sanityFetch({
     query: latestArticlesQuery,
+    params: {
+      excludeId: (featuredArticle as any)?._id ?? '',
+    },
   })
 
   return (
     <>
-      <div className="relative w-full pt-20">
-        {/* Featured Article - Full width */}
-        <div className="w-full">
-          {featuredArticle ? (
-            <FeaturedArticle article={featuredArticle} />
-          ) : (
-            <FeaturedPlaceholder />
-          )}
+      <div className="w-full pt-20">
+        {/* Featured Article Section with News Ticker Overlay */}
+        <div className="relative w-full">
+          {/* Featured Article - Full width */}
+          <div className="w-full h-[600px]">
+            {featuredArticle ? (
+              <FeaturedArticle article={featuredArticle} />
+            ) : (
+              <FeaturedPlaceholder />
+            )}
+          </div>
+
+          {/* News Ticker - Overlaid on featured article right side (desktop only) */}
+          <div className="hidden lg:block absolute inset-0 pointer-events-none">
+            <div className="max-w-[1366px] mx-auto px-4 h-full relative">
+              <div className="absolute top-6 bottom-6 right-0 w-96 pointer-events-auto">
+                <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-[500px] w-full animate-pulse" />}>
+                  <NewsTicker />
+                </Suspense>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* News Ticker - Overlaid on top right */}
-        <aside className="hidden lg:block absolute top-20 bottom-0 right-8 w-96 z-10 py-6">
-          <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-full w-full animate-pulse" />}>
-            <NewsTicker />
-          </Suspense>
-        </aside>
-
-        {/* News Ticker - Below on mobile */}
-        <div className="lg:hidden container mx-auto px-4 mt-8">
+        {/* News Ticker - Below featured article on mobile */}
+        <div className="lg:hidden max-w-[1366px] mx-auto px-4 mt-8">
           <div className="h-[500px]">
             <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-full w-full animate-pulse" />}>
               <NewsTicker />
@@ -62,16 +72,23 @@ export default async function Page() {
       {/* Latest Articles Section */}
       <LatestArticles articles={latestArticles || []} />
 
+      {/* Separator */}
+      <div className="bg-gray-50 pt-12">
+        <div className="max-w-[1366px] mx-auto px-4">
+          <div className="border-t border-gray-200" />
+        </div>
+      </div>
+
       {/* Commentary Section */}
       <CommentarySection articles={commentaryArticles || []} />
 
-      <div className="border-t border-gray-100 bg-gray-50">
-        <div className="container">
-          <aside className="py-12 sm:py-20">
+      {/* <div className="border-t border-gray-100 bg-gray-50">
+        <div className="max-w-[1366px] mx-auto px-4">
+          <aside className="py-12 sm:py-20"> */}
             {/* <Suspense>{await AllPosts()}</Suspense> */}
-          </aside>
+          {/* </aside>
         </div>
-      </div>
+      </div> */}
     </>
   )
 }

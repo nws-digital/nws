@@ -42,7 +42,7 @@ export function ArticleDates({
       
       {wasRepublished && (
         <div className="mt-1">
-          <span className="font-medium italic">Last Published on</span>{' '}
+          <span className="font-medium italic">Last Edited on</span>{' '}
           {showRelative ? (
             <time className="italic" dateTime={lastPublishedDate} title={formatDate(lastPublished!)}>
               {getRelativeTime(lastPublished!)}

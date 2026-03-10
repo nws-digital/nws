@@ -60,3 +60,23 @@
 .prose p {
   font-size: 18px !important;
 }
+
+/* Content protection - prevent text selection */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none; /* iOS Safari */
+}
+
+/* Apply to main content areas */
+article,
+.article-content,
+.post-content {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}

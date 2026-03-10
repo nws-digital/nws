@@ -8,6 +8,7 @@ import PortableText from '@/app/components/PortableText'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
 import {LatestArticlesSidebar} from '@/app/components/LatestArticlesSidebar'
 import {ArticleDates} from '@/app/components/ArticleDates'
+import {ShareArticle} from '@/app/components/ShareArticle'
 import {sanityFetch} from '@/sanity/lib/live'
 import {postQuery, allPostsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
@@ -184,10 +185,16 @@ export default async function ArticlePage(props: Props) {
                     {post.title}
                   </h2>
                 </div>
-                <div className="flex flex-col gap-3 mt-3">
+                <div className="flex items-center justify-between gap-4 mt-3">
+                  {/* Author - Left Side */}
                   {authorForAvatar?.firstName && authorForAvatar?.lastName && (
                     <Avatar person={authorForAvatar} small />
                   )}
+                  {/* Share Button - Right Side */}
+                  <ShareArticle 
+                    title={post.title || 'Article'} 
+                    url={`/${params.category}/${params.slug}`}
+                  />
                 </div>
               </div>
               <article className="gap-1 grid w-full">

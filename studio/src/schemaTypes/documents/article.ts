@@ -50,9 +50,9 @@ export const article = defineType({
     }),
     defineField({
       name: 'featured',
-      title: 'Featured Article',
+      title: 'Feature as Banner Article',
       type: 'boolean',
-      description: 'Display this article as the hero banner on homepage',
+      description: 'Display this article as the banner on homepage',
       initialValue: false,
     }),
     defineField({

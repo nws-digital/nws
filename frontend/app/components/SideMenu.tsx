@@ -115,48 +115,11 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
             <div className="border-t border-gray-200 my-4"></div>
           </motion.div>
 
-          {/* About, Contact, etc. */}
-          <motion.div
-            initial={{opacity: 0, y: 20}}
-            animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.2, duration: 0.3}}
-            className="space-y-3"
-          >
-            <Link 
-              href="/pages/about" 
-              className="block text-sm font-medium hover:text-red-600 transition-colors"
-              onClick={onClose}
-            >
-              ABOUT US
-            </Link>
-            <Link 
-              href="/pages/contact" 
-              className="block text-sm font-medium hover:text-red-600 transition-colors"
-              onClick={onClose}
-            >
-              CONTACT
-            </Link>
-            <Link 
-              href="/pages/careers" 
-              className="block text-sm font-medium hover:text-red-600 transition-colors"
-              onClick={onClose}
-            >
-              CAREERS
-            </Link>
-            <Link 
-              href="/pages/privacy" 
-              className="block text-sm font-medium hover:text-red-600 transition-colors"
-              onClick={onClose}
-            >
-              PRIVACY POLICY
-            </Link>
-          </motion.div>
-
           {/* Latest News */}
           <motion.div
             initial={{opacity: 0, y: 20}}
             animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.3, duration: 0.3}}
+            transition={{delay: 0.2, duration: 0.3}}
           >
             <h3 className="text-lg font-bold mb-4">
               <span className="relative inline-block">
@@ -202,6 +165,43 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
                 )
               })}
             </div>
+          </motion.div>
+
+          {/* About, Contact, etc. */}
+          <motion.div
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: 0.3, duration: 0.3}}
+            className="space-y-3"
+          >
+            <Link 
+              href="/pages/about" 
+              className="block text-sm font-medium hover:text-red-600 transition-colors"
+              onClick={onClose}
+            >
+              ABOUT US
+            </Link>
+            <Link 
+              href="/pages/contact" 
+              className="block text-sm font-medium hover:text-red-600 transition-colors"
+              onClick={onClose}
+            >
+              CONTACT
+            </Link>
+            <Link 
+              href="/pages/careers" 
+              className="block text-sm font-medium hover:text-red-600 transition-colors"
+              onClick={onClose}
+            >
+              CAREERS
+            </Link>
+            <Link 
+              href="/pages/privacy" 
+              className="block text-sm font-medium hover:text-red-600 transition-colors"
+              onClick={onClose}
+            >
+              PRIVACY POLICY
+            </Link>
           </motion.div>
 
           {/* Social */}

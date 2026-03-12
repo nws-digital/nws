@@ -188,7 +188,7 @@ export default async function ArticlePage(props: Props) {
                 <div className="flex items-center justify-between gap-4 mt-3">
                   {/* Author - Left Side */}
                   {authorForAvatar?.firstName && authorForAvatar?.lastName && (
-                    <Avatar person={authorForAvatar} small />
+                    <Avatar person={authorForAvatar} date={post.date} small />
                   )}
                   {/* Share Button - Right Side */}
                   <ShareArticle 

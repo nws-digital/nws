@@ -27,7 +27,7 @@ export default function CoverImage(props: CoverImageProps) {
   return (
     <figure>
       <div className="relative">{image}</div>
-      {caption && <figcaption className="mt-2 text-md text-gray-500 italic">{caption}</figcaption>}
+      {caption && <figcaption className="mt-2 text-md text-gray-500">{caption}</figcaption>}
     </figure>
   )
 }

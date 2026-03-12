@@ -28,6 +28,13 @@ interface SidebarArticle {
   }
 }
 
+const categoryLabels: Record<string, string> = {
+  'world-exclusive': 'World Exclusive',
+  'india-exclusive': 'India Exclusive',
+  'osint-exclusive': 'OSINT Exclusive',
+  'commentary': 'Commentary',
+}
+
 export async function LatestArticlesSidebar({currentArticleId}: LatestArticlesSidebarProps) {
   const {data: articles} = await sanityFetch({
     query: sidebarArticlesQuery,
@@ -71,7 +78,7 @@ export async function LatestArticlesSidebar({currentArticleId}: LatestArticlesSi
             {/* Details - Right */}
             <div className="flex-1 min-w-0">
               {/* Title */}
-              <h4 className="font-semibold text-sm text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-1">
+              <h4 className="font-semibold text-sm text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-1">
                 {article.title}
               </h4>
 
@@ -82,8 +89,10 @@ export async function LatestArticlesSidebar({currentArticleId}: LatestArticlesSi
                 <span className="block h-1" />
                 {article.category && (
                   <>
-                    <span>•</span>
-                    <span className="text-blue-600 font-medium">{article.category}</span>
+                    {/* <span>•</span> */}
+                    <span className="text-gray-500 font-medium">
+                      {categoryLabels[article.category] || article.category}
+                    </span>
                   </>
                 )}
               </div>

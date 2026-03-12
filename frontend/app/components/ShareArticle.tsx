@@ -147,7 +147,10 @@ export function ShareArticle({title, url, className = ''}: ShareArticleProps) {
           />
           
           {/* Dropdown Card */}
-          <div className="absolute right-0 mt-4 w-80 bg-white/98 backdrop-blur-2xl rounded-3xl shadow-2xl border border-gray-100/50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-3 duration-300">
+          <div className="absolute right-0 mt-2 w-80 bg-white/98 backdrop-blur-2xl rounded-xl shadow-2xl border border-gray-100/50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-3 duration-300">
+            {/* Arrow pointer */}
+            <div className="absolute -top-2 right-6 w-4 h-4 bg-white border-l border-t border-gray-100/50 transform rotate-45"></div>
+            
             {/* Header */}
             <div className="px-5 py-4 bg-gray-50 border-b border-gray-100">
               <p className="text-sm font-bold text-gray-800">Share Article</p>
@@ -163,7 +166,7 @@ export function ShareArticle({title, url, className = ''}: ShareArticleProps) {
                     href={platform.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border border-gray-100 ${platform.hoverColor} transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95 group`}
+                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-gray-100 ${platform.hoverColor} transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95 group`}
                     onClick={() => setIsOpen(false)}
                   >
                     <div className={`${platform.iconColor} transition-transform duration-200 group-hover:scale-110`}>
@@ -179,7 +182,7 @@ export function ShareArticle({title, url, className = ''}: ShareArticleProps) {
               {/* Copy Link Card */}
               <button
                 onClick={handleCopyLink}
-                className={`flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 w-full border-2 ${
+                className={`flex items-center justify-between gap-3 px-4 py-3.5 rounded-lg transition-all duration-300 w-full border-2 ${
                   copied 
                     ? 'bg-green-50 border-green-200 shadow-md' 
                     : 'bg-gray-50 border-gray-200 hover:border-gray-300 hover:shadow-md'

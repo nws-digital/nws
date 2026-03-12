@@ -114,6 +114,7 @@ export const article = defineType({
       title: 'Author',
       type: 'reference',
       to: [{type: 'person'}],
+      validation: (rule) => rule.required(),
     }),
   ],
   // List preview configuration. https://www.sanity.io/docs/previews-list-views

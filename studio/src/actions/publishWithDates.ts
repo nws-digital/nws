@@ -29,6 +29,7 @@ export const publishWithDates: DocumentActionComponent = (props) => {
   const draft = props.draft || props.published
   const title = (draft?.title as string) || ''
   const category = (draft?.category as string) || ''
+  const author = draft?.author as any
   const coverImage = draft?.coverImage as any
   const coverImageAlt = coverImage?.alt as string
 
@@ -36,6 +37,7 @@ export const publishWithDates: DocumentActionComponent = (props) => {
   const missingFields: string[] = []
   if (!title.trim()) missingFields.push('Title')
   if (!category) missingFields.push('Category')
+  if (!author?._ref) missingFields.push('Author')
   if (coverImage?.asset && !coverImageAlt) missingFields.push('Cover Image Alt Text')
 
   const hasRequiredFields = missingFields.length === 0

@@ -137,88 +137,67 @@ export function ShareArticle({title, url, className = ''}: ShareArticleProps) {
         <span className="hidden sm:inline">Share</span>
       </button>
 
-      {/* Premium Modern Dropdown */}
+      {/* Compact Modern Dropdown */}
       {isOpen && (
         <>
-          {/* Backdrop with blur */}
+          {/* Backdrop */}
           <div 
-            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm sm:hidden" 
+            className="fixed inset-0 z-40 bg-black/10 sm:hidden" 
             onClick={() => setIsOpen(false)}
           />
           
-          {/* Dropdown Card */}
-          <div className="absolute right-0 mt-2 w-80 bg-white/98 backdrop-blur-2xl rounded-xl shadow-2xl border border-gray-100/50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-3 duration-300">
+          {/* Dropdown */}
+          <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
             {/* Arrow pointer */}
-            <div className="absolute -top-2 right-6 w-4 h-4 bg-white border-l border-t border-gray-100/50 transform rotate-45"></div>
+            <div className="absolute -top-2 right-6 w-4 h-4 bg-white border-l border-t border-gray-200 transform rotate-45"></div>
             
-            {/* Header */}
-            <div className="px-5 py-4 bg-gray-50 border-b border-gray-100">
-              <p className="text-sm font-bold text-gray-800">Share Article</p>
-              <p className="text-xs text-gray-500 mt-0.5">Choose your platform</p>
-            </div>
-            
-            {/* Social Platforms Grid */}
-            <div className="p-4">
-              <div className="grid grid-cols-3 gap-3 mb-3">
+            {/* Content */}
+            <div className="p-3 space-y-2">
+              {/* Social icons in compact grid */}
+              <div className="grid grid-cols-5 gap-1.5">
                 {shareLinks.map((platform) => (
                   <a
                     key={platform.name}
                     href={platform.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-gray-100 ${platform.hoverColor} transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95 group`}
+                    className={`flex items-center justify-center h-10 rounded-lg border border-gray-200 ${platform.hoverColor} transition-all duration-150 hover:scale-105 hover:border-gray-300 active:scale-95`}
                     onClick={() => setIsOpen(false)}
+                    title={platform.name}
                   >
-                    <div className={`${platform.iconColor} transition-transform duration-200 group-hover:scale-110`}>
+                    <div className={`${platform.iconColor}`}>
                       {platform.icon}
                     </div>
-                    <span className="text-xs font-semibold text-gray-700 text-center leading-tight">
-                      {platform.name}
-                    </span>
                   </a>
                 ))}
               </div>
               
-              {/* Copy Link Card */}
+              {/* Divider */}
+              <div className="border-t border-gray-100"></div>
+              
+              {/* Copy Link */}
               <button
                 onClick={handleCopyLink}
-                className={`flex items-center justify-between gap-3 px-4 py-3.5 rounded-lg transition-all duration-300 w-full border-2 ${
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 w-full ${
                   copied 
-                    ? 'bg-green-50 border-green-200 shadow-md' 
-                    : 'bg-gray-50 border-gray-200 hover:border-gray-300 hover:shadow-md'
+                    ? 'bg-green-50 text-green-700' 
+                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg transition-all duration-300 ${
-                    copied 
-                      ? 'bg-green-100 text-green-600 scale-110' 
-                      : 'bg-white text-gray-600 group-hover:scale-110'
-                  }`}>
-                    {copied ? (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                      </svg>
-                    )}
-                  </div>
-                  <div className="text-left">
-                    <span className={`block text-sm font-bold ${
-                      copied ? 'text-green-700' : 'text-gray-800'
-                    }`}>
-                      {copied ? 'Link Copied!' : 'Copy Link'}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {copied ? 'Share it anywhere' : 'Get shareable link'}
-                    </span>
-                  </div>
-                </div>
-                {!copied && (
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                {copied ? (
+                  <>
+                    <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm font-medium">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    <span className="text-sm font-medium">Copy Link</span>
+                  </>
                 )}
               </button>
             </div>

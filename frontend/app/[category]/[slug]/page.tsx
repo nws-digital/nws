@@ -171,7 +171,7 @@ export default async function ArticlePage(props: Props) {
                 label: categoryLabel,
                 href: `/${params.category}`,
               },
-              {label: articleSlug},
+              // {label: articleSlug},
             ]}
           />
 

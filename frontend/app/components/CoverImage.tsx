@@ -25,7 +25,7 @@ export default function CoverImage(props: CoverImageProps) {
   const caption = source?.caption ? stegaClean(source.caption) : null
 
   return (
-    <figure>
+    <figure className="mb-5">
       <div className="relative">{image}</div>
       {caption && <figcaption className="mt-2 text-md text-gray-500">{caption}</figcaption>}
     </figure>

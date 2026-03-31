@@ -11,6 +11,7 @@ IF NOT EXISTS rss_articles
   id UUID DEFAULT gen_random_uuid
 () PRIMARY KEY,
   title TEXT NOT NULL,
+  generated_title TEXT,
   link TEXT NOT NULL,
   description TEXT,
   pub_date TIMESTAMPTZ,
@@ -25,6 +26,10 @@ IF NOT EXISTS rss_articles
   CONSTRAINT unique_link UNIQUE
 (link)
 );
+
+-- Add generated_title column if it doesn't exist (for existing tables)
+ALTER TABLE rss_articles ADD COLUMN
+IF NOT EXISTS generated_title TEXT;
 
 -- Create indexes for fast queries
 CREATE INDEX
@@ -46,13 +51,15 @@ IF EXISTS "Allow public read access" ON rss_articles;
 DROP POLICY
 IF EXISTS "Allow service role to insert" ON rss_articles;
 DROP POLICY
+IF EXISTS "Allow service role to update" ON rss_articles;
+DROP POLICY
 IF EXISTS "Allow service role to delete" ON rss_articles;
 
 -- Allow public read access (anyone can read articles)
 CREATE POLICY "Allow public read access"
   ON rss_articles FOR
 SELECT
-    TO public
+  TO public
   USING
 (true);
 
@@ -63,6 +70,15 @@ INSERT
   TO service_role
   WITH CHECK (
 true);
+
+-- Allow service role to update (for updating generated titles)
+CREATE POLICY "Allow service role to update"
+  ON rss_articles FOR
+UPDATE
+  TO service_role
+  USING (true)
+WITH CHECK
+(true);
 
 -- Allow service role to delete (for cleanup)
 CREATE POLICY "Allow service role to delete"
@@ -79,9 +95,9 @@ RETURNS TABLE
 DECLARE
   count INTEGER;
 BEGIN
-    DELETE FROM rss_articles
+  DELETE FROM rss_articles
   WHERE created_at < NOW() - INTERVAL
-    '24 hours';
+  '24 hours';
 
 GET DIAGNOSTICS count = ROW_COUNT;
 

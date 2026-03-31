@@ -13,6 +13,7 @@ export default function CoverImage(props: CoverImageProps) {
   const image = source?.asset?._ref ? (
     <Image
       className="object-cover"
+      // className="object-cover rounded-lg"
       width={getImageDimensions(source).width}
       height={getImageDimensions(source).height}
       alt={stegaClean(source?.alt) || ''}
@@ -21,5 +22,12 @@ export default function CoverImage(props: CoverImageProps) {
     />
   ) : null
 
-  return <div className="relative">{image}</div>
+  const caption = source?.caption ? stegaClean(source.caption) : null
+
+  return (
+    <figure className="mb-5">
+      <div className="relative">{image}</div>
+      {caption && <figcaption className="mt-2 text-md text-gray-500">{caption}</figcaption>}
+    </figure>
+  )
 }

@@ -34,6 +34,17 @@ export function ShareArticle({title, url, className = ''}: ShareArticleProps) {
     }
   }, [isOpen])
 
+  // Close on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false)
+    }
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape)
+      return () => document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isOpen])
+
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl)
@@ -41,7 +52,7 @@ export function ShareArticle({title, url, className = ''}: ShareArticleProps) {
       setTimeout(() => {
         setCopied(false)
         setIsOpen(false)
-      }, 1500)
+      }, 2000)
     } catch (err) {
       console.error('Failed to copy:', err)
     }
@@ -56,7 +67,8 @@ export function ShareArticle({title, url, className = ''}: ShareArticleProps) {
         </svg>
       ),
       url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
-      color: 'text-blue-600',
+      hoverColor: 'hover:bg-blue-50',
+      iconColor: 'text-[#1877F2]',
     },
     {
       name: 'X',
@@ -66,7 +78,8 @@ export function ShareArticle({title, url, className = ''}: ShareArticleProps) {
         </svg>
       ),
       url: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
-      color: 'text-black',
+      hoverColor: 'hover:bg-gray-50',
+      iconColor: 'text-black',
     },
     {
       name: 'LinkedIn',
@@ -76,7 +89,8 @@ export function ShareArticle({title, url, className = ''}: ShareArticleProps) {
         </svg>
       ),
       url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
-      color: 'text-blue-700',
+      hoverColor: 'hover:bg-blue-50',
+      iconColor: 'text-[#0A66C2]',
     },
     {
       name: 'WhatsApp',
@@ -86,7 +100,8 @@ export function ShareArticle({title, url, className = ''}: ShareArticleProps) {
         </svg>
       ),
       url: `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`,
-      color: 'text-green-500',
+      hoverColor: 'hover:bg-green-50',
+      iconColor: 'text-[#25D366]',
     },
     {
       name: 'Email',
@@ -96,7 +111,8 @@ export function ShareArticle({title, url, className = ''}: ShareArticleProps) {
         </svg>
       ),
       url: `mailto:?subject=${encodedTitle}&body=${encodedUrl}`,
-      color: 'text-gray-700',
+      hoverColor: 'hover:bg-gray-50',
+      iconColor: 'text-gray-600',
     },
   ]
 
@@ -105,53 +121,88 @@ export function ShareArticle({title, url, className = ''}: ShareArticleProps) {
       {/* Share Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
+        className="group relative inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-full shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-200 hover:scale-105 active:scale-95"
         aria-label="Share article"
+        aria-expanded={isOpen}
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+        <svg 
+          className="w-4 h-4 transition-transform duration-200 group-hover:rotate-12" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth={2}
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
         </svg>
-        <span>Share</span>
+        <span className="hidden sm:inline">Share</span>
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Compact Modern Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-          {shareLinks.map((platform) => (
-            <a
-              key={platform.name}
-              href={platform.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors duration-150"
-              onClick={() => setIsOpen(false)}
-            >
-              <div className={platform.color}>{platform.icon}</div>
-              <span className="text-sm font-medium text-gray-700">{platform.name}</span>
-            </a>
-          ))}
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 z-40 bg-black/10 sm:hidden" 
+            onClick={() => setIsOpen(false)}
+          />
           
-          {/* Copy Link */}
-          <button
-            onClick={handleCopyLink}
-            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors duration-150 w-full text-left"
-          >
-            <div className="text-gray-700">
-              {copied ? (
-                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-              )}
+          {/* Dropdown */}
+          <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+            {/* Arrow pointer */}
+            <div className="absolute -top-2 right-6 w-4 h-4 bg-white border-l border-t border-gray-200 transform rotate-45"></div>
+            
+            {/* Content */}
+            <div className="p-3 space-y-2">
+              {/* Social icons in compact grid */}
+              <div className="grid grid-cols-5 gap-1.5">
+                {shareLinks.map((platform) => (
+                  <a
+                    key={platform.name}
+                    href={platform.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex items-center justify-center h-10 rounded-lg border border-gray-200 ${platform.hoverColor} transition-all duration-150 hover:scale-105 hover:border-gray-300 active:scale-95`}
+                    onClick={() => setIsOpen(false)}
+                    title={platform.name}
+                  >
+                    <div className={`${platform.iconColor}`}>
+                      {platform.icon}
+                    </div>
+                  </a>
+                ))}
+              </div>
+              
+              {/* Divider */}
+              <div className="border-t border-gray-100"></div>
+              
+              {/* Copy Link */}
+              <button
+                onClick={handleCopyLink}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 w-full ${
+                  copied 
+                    ? 'bg-green-50 text-green-700' 
+                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {copied ? (
+                  <>
+                    <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-sm font-medium">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    <span className="text-sm font-medium">Copy Link</span>
+                  </>
+                )}
+              </button>
             </div>
-            <span className="text-sm font-medium text-gray-700">
-              {copied ? 'Copied!' : 'Copy link'}
-            </span>
-          </button>
-        </div>
+          </div>
+        </>
       )}
     </div>
   )

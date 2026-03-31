@@ -61,7 +61,7 @@ export function NewsTicker() {
                 <h3 className="text-sm font-semibold mb-2 text-white">
                   {news.generated_title}
                 </h3>
-                <p className="text-[#d0d2d6] text-xs">{getTimeAgo(news.pub_date)}</p>
+                {/* <p className="text-[#d0d2d6] text-xs">{getTimeAgo(news.pub_date)}</p> */}
               </div>
           ))}
         </div>

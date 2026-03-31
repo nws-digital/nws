@@ -171,7 +171,7 @@ export default async function ArticlePage(props: Props) {
                 label: categoryLabel,
                 href: `/${params.category}`,
               },
-              {label: articleSlug},
+              // {label: articleSlug},
             ]}
           />
 
@@ -188,7 +188,7 @@ export default async function ArticlePage(props: Props) {
                 <div className="flex items-center justify-between gap-4 mt-3">
                   {/* Author - Left Side */}
                   {authorForAvatar?.firstName && authorForAvatar?.lastName && (
-                    <Avatar person={authorForAvatar} small />
+                    <Avatar person={authorForAvatar} date={post.date} small />
                   )}
                   {/* Share Button - Right Side */}
                   <ShareArticle 
@@ -217,7 +217,8 @@ export default async function ArticlePage(props: Props) {
             {/* Vertical Divider + Sidebar - 1/4 width (Desktop only) */}
             <aside className="hidden lg:block lg:col-span-1 border-l border-gray-200 pl-8">
               <div className="sticky top-24">
-                <h3 className="text-lg font-bold mb-4">Latest Articles</h3>
+                <h3 className="text-lg font-bold">Latest on NWS</h3>
+                <div className="w-7 h-1 bg-red-500 mb-4" />
                 <LatestArticlesSidebar currentArticleId={post._id} />
               </div>
             </aside>
@@ -225,7 +226,8 @@ export default async function ArticlePage(props: Props) {
 
           {/* Mobile Latest Articles - Below article content */}
           <div className="lg:hidden mt-12 pt-8 border-t border-gray-200">
-            <h3 className="text-xl font-bold mb-6">Latest Articles</h3>
+            <h3 className="text-xl font-bold">Latest on NWS</h3>
+            <div className="w-7 h-1 bg-red-500 mb-6" />
             <LatestArticlesSidebar currentArticleId={post._id} />
           </div>
         </div>

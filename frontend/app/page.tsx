@@ -50,7 +50,7 @@ export default async function Page() {
           {/* News Ticker - Overlaid on featured article right side (desktop only) */}
           <div className="hidden lg:block absolute inset-0 pointer-events-none">
             <div className="max-w-[1366px] mx-auto px-4 h-full relative">
-              <div className="absolute top-6 bottom-6 right-0 w-96 pointer-events-auto">
+              <div className="absolute top-6 bottom-6 right-4 w-96 pointer-events-auto">
                 <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-[500px] w-full animate-pulse" />}>
                   <NewsTicker />
                 </Suspense>

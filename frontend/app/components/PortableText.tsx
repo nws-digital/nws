@@ -101,7 +101,7 @@ export default function CustomPortableText({
               className="rounded-lg w-full h-auto"
             />
             {value.caption && (
-                <figcaption className="mt-2 text-md text-gray-600 italic">
+                <figcaption className="mt-2 text-md text-gray-500">
                 {value.caption}
                 </figcaption>
             )}
@@ -112,7 +112,7 @@ export default function CustomPortableText({
   }
 
   return (
-    <div className={['prose prose-a:text-brand max-w-none text-justify', className].filter(Boolean).join(' ')}>
+    <div className={['prose prose-a:text-brand max-w-none text-left', className].filter(Boolean).join(' ')}>
       <PortableText components={components} value={value} />
     </div>
   )

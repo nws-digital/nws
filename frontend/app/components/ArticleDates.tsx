@@ -20,7 +20,18 @@ export function ArticleDates({
   const wasRepublished = lastPublished && date !== lastPublishedDate
 
   const formatDate = (dateObj: Date) => {
-    return format(dateObj, 'MMMM d, yyyy \'at\' h:mm a')
+    const istFormatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Kolkata',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    })
+    
+    const formattedDate = istFormatter.format(dateObj).replace(' at ', ' ')
+    return `${formattedDate} IST`
   }
 
   const getRelativeTime = (dateObj: Date) => {
@@ -29,7 +40,7 @@ export function ArticleDates({
 
   return (
     <div className={`text-sm text-gray-600 ${className}`}>
-      <div>
+      {/* <div>
         <span className="font-medium italic">Published on </span>{' '}
         {showRelative ? (
           <time className="italic" dateTime={date} title={formatDate(published)}>
@@ -38,7 +49,7 @@ export function ArticleDates({
         ) : (
           <time className="italic" dateTime={date}>{formatDate(published)}</time>
         )}
-      </div>
+      </div> */}
       
       {wasRepublished && (
         <div className="mt-1">

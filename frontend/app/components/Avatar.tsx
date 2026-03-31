@@ -59,16 +59,13 @@ export default function Avatar({person, date, small = false}: Props) {
             </button>
           </div>
         ) : (
-          <div className="mr-1">By </div>
+          <div className="mr-1"></div>
         )}
         <div className="flex flex-col">
           {firstName && lastName && (
             <div className={`font-semibold ${small ? 'text-sm' : 'text-base'}`}>
               {firstName} {lastName}
             </div>
-          )}
-          {designation && (
-            <div className={`text-gray-600 ${small ? 'text-xs' : 'text-sm'}`}>{designation}</div>
           )}
           {date && (
             <div className={`text-gray-500 ${small ? 'text-xs' : 'text-sm'}`}>

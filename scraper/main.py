@@ -12,8 +12,10 @@ from typing import List, Dict, Any
 import httpx
 import xmltodict
 from supabase import create_client, Client
+
 from dotenv import load_dotenv
 from anthropic import Anthropic
+from sanity_prompt import get_prompt_and_instructions
 
 # Load environment variables
 load_dotenv()
@@ -109,7 +111,7 @@ def count_links_in_description(description: str) -> int:
     return description.lower().count('<a href=')
 
 
-async def generate_unique_title_with_gemini(original_title: str, link: str, description: str) -> str:
+async def generate_unique_title_with_gemini(original_title: str, link: str, description: str, prompt_template: str = None, instructions: str = None) -> str:
     """
     Generate a unique professional title using Claude AI
     
@@ -117,16 +119,19 @@ async def generate_unique_title_with_gemini(original_title: str, link: str, desc
         original_title: Original article title
         link: Article link
         description: Article description with similar article links
+        prompt_template: System prompt (includes requirements)
+        instructions: Additional user instructions
         
     Returns:
         New professionally crafted title
     """
-    try:
-        prompt = f"""You are a professional journalist. Based on the following article information, create a unique, self-explanatory news headline that tells the complete story.
 
-Original Title: {original_title}
-Article Link: {link}
-Description (with similar articles): {description[:800]}
+    try:
+        # Use prompt from Sanity if provided, else use default
+        if prompt_template:
+            prompt = prompt_template
+        else:
+            prompt = """You are a professional journalist. Based on the following article information, create a unique, self-explanatory news headline that tells the complete story.
 
 Requirements:
 1. Make it COMPLETELY SELF-EXPLANATORY - readers should understand the full story from just the title
@@ -135,9 +140,14 @@ Requirements:
 4. Keep it under 150 characters but prioritize clarity over brevity
 5. Use active voice and present tense
 6. Sound professional and journalistic, not clickbait
-7. Return ONLY the headline, nothing else
-
-New Headline:"""
+7. Return ONLY the headline, nothing else"""
+        
+        # Append user instructions if provided
+        if instructions:
+            prompt += f"\n\nAdditional Instructions:\n{instructions}"
+        
+        # Always append article context
+        prompt += f"\n\nOriginal Title: {original_title}\nArticle Link: {link}\nDescription (with similar articles): {description[:800]}\n\nNew Headline:"
 
         response = await asyncio.to_thread(
             anthropic_client.messages.create,
@@ -168,7 +178,7 @@ New Headline:"""
         return original_title  # Fallback to original title
 
 
-async def fetch_and_save_articles(topic: str, feed_url: str):
+async def fetch_and_save_articles(topic: str, feed_url: str, prompt_template: str = None, instructions: str = None):
     """
     Fetch RSS feed and save articles to Supabase
     
@@ -240,7 +250,9 @@ async def fetch_and_save_articles(topic: str, feed_url: str):
                     new_title = await generate_unique_title_with_gemini(
                         article_data['title'],
                         article_data['link'],
-                        article_data['description']
+                        article_data['description'],
+                        prompt_template,
+                        instructions
                     )
                     
                     # Update article with generated title
@@ -284,6 +296,7 @@ def delete_old_articles():
         print(f"❌ Error deleting old articles: {str(e)}")
 
 
+
 async def main():
     """Main async function"""
     print("=" * 60)
@@ -292,17 +305,23 @@ async def main():
     print(f"📊 Supabase URL: {os.getenv('SUPABASE_URL')}")
     print(f"🇮🇳 Region: India (IN)")
     print(f"⏰ Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    
-    # Fetch articles for all topics in parallel
+
+
+    # Fetch prompt and instructions from Sanity
+    prompt_data = await get_prompt_and_instructions()
+    print(f"\n🧠 Prompt: {prompt_data['prompt']}")
+    print(f"📝 Instructions: {prompt_data['instructions']}")
+
+    # Fetch articles for all topics in parallel, passing prompt/instructions
     tasks = [
-        fetch_and_save_articles(topic, url)
+        fetch_and_save_articles(topic, url, prompt_data['prompt'], prompt_data['instructions'])
         for topic, url in RSS_FEEDS.items()
     ]
     await asyncio.gather(*tasks)
-    
+
     # Delete old articles
     delete_old_articles()
-    
+
     print("\n" + "=" * 60)
     print("✅ Scraping complete!")
     print("=" * 60)

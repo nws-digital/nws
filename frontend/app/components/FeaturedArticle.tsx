@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import {urlForImage} from '@/sanity/lib/utils'
+import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
 
 interface FeaturedArticleProps {
   article: {
@@ -39,7 +40,7 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
 
   return (
     <Link 
-      href={`/${article.category}/${article.slug.current}`}
+      href={`/${cleanCategorySlug(article.category || '')}/${article.slug.current}`}
       className="group block relative overflow-hidden shadow-2xl"
     >
       {/* Image */}

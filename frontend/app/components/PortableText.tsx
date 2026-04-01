@@ -11,7 +11,7 @@
 import {PortableText, type PortableTextComponents, type PortableTextBlock} from 'next-sanity'
 import Image from 'next/image'
 import {urlForImage} from '@/sanity/lib/utils'
-
+import { Tweet } from 'react-tweet'
 import ResolvedLink from '@/app/components/ResolvedLink'
 
 export default function CustomPortableText({
@@ -107,6 +107,57 @@ export default function CustomPortableText({
             )}
           </figure>
         )
+      },
+      embed: ({value}) => {
+        if (!value?.url || !value?.type) return null
+        if (value.type === 'youtube') {
+          // Extract YouTube video ID
+          const match = value.url.match(/(?:youtu.be\/|youtube.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/)
+          const videoId = match ? match[1] : null
+          if (!videoId) return null
+          return (
+            <div className="my-8 w-full aspect-video">
+              <iframe
+                src={`https://www.youtube.com/embed/${videoId}`}
+                title="YouTube video embed"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="rounded-lg w-full h-full"
+                style={{display: 'block'}}
+              />
+            </div>
+          )
+        }
+        if (value.type === 'twitter') {
+          // Use react-tweet for X/Twitter embeds
+          // Extract tweet ID from URL
+          const match = value.url.match(/twitter.com\/.+\/status\/(\d+)/)
+          const tweetId = match ? match[1] : null
+          if (!tweetId) return null
+          return (
+            <div className="my-8 w-full max-w-2xl mx-auto">
+              <Tweet id={tweetId} />
+            </div>
+          )
+        }
+        // Generic iframe embed
+        if (value.type === 'iframe') {
+          return (
+            <div className="my-8 flex justify-center">
+              <iframe
+                src={value.url}
+                title="Embedded content"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="rounded-lg w-full max-w-2xl aspect-video"
+                style={{minHeight: 300}}
+              />
+            </div>
+          )
+        }
+        return null
       },
     },
   }

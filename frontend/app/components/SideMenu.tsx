@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
 import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
 import {urlForImage} from '@/sanity/lib/utils'
@@ -141,7 +142,7 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
                 return (
                   <Link
                     key={article._id}
-                    href={`/${article.category}/${article.slug.current}`}
+                    href={`/${cleanCategorySlug(article.category)}/${article.slug.current}`}
                     className="flex gap-3 group"
                     onClick={onClose}
                   >

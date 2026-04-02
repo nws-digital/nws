@@ -49,7 +49,7 @@ export function NewsTicker() {
       transition={{delay: 0.5}}
       className="w-full flex flex-col shrink-0 h-full"
     >
-      <div className="bg-red-600 rounded-t-3xl px-6 py-3">
+      <div className="bg-red-600 rounded-t-2xl px-6 py-3">
         <h2 className="text-white text-2xl font-semibold">Breaking</h2>
       </div>
       <div className="relative bg-black/65 backdrop-blur rounded-b-3xl overflow-hidden flex-1">

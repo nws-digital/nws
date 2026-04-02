@@ -111,18 +111,18 @@ export function CommentaryArticlesList({
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-bold text-black mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
+                <h3 className="font-vollkorn font-[700] text-[1.15rem] tracking-[-0.01em] leading-[1.25] text-black mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
                   {article.title}
                 </h3>
 
                 {/* Excerpt */}
-                <p className="text-gray-600 text-sm line-clamp-4 mb-4">
+                <p className="font-spectral-regular font-[400] text-[0.92rem] leading-[1.6] text-[#666660] text-sm line-clamp-4 mb-4">
                   {article.excerpt || article.contentPreview || 'No preview available...'}
                   {(article.excerpt || article.contentPreview) && '...'}
                 </p>
 
                 {/* Time ago at bottom */}
-                <p className="text-xs text-gray-400 mt-auto">{timeAgo}</p>
+                <p className="font-inconsolata-regular font-[400] text-[0.72rem] text-gray-400 mt-auto">{timeAgo}</p>
               </Link>
             </motion.div>
           )

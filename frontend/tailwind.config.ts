@@ -95,7 +95,14 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['var(--font-inter)'],
+        'sans': ['system-ui', 'sans-serif'],
+        'pt-serif': ['PT Serif', 'Georgia', 'serif'],
+        'vollkorn-sc': ['Vollkorn SC', 'serif'],
+        'vollkorn': ['Vollkorn', 'serif'],
+        'spectral': ['Spectral', 'serif'],
+        'spectral-regular': ['Spectral', 'serif'],
+        'inconsolata': ['Inconsolata', 'monospace'],
+        'inconsolata-regular': ['Inconsolata', 'monospace'],
       },
       animation: {
         scroll: 'scroll 60s linear infinite',

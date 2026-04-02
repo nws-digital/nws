@@ -42,7 +42,7 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
 
             {/* Navigation - Hidden on mobile, shown on desktop */}
             <nav className="hidden md:flex flex-1 justify-center">
-              <ul className="flex items-center gap-6 lg:gap-8 text-xs lg:text-sm font-bold uppercase tracking-wide text-black">
+            <ul className="flex items-center gap-6 lg:gap-8 font-vollkorn-sc font-semibold text-[0.72rem] uppercase tracking-[0.1em] text-black">
                 <li>
                   <Link href="/world-exclusive" className="hover:text-red-600 transition-colors">
                     World Exclusive

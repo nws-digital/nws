@@ -105,7 +105,7 @@ export function LatestArticles({articles}: LatestArticlesProps) {
       <div className="max-w-[1366px] mx-auto px-4">
         <motion.div className="flex justify-between items-center mb-8" variants={itemVariants}>
           <div>
-            <h6 className="text-2xl font-bold text-black whitespace-nowrap mb-2">Latest</h6>
+            <h6 className="font-vollkorn-sc font-[600] text-[0.72rem] uppercase tracking-[0.15em] text-black whitespace-nowrap mb-2">Latest</h6>
             <motion.div
               className="w-8 h-1.5 bg-red-600"
               initial={{width: 0}}
@@ -116,7 +116,7 @@ export function LatestArticles({articles}: LatestArticlesProps) {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-red-600"
+              className="flex items-center gap-2 font-inconsolata font-[500] text-[0.75rem] uppercase text-[#FE0000] hover:text-red-700"
             >
               View All
               <motion.svg
@@ -205,17 +205,17 @@ export function LatestArticles({articles}: LatestArticlesProps) {
 
                   {/* Content */}
                   <div className="flex flex-col flex-1 p-6">
-                    <h3 className="text-lg font-bold text-black mb-3 group-hover:text-red-600 transition-colors duration-300 line-clamp-2">
+                    <h3 className="font-vollkorn font-[700] text-[1.15rem] tracking-[-0.01em] leading-[1.25] text-black mb-3 group-hover:text-red-600 transition-colors duration-300 line-clamp-2">
                       {article.title}
                     </h3>
-                    <p className="text-gray-600 text-sm line-clamp-3 mb-4 flex-1">
+                    <p className="font-spectral-regular font-[400] text-[0.92rem] leading-[1.6] text-[#666660] text-sm line-clamp-3 mb-4 flex-1">
                       {article.excerpt || article.contentPreview || 'No preview available...'}
                       {((article.excerpt || article.contentPreview) as any) && '...'}
                     </p>
                     <div className="flex items-center justify-between text-xs mt-4 pt-4 border-t border-gray-100">
-                      <span className="text-gray-400">{timeAgo}</span>
+                      <span className="font-inconsolata-regular font-[400] text-[0.72rem] text-gray-400">{timeAgo}</span>
                       {categoryLabel && (
-                        <span className="text-red-600 font-semibold uppercase">
+                        <span className="font-vollkorn-sc font-[600] text-[0.65rem] uppercase text-red-600">
                           {categoryLabel}
                         </span>
                       )}

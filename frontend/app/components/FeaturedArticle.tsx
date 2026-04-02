@@ -73,13 +73,13 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
           <div className="lg:pr-[420px]">
             {/* Featured badge */}
             <div className="inline-flex items-center gap-2 bg-red-600 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold mb-2 sm:mb-3 lg:mb-4">
-                    <svg 
+                    {/* <svg 
                       className="w-3 h-3 sm:w-4 sm:h-4" 
                       fill="currentColor" 
                       viewBox="0 0 20 20"
                     >
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
+                    </svg> */}
                     {/* FEATURED STORY */}
                     {article.category && (
                   <>
@@ -95,13 +95,13 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
                   </div>
       
                   {/* Title */}
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 md:mb-4 leading-tight line-clamp-2 sm:line-clamp-3 group-hover:text-red-400 transition-colors drop-shadow-lg">
+                  <h2 className="font-vollkorn font-[900] text-[2.2rem] tracking-[-0.02em] leading-[1.1] mb-2 sm:mb-3 md:mb-4 line-clamp-2 sm:line-clamp-3 group-hover:text-red-400 transition-colors drop-shadow-lg">
                     {article.title}
                   </h2>
       
                   {/* Excerpt - hide on very small screens */}
                   {article.excerpt && (
-                    <p className="hidden sm:block text-sm md:text-base text-gray-200 mb-3 sm:mb-4 line-clamp-2 md:line-clamp-3 max-w-3xl drop-shadow-md">
+                    <p className="hidden sm:block font-spectral font-[300] italic text-[1.05rem] leading-[1.5] mb-3 sm:mb-4 line-clamp-2 md:line-clamp-3 max-w-3xl drop-shadow-md">
                       {article.excerpt}
                     </p>
                   )}

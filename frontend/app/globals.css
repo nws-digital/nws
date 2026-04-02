@@ -28,10 +28,36 @@
   --color-gray-900: #1b1d27;
   --color-gray-950: #13141b;
 
-  --font-display: 'PT Serif', serif;
-  --font-sans: 'PT Serif', serif;
-
   --default-transition-duration: 250ms;
+}
+
+/* Font utilities with !important to ensure they work */
+.font-vollkorn {
+  font-family: 'Vollkorn', serif !important;
+}
+
+.font-vollkorn-sc {
+  font-family: 'Vollkorn SC', serif !important;
+}
+
+.font-spectral {
+  font-family: 'Spectral', serif !important;
+}
+
+.font-spectral-regular {
+  font-family: 'Spectral', serif !important;
+}
+
+.font-inconsolata {
+  font-family: 'Inconsolata', monospace !important;
+}
+
+.font-inconsolata-regular {
+  font-family: 'Inconsolata', monospace !important;
+}
+
+.font-pt-serif {
+  font-family: 'PT Serif', Georgia, serif !important;
 }
 
 /* Auto-scrolling animation */
@@ -59,6 +85,29 @@
 
 .prose p {
   font-size: 18px !important;
+}
+
+/* Image caption styling for article pages */
+.prose figcaption,
+article figcaption,
+figure figcaption {
+  font-family: 'Spectral', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: #666666;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+/* Author name and date styling */
+.author-meta {
+  font-family: 'Inconsolata', monospace;
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #666666;
 }
 
 /* Content protection - prevent text selection */

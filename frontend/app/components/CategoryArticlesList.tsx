@@ -122,20 +122,20 @@ export function CategoryArticlesList({
                 {/* Content */}
                 <div className="flex flex-col flex-1 p-6">
                   {/* Headline */}
-                  <h3 className="text-lg font-bold text-black mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
+                  <h3 className="font-vollkorn font-[700] text-[1.15rem] tracking-[-0.01em] leading-[1.25] text-black mb-3 group-hover:text-red-600 transition-colors line-clamp-2">
                     {article.title}
                   </h3>
 
                   {/* Summary/Excerpt */}
-                  <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                  <p className="font-spectral-regular font-[400] text-[0.92rem] leading-[1.6] text-[#666660] text-sm line-clamp-3 mb-4">
                     {article.excerpt || article.contentPreview || 'No preview available...'}
                     {(article.excerpt || article.contentPreview) && '...'}
                   </p>
 
                   {/* Time at bottom */}
                   <div className="flex items-center justify-between text-xs mt-auto pt-4 border-t border-gray-100">
-                    <span className="text-gray-400">{timeAgo}</span>
-                    <span className="text-red-600 font-semibold uppercase">{categoryLabel}</span>
+                    <span className="font-inconsolata-regular font-[400] text-[0.72rem] text-gray-400">{timeAgo}</span>
+                    <span className="font-vollkorn-sc font-[600] text-[0.65rem] uppercase text-red-600">{categoryLabel}</span>
                   </div>
                 </div>
               </Link>

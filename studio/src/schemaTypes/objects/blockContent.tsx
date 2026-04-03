@@ -1,4 +1,5 @@
 import {defineArrayMember, defineType, defineField} from 'sanity'
+import {embed} from './embed'
 
 /**
  * This is the schema definition for the rich text fields used for
@@ -114,6 +115,11 @@ export const blockContent = defineType({
           description: 'Optional caption displayed below the image.',
         }),
       ],
+    }),
+    // Add embed support
+    defineArrayMember({
+      type: 'embed',
+      title: 'Embed',
     }),
   ],
 })

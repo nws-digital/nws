@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import {Image} from 'next-sanity/image'
 import {urlForImage} from '@/sanity/lib/utils'
+import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
 import {formatDistanceToNow} from 'date-fns'
 import {sidebarArticlesQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
@@ -52,55 +53,56 @@ export async function LatestArticlesSidebar({currentArticleId}: LatestArticlesSi
 
   return (
     <div className="space-y-4">
-      {sidebarArticles.map((article) => {
-        const coverBuilder = article.coverImage ? urlForImage(article.coverImage) : null
-        const coverImageUrl = coverBuilder?.width(80).height(80).fit('crop').url()
-        const timeAgo = formatDistanceToNow(new Date(article.date), {addSuffix: true})
+      {sidebarArticles
+        .filter(article => article.slug?.current)
+        .map((article) => {
+          const coverBuilder = article.coverImage ? urlForImage(article.coverImage) : null
+          const coverImageUrl = coverBuilder?.width(80).height(80).fit('crop').url()
+          const timeAgo = formatDistanceToNow(new Date(article.date), {addSuffix: true})
 
-        return (
-          <Link
-            key={article._id}
-            href={`/${article.category}/${article.slug.current}`}
-            className="group flex gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0"
-          >
-            {/* Square Image - Left */}
-            {coverImageUrl && (
-              <div className="relative w-20 h-20 flex-shrink-0 rounded overflow-hidden">
-                <Image
-                  src={coverImageUrl}
-                  alt={article.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+          return (
+            <Link
+              key={article._id}
+              href={`/${cleanCategorySlug(article.category)}/${article.slug.current}`}
+              className="group flex gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0"
+            >
+              {/* Square Image - Left */}
+              {coverImageUrl && (
+                <div className="relative w-20 h-20 flex-shrink-0 rounded overflow-hidden">
+                  <Image
+                    src={coverImageUrl}
+                    alt={article.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              )}
+
+              {/* Details - Right */}
+              <div className="flex-1 min-w-0">
+                {/* Title */}
+                <h4 className="font-semibold text-sm text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-3">
+                  {article.title}
+                </h4>
+
+                {/* Time ago and Category */}
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  {/* <span>{timeAgo}</span> */}
+                  {/* <br /> */}
+                  {/* <span className="block h-1" /> */}
+                  {article.category && (
+                    <>
+                      {/* <span>•</span> */}
+                      <span className="text-gray-500 font-medium">
+                        {categoryLabels[article.category] || article.category}
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
-            )}
-
-            {/* Details - Right */}
-            <div className="flex-1 min-w-0">
-              {/* Title */}
-              <h4 className="font-semibold text-sm text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-3">
-                {article.title}
-              </h4>
-
-              {/* Time ago and Category */}
-              <div className="flex items-center gap-2 text-xs text-gray-500">
-                {/* <span>{timeAgo}</span> */}
-                {/* <br /> */}
-                {/* <span className="block h-1" /> */}
-                {article.category && (
-                  <>
-                    {/* <span>•</span> */}
-                    
-                    <span className="text-gray-500 font-medium">
-                      {categoryLabels[article.category] || article.category}
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-          </Link>
-        )
-      })}
+            </Link>
+          )
+        })}
     </div>
   )
 }

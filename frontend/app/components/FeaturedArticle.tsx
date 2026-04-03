@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import {urlForImage} from '@/sanity/lib/utils'
+import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
 
 interface FeaturedArticleProps {
   article: {
@@ -39,7 +40,7 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
 
   return (
     <Link 
-      href={`/${article.category}/${article.slug.current}`}
+      href={`/${cleanCategorySlug(article.category || '')}/${article.slug.current}`}
       className="group block relative overflow-hidden shadow-2xl"
     >
       {/* Image */}
@@ -55,7 +56,7 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
               sizes="100vw"
             />
             {/* Gradient overlay - stronger on mobile */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent sm:from-black/60 sm:via-black/25" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent sm:from-black/70 sm:via-black/25" />
           </>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">

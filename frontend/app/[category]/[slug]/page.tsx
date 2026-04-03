@@ -181,7 +181,7 @@ export default async function ArticlePage(props: Props) {
             <div className="lg:col-span-3">
               <div className="pb-2 mb-2 border-b border-gray-100">
                 <div className="flex flex-col gap-2">
-                  <h2 className="font-vollkorn font-[900] text-[2.2rem] tracking-[-0.02em] leading-[1.1] text-black">
+                  <h2 className="text-xl font-bold tracking-tight text-black sm:text-2xl lg:text-3xl">
                     {post.title}
                   </h2>
                 </div>
@@ -197,7 +197,7 @@ export default async function ArticlePage(props: Props) {
                   />
                 </div>
               </div>
-              <article className="gap-1 grid w-full font-spectral-regular">
+              <article className="gap-1 grid w-full">
                 <div className="">{post?.coverImage && <CoverImage image={post.coverImage} priority />}</div>
                 {post.content?.length && (
                   <PortableText className="" value={post.content as PortableTextBlock[]} />

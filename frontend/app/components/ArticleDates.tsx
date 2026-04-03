@@ -39,7 +39,7 @@ export function ArticleDates({
   }
 
   return (
-    <div className={`author-meta ${className}`}>
+    <div className={`text-sm text-gray-600 ${className}`}>
       {/* <div>
         <span className="font-medium italic">Published on </span>{' '}
         {showRelative ? (

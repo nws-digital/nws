@@ -81,17 +81,7 @@ export async function LatestArticlesSidebar({currentArticleId}: LatestArticlesSi
               {/* Details - Right */}
               <div className="flex-1 min-w-0">
                 {/* Title */}
-                <h4 
-                  className="group-hover:text-red-600 transition-colors line-clamp-2"
-                  style={{
-                    fontFamily: 'Vollkorn, serif',
-                    fontWeight: 700,
-                    fontSize: '0.95rem',
-                    lineHeight: 1.3,
-                    color: 'var(--headline)',
-                    marginBottom: '0.4rem'
-                  }}
-                >
+                <h4 className="font-semibold text-sm text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-3">
                   {article.title}
                 </h4>
 
@@ -103,10 +93,7 @@ export async function LatestArticlesSidebar({currentArticleId}: LatestArticlesSi
                   {article.category && (
                     <>
                       {/* <span>•</span> */}
-                      <span 
-                        className="text-red-600 font-semibold"
-                        style={{fontFamily: 'Vollkorn SC', fontSize: '0.65rem'}}
-                      >
+                      <span className="text-gray-500 font-medium">
                         {categoryLabels[article.category] || article.category}
                       </span>
                     </>

@@ -63,12 +63,12 @@ export default function Avatar({person, date, small = false}: Props) {
         )}
         <div className="flex flex-col">
           {firstName && lastName && (
-            <div className="author-meta">
+            <div className={`font-semibold ${small ? 'text-sm' : 'text-base'}`}>
               {firstName} {lastName}
             </div>
           )}
           {date && (
-            <div className="author-meta">
+            <div className={`text-gray-500 ${small ? 'text-xs' : 'text-sm'}`}>
               <DateComponent dateString={date} />
             </div>
           )}

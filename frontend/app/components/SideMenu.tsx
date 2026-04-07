@@ -190,11 +190,11 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
               CONTACT
             </Link>
             <Link 
-              href="/pages/careers" 
+              href="/pages/terms" 
               className="block text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >
-              CAREERS
+              TERMS AND CONDITIONS
             </Link>
             <Link 
               href="/pages/privacy" 

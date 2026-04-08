@@ -96,21 +96,21 @@ export default async function Page(props: Props) {
           />
 
           {/* Page Header */}
-          <div className="max-w-4xl mx-auto text-center mb-12">
+          <div className="max-w-4xl mx-auto text-center mb-8">
             {page.heading && (
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
                 {page.heading}
               </h1>
             )}
             {page.subheading && (
-              <p className="text-xl text-gray-600">
+              <p className="text-lg text-gray-600">
                 {page.subheading}
               </p>
             )}
           </div>
 
           {/* Page Builder Content */}
-          <div className="max-w-7xl mx-auto">
+          <div className="w-full">
             <PageBuilder page={page} />
           </div>
         </div>

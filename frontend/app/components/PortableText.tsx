@@ -116,16 +116,17 @@ export default function CustomPortableText({
           const videoId = match ? match[1] : null
           if (!videoId) return null
           return (
-            <div className="my-8 w-full aspect-video">
-              <iframe
-                src={`https://www.youtube.com/embed/${videoId}`}
-                title="YouTube video embed"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                className="rounded-lg w-full h-full"
-                style={{display: 'block'}}
-              />
+            <div className="my-8 max-w-full overflow-hidden">
+              <div className="relative w-full aspect-video max-w-full">
+                <iframe
+                  src={`https://www.youtube.com/embed/${videoId}`}
+                  title="YouTube video embed"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full rounded-lg"
+                />
+              </div>
             </div>
           )
         }
@@ -136,24 +137,27 @@ export default function CustomPortableText({
           const tweetId = match ? match[1] : null
           if (!tweetId) return null
           return (
-            <div className="my-8 w-full max-w-2xl mx-auto">
-              <Tweet id={tweetId} />
+            <div className="my-8 max-w-full overflow-hidden flex justify-center">
+              <div className="w-full max-w-xl">
+                <Tweet id={tweetId} />
+              </div>
             </div>
           )
         }
         // Generic iframe embed
         if (value.type === 'iframe') {
           return (
-            <div className="my-8 flex justify-center">
-              <iframe
-                src={value.url}
-                title="Embedded content"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                className="rounded-lg w-full max-w-2xl aspect-video"
-                style={{minHeight: 300}}
-              />
+            <div className="my-8 max-w-full overflow-hidden">
+              <div className="relative w-full aspect-video max-w-full">
+                <iframe
+                  src={value.url}
+                  title="Embedded content"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full rounded-lg"
+                />
+              </div>
             </div>
           )
         }
@@ -163,7 +167,7 @@ export default function CustomPortableText({
   }
 
   return (
-    <div className={['prose prose-a:text-brand max-w-none text-left', className].filter(Boolean).join(' ')}>
+    <div className={['prose prose-a:text-brand max-w-none text-left overflow-hidden', className].filter(Boolean).join(' ')}>
       <PortableText components={components} value={value} />
     </div>
   )

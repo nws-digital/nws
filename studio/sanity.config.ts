@@ -17,6 +17,8 @@ import {
   type DocumentLocation,
 } from 'sanity/presentation'
 import {assist} from '@sanity/assist'
+import {DocumentTextIcon} from '@sanity/icons'
+import SupabaseTitlesTool from './src/tools/SupabaseTitlesTool'
 
 // Environment variables for project configuration
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || '01seu5c9'
@@ -127,6 +129,17 @@ export default defineConfig({
     unsplashImageAsset(),
     assist(),
     visionTool(),
+  ],
+
+  // Custom tools
+  tools: (prev) => [
+    ...prev,
+    {
+      name: 'supabase-titles',
+      title: 'RSS Titles',
+      icon: DocumentTextIcon,
+      component: SupabaseTitlesTool,
+    },
   ],
 
   // Schema configuration, imported from ./src/schemaTypes/index.ts

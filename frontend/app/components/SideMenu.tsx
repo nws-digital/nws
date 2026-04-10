@@ -6,6 +6,7 @@ import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
 import {urlForImage} from '@/sanity/lib/utils'
 import {motion, AnimatePresence} from 'framer-motion'
+import {SOCIAL_LINKS} from '@/lib/constants'
 
 interface Article {
   _id: string
@@ -225,38 +226,17 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
               </span>
             </h3>
             <div className="space-y-3">
-              <a 
-                href="https://twitter.com/nws" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-sm font-medium hover:text-red-600 transition-colors"
-              >
-                TWITTER
-              </a>
-              <a 
-                href="https://facebook.com/nws" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-sm font-medium hover:text-red-600 transition-colors"
-              >
-                FACEBOOK
-              </a>
-              <a 
-                href="https://instagram.com/nws" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-sm font-medium hover:text-red-600 transition-colors"
-              >
-                INSTAGRAM
-              </a>
-              <a 
-                href="https://linkedin.com/company/nws" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-sm font-medium hover:text-red-600 transition-colors"
-              >
-                LINKEDIN
-              </a>
+              {SOCIAL_LINKS.map((social) => (
+                <a 
+                  key={social.name}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-sm font-medium hover:text-red-600 transition-colors"
+                >
+                  {social.name.toUpperCase()}
+                </a>
+              ))}
             </div>
           </motion.div>
         </div>

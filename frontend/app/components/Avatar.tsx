@@ -90,7 +90,7 @@ export default function Avatar({person, coAuthor, date, small = false}: Props) {
               {coAuthor?.firstName && coAuthor?.lastName && (
                 <>
                   {' '}
-                  And{' '}
+                  <span className="font-normal text-gray-500">and</span>{' '}
                   <button
                     onClick={(e) => {
                       e.preventDefault()

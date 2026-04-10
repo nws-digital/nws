@@ -23,6 +23,12 @@ interface CommentaryArticle {
     designation?: string
     picture?: any
   }
+  coAuthor?: {
+    firstName: string
+    lastName: string
+    designation?: string
+    picture?: any
+  }
 }
 
 interface CommentaryArticlesListProps {
@@ -83,6 +89,16 @@ export function CommentaryArticlesList({
               }
             : null
 
+          const coAuthorForAvatar = article.coAuthor
+            ? {
+                firstName: article.coAuthor.firstName ?? null,
+                lastName: article.coAuthor.lastName ?? null,
+                designation: article.coAuthor.designation ?? null,
+                picture: article.coAuthor.picture,
+                bio: (article.coAuthor as any).bio,
+              }
+            : null
+
           const timeAgo = formatDistanceToNow(new Date(article.date), {
             addSuffix: true,
           })
@@ -107,7 +123,7 @@ export function CommentaryArticlesList({
               >
                 {/* Author Info */}
                 <div className="mb-4">
-                  {authorForAvatar && <Avatar person={authorForAvatar} date={article.date} small />}
+                  {authorForAvatar && <Avatar person={authorForAvatar} coAuthor={coAuthorForAvatar} date={article.date} small />}
                 </div>
 
                 {/* Title */}

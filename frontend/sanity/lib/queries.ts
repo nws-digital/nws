@@ -27,7 +27,8 @@ export const commentaryArticlesQuery = defineQuery(`
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
     lastPublishedDate,
-    "author": author->{firstName, lastName, designation, picture, bio}
+    "author": author->{firstName, lastName, designation, picture, bio},
+    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}
   }
 `)
 
@@ -43,7 +44,8 @@ export const latestArticlesQuery = defineQuery(`
     lastPublishedDate,
     category,
     coverImage,
-    "author": author->{firstName, lastName, designation, picture, bio}
+    "author": author->{firstName, lastName, designation, picture, bio},
+    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}
   }
 `)
 
@@ -58,7 +60,8 @@ export const sidebarArticlesQuery = defineQuery(`
     lastPublishedDate,
     category,
     coverImage,
-    "author": author->{firstName, lastName, designation, picture, bio}
+    "author": author->{firstName, lastName, designation, picture, bio},
+    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}
   }
 `)
 
@@ -73,7 +76,8 @@ export const categoryArticlesQuery = defineQuery(`
     lastPublishedDate,
     category,
     coverImage,
-    "author": author->{firstName, lastName, designation, picture, bio}
+    "author": author->{firstName, lastName, designation, picture, bio},
+    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}
   }
 `)
 
@@ -90,7 +94,8 @@ export const commentaryArticlesPageQuery = defineQuery(`
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
     lastPublishedDate,
-    "author": author->{firstName, lastName, designation, picture, bio}
+    "author": author->{firstName, lastName, designation, picture, bio},
+    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}
   }
 `)
 
@@ -105,6 +110,7 @@ const postFields = /* groq */ `
   "date": coalesce(date, _createdAt),
   lastPublishedDate,
   "author": author->{firstName, lastName, designation, picture, bio},
+  "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio},
   category,
 `
 

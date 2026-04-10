@@ -15,14 +15,23 @@ type Props = {
     picture?: any
     bio?: any
   }
+  coAuthor?: {
+    firstName: string | null
+    lastName: string | null
+    designation?: string | null
+    picture?: any
+    bio?: any
+  } | null
   date?: string
   small?: boolean
 }
 
-export default function Avatar({person, date, small = false}: Props) {
+export default function Avatar({person, coAuthor, date, small = false}: Props) {
   const {firstName, lastName, designation, picture, bio} = person
   const [showBio, setShowBio] = useState(false)
+  const [showCoAuthorBio, setShowCoAuthorBio] = useState(false)
   const hasBio = bio && Array.isArray(bio) && bio.length > 0
+  const coAuthorHasBio = coAuthor?.bio && Array.isArray(coAuthor.bio) && coAuthor.bio.length > 0
 
   return (
     <>
@@ -64,7 +73,46 @@ export default function Avatar({person, date, small = false}: Props) {
         <div className="flex flex-col">
           {firstName && lastName && (
             <div className={`font-semibold ${small ? 'text-sm' : 'text-base'}`}>
-              {firstName} {lastName}
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  if (hasBio) setShowBio(true)
+                }}
+                disabled={!hasBio}
+                className={`${
+                  hasBio ? 'hover:text-red-600 cursor-pointer transition-colors duration-200' : ''
+                }`}
+                aria-label={hasBio ? `View ${firstName} ${lastName}'s bio` : undefined}
+              >
+                {firstName} {lastName}
+              </button>
+              {coAuthor?.firstName && coAuthor?.lastName && (
+                <>
+                  {' '}
+                  And{' '}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      if (coAuthorHasBio) setShowCoAuthorBio(true)
+                    }}
+                    disabled={!coAuthorHasBio}
+                    className={`${
+                      coAuthorHasBio
+                        ? 'hover:text-red-600 cursor-pointer transition-colors duration-200'
+                        : ''
+                    }`}
+                    aria-label={
+                      coAuthorHasBio
+                        ? `View ${coAuthor.firstName} ${coAuthor.lastName}'s bio`
+                        : undefined
+                    }
+                  >
+                    {coAuthor.firstName} {coAuthor.lastName}
+                  </button>
+                </>
+              )}
             </div>
           )}
           {date && (
@@ -77,6 +125,14 @@ export default function Avatar({person, date, small = false}: Props) {
 
       {hasBio && (
         <AuthorBioDialog isOpen={showBio} onClose={() => setShowBio(false)} person={person} />
+      )}
+
+      {coAuthorHasBio && coAuthor && (
+        <AuthorBioDialog
+          isOpen={showCoAuthorBio}
+          onClose={() => setShowCoAuthorBio(false)}
+          person={coAuthor}
+        />
       )}
     </>
   )

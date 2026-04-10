@@ -116,6 +116,13 @@ export const article = defineType({
       to: [{type: 'person'}],
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: 'coAuthor',
+      title: 'Co-Author',
+      type: 'reference',
+      to: [{type: 'person'}],
+      description: 'Optional co-author for this article',
+    }),
   ],
   // List preview configuration. https://www.sanity.io/docs/previews-list-views
   preview: {
@@ -123,17 +130,28 @@ export const article = defineType({
       title: 'title',
       authorFirstName: 'author.firstName',
       authorLastName: 'author.lastName',
+      coAuthorFirstName: 'coAuthor.firstName',
+      coAuthorLastName: 'coAuthor.lastName',
       date: 'date',
       media: 'coverImage',
       featured: 'featured',
       category: 'category',
     },
-    prepare({title, media, authorFirstName, authorLastName, date, featured, category}) {
+    prepare({title, media, authorFirstName, authorLastName, coAuthorFirstName, coAuthorLastName, date, featured, category}) {
       const categoryLabel = category ? category.replace('-', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : ''
+      
+      let authorText = ''
+      if (authorFirstName && authorLastName) {
+        authorText = `by ${authorFirstName} ${authorLastName}`
+        if (coAuthorFirstName && coAuthorLastName) {
+          authorText += ` & ${coAuthorFirstName} ${coAuthorLastName}`
+        }
+      }
+      
       const subtitles = [
         featured && '⭐ Featured',
         categoryLabel,
-        authorFirstName && authorLastName && `by ${authorFirstName} ${authorLastName}`,
+        authorText,
         date && `on ${format(parseISO(date), 'LLL d, yyyy')}`,
       ].filter(Boolean)
 

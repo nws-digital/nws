@@ -39,7 +39,11 @@ export function NewsTicker() {
   const [breakingNews, setBreakingNews] = useState<RssArticle[]>([])
 
   useEffect(() => {
-    getAllNews().then(setBreakingNews)
+    getAllNews().then((news) => {
+      // Filter out articles with null or empty generated_title
+      const validNews = news.filter((item) => item.generated_title && item.generated_title.trim() !== '')
+      setBreakingNews(validNews)
+    })
   }, [])
 
   return (

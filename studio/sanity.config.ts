@@ -17,6 +17,8 @@ import {
   type DocumentLocation,
 } from 'sanity/presentation'
 import {assist} from '@sanity/assist'
+import {DocumentTextIcon} from '@sanity/icons'
+import SupabaseTitlesTool from './src/tools/SupabaseTitlesTool'
 
 // Environment variables for project configuration
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || '01seu5c9'
@@ -55,6 +57,9 @@ export default defineConfig({
 
   plugins: [
     // Presentation tool configuration for Visual Editing
+    structureTool({
+      structure, // Custom studio structure configuration, imported from ./src/structure.ts
+    }),
     presentationTool({
       previewUrl: {
         origin: SANITY_STUDIO_PREVIEW_URL,
@@ -120,13 +125,21 @@ export default defineConfig({
         },
       },
     }),
-    structureTool({
-      structure, // Custom studio structure configuration, imported from ./src/structure.ts
-    }),
     // Additional plugins for enhanced functionality
     unsplashImageAsset(),
     assist(),
     visionTool(),
+  ],
+
+  // Custom tools
+  tools: (prev) => [
+    ...prev,
+    {
+      name: 'supabase-titles',
+      title: 'Breaking',
+      icon: DocumentTextIcon,
+      component: SupabaseTitlesTool,
+    },
   ],
 
   // Schema configuration, imported from ./src/schemaTypes/index.ts

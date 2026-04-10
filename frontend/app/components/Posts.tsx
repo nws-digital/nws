@@ -26,6 +26,16 @@ const Post = ({post}: {post: AllPostsQueryResult[number]}) => {
         }
       : null
 
+  const coAuthor = (post as any).coAuthor
+  const coAuthorForAvatar =
+    coAuthor && typeof coAuthor === 'object' && 'firstName' in coAuthor && 'lastName' in coAuthor
+      ? {
+          firstName: (coAuthor as any).firstName ?? null,
+          lastName: (coAuthor as any).lastName ?? null,
+          picture: 'picture' in coAuthor ? (coAuthor as any).picture : undefined,
+        }
+      : null
+
   return (
     <article
       data-sanity={attr()}
@@ -43,7 +53,7 @@ const Post = ({post}: {post: AllPostsQueryResult[number]}) => {
       <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
         {authorForAvatar?.firstName && authorForAvatar?.lastName && (
           <div className="flex items-center">
-            <Avatar person={authorForAvatar} small={true} />
+            <Avatar person={authorForAvatar} coAuthor={coAuthorForAvatar} small={true} />
           </div>
         )}
         <time className="text-gray-500 text-xs font-mono" dateTime={date}>

@@ -40,6 +40,7 @@ type ArticlePost = {
   category?: string
   content?: PortableTextBlock[]
   author?: ArticleAuthor | null
+  coAuthor?: ArticleAuthor | null
 }
 
 const validCategories = [
@@ -155,6 +156,16 @@ export default async function ArticlePage(props: Props) {
       }
     : null
 
+  const coAuthorForAvatar = post.coAuthor
+    ? {
+        firstName: post.coAuthor.firstName ?? null,
+        lastName: post.coAuthor.lastName ?? null,
+        designation: post.coAuthor.designation ?? null,
+        picture: post.coAuthor.picture,
+        bio: post.coAuthor.bio,
+      }
+    : null
+
   // Format slug for display (remove hyphens, capitalize)
   const articleSlug =
     post.slug?.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || 'Article'
@@ -188,7 +199,7 @@ export default async function ArticlePage(props: Props) {
                 <div className="flex items-center justify-between gap-4 mt-3">
                   {/* Author - Left Side */}
                   {authorForAvatar?.firstName && authorForAvatar?.lastName && (
-                    <Avatar person={authorForAvatar} date={post.date} small />
+                    <Avatar person={authorForAvatar} coAuthor={coAuthorForAvatar} date={post.date} small />
                   )}
                   {/* Share Button - Right Side */}
                   <ShareArticle 

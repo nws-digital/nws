@@ -116,7 +116,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="text-center text-gray-400">
-          <p>© 2025 NWS. All rights reserved.</p>
+          <p>© 2026 NWS. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-RSS News Scraper for NATION and WORLD topics (India)
+RSS News Scraper for WORLD news (India perspective)
 Fetches news from Google News RSS feeds and saves to Supabase
 Uses async httpx for better performance
 """
@@ -29,9 +29,8 @@ supabase: Client = create_client(
 # Initialize Claude client
 anthropic_client = Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
 
-# Google News RSS feed URLs (India-based)
+# Google News RSS feed URLs (World news only)
 RSS_FEEDS = {
-    'nation': 'https://news.google.com/rss/topics/CAAqJQgKIh9DQkFTRVFvSUwyMHZNRE55YXpBU0JXVnVMVWRDS0FBUAE?hl=en-IN&gl=IN&ceid=IN:en',
     'world': 'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtVnVHZ0pKVGlnQVAB?hl=en-IN&gl=IN&ceid=IN:en'
 }
 
@@ -183,8 +182,10 @@ async def fetch_and_save_articles(topic: str, feed_url: str, prompt_template: st
     Fetch RSS feed and save articles to Supabase
     
     Args:
-        topic: Topic name (nation or world)
+        topic: Topic name (world)
         feed_url: RSS feed URL
+        prompt_template: Optional custom prompt from Sanity
+        instructions: Optional custom instructions from Sanity
     """
     print(f"\n📰 Fetching {topic.upper()} news...")
     

@@ -1,4 +1,4 @@
-import type {Metadata, ResolvingMetadata} from 'next'
+import type {Metadata} from 'next'
 import {notFound} from 'next/navigation'
 import {type PortableTextBlock} from 'next-sanity'
 import {Suspense} from 'react'
@@ -88,7 +88,7 @@ export async function generateStaticParams() {
 /**
  * Generate metadata for the page.
  */
-export async function generateMetadata(props: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const postResponse = await sanityFetch({
     query: postQuery,
@@ -96,8 +96,14 @@ export async function generateMetadata(props: Props, parent: ResolvingMetadata):
     stega: false,
   })
   const post = postResponse.data as ArticlePost | null
-  const previousImages = (await parent).openGraph?.images || []
   const ogImage = resolveOpenGraphImage(post?.coverImage)
+  const fallbackImage = {
+    url: '/images/tile-grid-black.png',
+    alt: post?.title || 'NWS',
+    width: 1200,
+    height: 630,
+  }
+  const images = ogImage ? [ogImage] : [fallbackImage]
 
   return {
     authors:
@@ -107,7 +113,16 @@ export async function generateMetadata(props: Props, parent: ResolvingMetadata):
     title: post?.title,
     description: post?.excerpt,
     openGraph: {
-      images: ogImage ? [ogImage, ...previousImages] : previousImages,
+      type: 'article',
+      title: post?.title,
+      description: post?.excerpt,
+      images,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post?.title,
+      description: post?.excerpt,
+      images,
     },
   } satisfies Metadata
 }

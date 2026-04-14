@@ -40,8 +40,26 @@ export const urlForImage = (source: any) => {
 
 export function resolveOpenGraphImage(image: any, width = 1200, height = 627) {
   if (!image) return
+  const imageRef = image?.asset?._ref as string | undefined
+  if (!imageRef) return
+
+  const refMatch = imageRef.match(/-(\d+)x(\d+)-([a-zA-Z0-9]+)$/)
+  if (refMatch) {
+    const refWidth = Number(refMatch[1])
+    const refHeight = Number(refMatch[2])
+    const refFormat = refMatch[3]?.toLowerCase()
+
+    if (refFormat === 'svg') return
+    if (Number.isFinite(refWidth) && Number.isFinite(refHeight) && (refWidth < 300 || refHeight < 300)) {
+      return
+    }
+  }
+
   const url = urlForImage(image)?.width(1200).height(627).fit('crop').url()
   if (!url) return
+
+  if (url.toLowerCase().includes('.svg')) return
+
   return {url, alt: image?.alt as string, width, height}
 }
 

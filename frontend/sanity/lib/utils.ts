@@ -43,6 +43,9 @@ export function resolveOpenGraphImage(image: any, width = 1200, height = 627) {
   const imageRef = image?.asset?._ref as string | undefined
   if (!imageRef) return
 
+  // Reject SVG files explicitly (check reference level)
+  if (imageRef.includes('-svg') || imageRef.includes('.svg')) return
+
   const refMatch = imageRef.match(/-(\d+)x(\d+)-([a-zA-Z0-9]+)$/)
   if (refMatch) {
     const refWidth = Number(refMatch[1])

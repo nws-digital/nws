@@ -1,7 +1,20 @@
 import {MetadataRoute} from 'next'
 import {sanityFetch} from '@/sanity/lib/live'
 import {sitemapData} from '@/sanity/lib/queries'
-import {headers} from 'next/headers'
+
+function getBaseUrl() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL
+  if (configured) {
+    const normalized = configured.startsWith('http') ? configured : `https://${configured}`
+    try {
+      return new URL(normalized)
+    } catch {
+      return new URL('https://example.com')
+    }
+  }
+
+  return process.env.NODE_ENV === 'development' ? new URL('http://localhost:3000') : new URL('https://example.com')
+}
 
 /**
  * This file creates a sitemap (sitemap.xml) for the application. Learn more about sitemaps in Next.js here: https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
@@ -12,15 +25,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const allPostsAndPages = await sanityFetch({
     query: sitemapData,
   })
-  const headersList = await headers()
+  const baseUrl = getBaseUrl()
   const sitemap: MetadataRoute.Sitemap = []
-  const domain: String = headersList.get('host') as string
-  sitemap.push({
-    url: domain as string,
-    lastModified: new Date(),
-    priority: 1,
-    changeFrequency: 'monthly',
-  })
+
+  // Include the most important static routes to help discovery.
+  const staticRoutes = ['/']
+  for (const route of staticRoutes) {
+    sitemap.push({
+      url: new URL(route, baseUrl).toString(),
+      lastModified: new Date(),
+      priority: route === '/' ? 1 : 0.8,
+      changeFrequency: route === '/' ? 'daily' : 'hourly',
+    })
+  }
 
   if (allPostsAndPages != null && allPostsAndPages.data.length != 0) {
     let priority: number
@@ -40,12 +57,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         case 'page':
           priority = 0.8
           changeFrequency = 'monthly'
-          url = `${domain}/${p.slug}`
+          url = new URL(`/${p.slug}`, baseUrl).toString()
           break
         case 'article':
-          priority = 0.5
-          changeFrequency = 'never'
-          url = `${domain}/posts/${p.slug}`
+          priority = 0.7
+          changeFrequency = 'daily'
+          url = new URL(`/posts/${p.slug}`, baseUrl).toString()
           break
         default:
           continue

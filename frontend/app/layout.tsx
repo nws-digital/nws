@@ -18,6 +18,20 @@ import {settingsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 import {handleError} from './client-utils'
 
+function getMetadataBase() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL
+  if (configured) {
+    const normalized = configured.startsWith('http') ? configured : `https://${configured}`
+    try {
+      return new URL(normalized)
+    } catch {
+      return undefined
+    }
+  }
+
+  return process.env.NODE_ENV === 'development' ? new URL('http://localhost:3000') : undefined
+}
+
 /**
  * Generate metadata for the page.
  * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
@@ -31,15 +45,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = settings?.title || demo.title
   const description = settings?.description || demo.description
 
-  const ogImage = resolveOpenGraphImage(settings?.ogImage)
-  let metadataBase: URL | undefined = undefined
-  try {
-    metadataBase = settings?.ogImage?.metadataBase
-      ? new URL(settings.ogImage.metadataBase)
-      : undefined
-  } catch {
-    // ignore
+  const metadataBase = getMetadataBase()
+  const fallbackImage = {
+    url: '/images/tile-1-black.png',
+    alt: title,
+    width: 1200,
+    height: 630,
   }
+  // Home page always uses local fallback (logo) for consistency
+  const images = [fallbackImage]
+
   return {
     metadataBase,
     title: {
@@ -47,8 +62,28 @@ export async function generateMetadata(): Promise<Metadata> {
       default: title,
     },
     description: toPlainText(description),
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
+      },
+    },
     openGraph: {
-      images: ogImage ? [ogImage] : [],
+      title,
+      description: toPlainText(description),
+      type: 'website',
+      images,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: toPlainText(description),
+      images,
     },
   }
 }

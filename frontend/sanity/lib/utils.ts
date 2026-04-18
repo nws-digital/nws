@@ -38,10 +38,31 @@ export const urlForImage = (source: any) => {
   return imageBuilder?.image(source).auto('format')
 }
 
-export function resolveOpenGraphImage(image: any, width = 1200, height = 627) {
+export function resolveOpenGraphImage(image: any, width = 1200, height = 630) {
   if (!image) return
-  const url = urlForImage(image)?.width(1200).height(627).fit('crop').url()
+  const imageRef = image?.asset?._ref as string | undefined
+  if (!imageRef) return
+
+  // Reject SVG files explicitly (check reference level)
+  if (imageRef.includes('-svg') || imageRef.includes('.svg')) return
+
+  const refMatch = imageRef.match(/-(\d+)x(\d+)-([a-zA-Z0-9]+)$/)
+  if (refMatch) {
+    const refWidth = Number(refMatch[1])
+    const refHeight = Number(refMatch[2])
+    const refFormat = refMatch[3]?.toLowerCase()
+
+    if (refFormat === 'svg') return
+    if (Number.isFinite(refWidth) && Number.isFinite(refHeight) && (refWidth < 300 || refHeight < 300)) {
+      return
+    }
+  }
+
+  const url = urlForImage(image)?.width(1200).height(630).fit('crop').url()
   if (!url) return
+
+  if (url.toLowerCase().includes('.svg')) return
+
   return {url, alt: image?.alt as string, width, height}
 }
 

@@ -1,4 +1,4 @@
-import type {Metadata, ResolvingMetadata} from 'next'
+import type {Metadata} from 'next'
 import {notFound} from 'next/navigation'
 import {type PortableTextBlock} from 'next-sanity'
 import {Suspense} from 'react'
@@ -12,6 +12,7 @@ import {ShareArticle} from '@/app/components/ShareArticle'
 import {sanityFetch} from '@/sanity/lib/live'
 import {postQuery, allPostsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
+import * as demo from '@/sanity/lib/demo'
 
 type Props = {
   params: Promise<{
@@ -55,8 +56,21 @@ const categoryLabels: Record<string, string> = {
   'india-exclusive': 'India Exclusive',
   'osint-exclusive': 'OSINT Exclusive',
   'commentary': 'Commentary',
+
 }
 
+function getMetadataBaseForArticle() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL
+  if (configured) {
+    const normalized = configured.startsWith('http') ? configured : `https://${configured}`
+    try {
+      return new URL(normalized)
+    } catch {
+      return undefined
+    }
+  }
+  return process.env.NODE_ENV === 'development' ? new URL('http://localhost:3000') : undefined
+}
 /**
  * Revalidate the page every 5 minutes to get fresh content
  */
@@ -88,7 +102,7 @@ export async function generateStaticParams() {
 /**
  * Generate metadata for the page.
  */
-export async function generateMetadata(props: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const postResponse = await sanityFetch({
     query: postQuery,
@@ -96,18 +110,39 @@ export async function generateMetadata(props: Props, parent: ResolvingMetadata):
     stega: false,
   })
   const post = postResponse.data as ArticlePost | null
-  const previousImages = (await parent).openGraph?.images || []
   const ogImage = resolveOpenGraphImage(post?.coverImage)
+  const fallbackImage = {
+    url: '/images/tile-1-black.png',
+    alt: post?.title || 'NWS',
+    width: 1200,
+    height: 630,
+  }
+  const images = ogImage ? [ogImage] : [fallbackImage]
+  const canonicalPath = `/${params.category}/${params.slug}`
 
   return {
+    metadataBase: getMetadataBaseForArticle(),
     authors:
       post?.author?.firstName && post?.author?.lastName
         ? [{name: `${post.author.firstName ?? ''} ${post.author.lastName ?? ''}`.trim()}]
         : [],
     title: post?.title,
     description: post?.excerpt,
+    alternates: {
+      canonical: canonicalPath,
+    },
     openGraph: {
-      images: ogImage ? [ogImage, ...previousImages] : previousImages,
+      type: 'article',
+      url: canonicalPath,
+      title: post?.title,
+      description: post?.excerpt,
+      images,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post?.title,
+      description: post?.excerpt,
+      images,
     },
   } satisfies Metadata
 }
@@ -216,23 +251,22 @@ export default async function ArticlePage(props: Props) {
               </article>
 
               <div className="flex flex-col gap-3 mt-3 top-8 pt-8">
-                  {post.date && (
-                    <ArticleDates 
-                      date={post.date} 
-                      lastPublishedDate={post.lastPublishedDate}
-                    />
-                  )}
-                </div>
+                {post.date && (
+                  <ArticleDates
+                    date={post.date}
+                    lastPublishedDate={post.lastPublishedDate}
+                  />
+                )}
+              </div>
             </div>
 
-            {/* Vertical Divider + Sidebar - 1/4 width (Desktop only) */}
-            <aside className="hidden lg:block lg:col-span-1 border-l border-gray-200 pl-8">
+            <div className="hidden lg:block lg:col-span-1">
               <div className="sticky top-24">
-                <h3 className="text-lg font-bold">Latest on NWS</h3>
-                <div className="w-7 h-1 bg-red-500 mb-4" />
+                <h3 className="text-xl font-bold">Latest on NWS</h3>
+                <div className="w-7 h-1 bg-red-500 mb-6" />
                 <LatestArticlesSidebar currentArticleId={post._id} />
               </div>
-            </aside>
+            </div>
           </div>
 
           {/* Mobile Latest Articles - Below article content */}

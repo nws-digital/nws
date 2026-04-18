@@ -1,4 +1,4 @@
-import type {Metadata, ResolvingMetadata} from 'next'
+import type {Metadata} from 'next'
 import {notFound} from 'next/navigation'
 import {type PortableTextBlock} from 'next-sanity'
 import {Suspense} from 'react'
@@ -44,6 +44,20 @@ const categoryLabels: Record<string, string> = {
   'commentary': 'Commentary',
 }
 
+function getMetadataBaseForArticle() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL
+  if (configured) {
+    const normalized = configured.startsWith('http') ? configured : `https://${configured}`
+    try {
+      return new URL(normalized)
+    } catch {
+      return undefined
+    }
+  }
+
+  return process.env.NODE_ENV === 'development' ? new URL('http://localhost:3000') : undefined
+}
+
 /**
  * Generate the static params for the page.
  * Only pre-generate the 50 most recent articles.
@@ -70,7 +84,7 @@ export const revalidate = 300
  * Generate metadata for the page.
  * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
  */
-export async function generateMetadata(props: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const postResponse = await sanityFetch({
     query: postQuery,
@@ -79,18 +93,39 @@ export async function generateMetadata(props: Props, parent: ResolvingMetadata):
     stega: false,
   })
   const post = postResponse.data as PostData | null
-  const previousImages = (await parent).openGraph?.images || []
   const ogImage = resolveOpenGraphImage(post?.coverImage)
+  const fallbackImage = {
+    url: '/images/tile-1-black.png',
+    alt: post?.title || 'NWS',
+    width: 1200,
+    height: 630,
+  }
+  const images = ogImage ? [ogImage] : [fallbackImage]
+  const canonicalPath = `/posts/${params.slug}`
 
   return {
+    metadataBase: getMetadataBaseForArticle(),
     authors:
       post?.author?.firstName && post?.author?.lastName
         ? [{name: `${post.author.firstName ?? ''} ${post.author.lastName ?? ''}`.trim()}]
         : [],
     title: post?.title,
     description: post?.excerpt,
+    alternates: {
+      canonical: canonicalPath,
+    },
     openGraph: {
-      images: ogImage ? [ogImage, ...previousImages] : previousImages,
+      type: 'article',
+      url: canonicalPath,
+      title: post?.title,
+      description: post?.excerpt,
+      images,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post?.title,
+      description: post?.excerpt,
+      images,
     },
   } satisfies Metadata
 }

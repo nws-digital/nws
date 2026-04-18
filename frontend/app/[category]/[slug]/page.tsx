@@ -118,18 +118,22 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     height: 630,
   }
   const images = ogImage ? [ogImage] : [fallbackImage]
+  const canonicalPath = `/${params.category}/${params.slug}`
 
   return {
-      metadataBase: getMetadataBaseForArticle(),
+    metadataBase: getMetadataBaseForArticle(),
     authors:
       post?.author?.firstName && post?.author?.lastName
         ? [{name: `${post.author.firstName ?? ''} ${post.author.lastName ?? ''}`.trim()}]
         : [],
     title: post?.title,
     description: post?.excerpt,
+    alternates: {
+      canonical: canonicalPath,
+    },
     openGraph: {
       type: 'article',
-        url: `/${params.category}/${params.slug}`,
+      url: canonicalPath,
       title: post?.title,
       description: post?.excerpt,
       images,
@@ -141,19 +145,6 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       images,
     },
   } satisfies Metadata
-
-function getMetadataBaseForArticle() {
-  const configured = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL
-  if (configured) {
-    const normalized = configured.startsWith('http') ? configured : `https://${configured}`
-    try {
-      return new URL(normalized)
-    } catch {
-      return undefined
-    }
-  }
-  return process.env.NODE_ENV === 'development' ? new URL('http://localhost:3000') : undefined
-}
 }
 
 export default async function ArticlePage(props: Props) {

@@ -38,7 +38,7 @@ export const urlForImage = (source: any) => {
   return imageBuilder?.image(source).auto('format')
 }
 
-export function resolveOpenGraphImage(image: any, width = 1200, height = 627) {
+export function resolveOpenGraphImage(image: any, width = 1200, height = 630) {
   if (!image) return
   const imageRef = image?.asset?._ref as string | undefined
   if (!imageRef) return
@@ -58,7 +58,7 @@ export function resolveOpenGraphImage(image: any, width = 1200, height = 627) {
     }
   }
 
-  const url = urlForImage(image)?.width(1200).height(627).fit('crop').url()
+  const url = urlForImage(image)?.width(1200).height(630).fit('crop').url()
   if (!url) return
 
   if (url.toLowerCase().includes('.svg')) return

@@ -116,7 +116,8 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="text-center text-gray-400">
-          <p>© 2026 NWS. All rights reserved.</p>
+          <p>© 2026 NWS™. All rights reserved.</p>
+          <p>NWS™ and NWS Facts™ are trademarks of F3 Media Inc.</p>
         </div>
       </div>
     </footer>

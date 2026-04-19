@@ -31,7 +31,7 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
             {/* Logo/Title */}
             <Link className="flex items-center" href="/" onClick={() => setSideMenuOpen(false)}>
               <Image 
-                src="/images/Logo_Dark.svg" 
+                src="/images/logo_powered.svg" 
                 alt="NWS" 
                 width={136}
                 height={56}

@@ -29,15 +29,16 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
         <div className="max-w-[1366px] container mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between">
             {/* Logo/Title */}
-            <Link className="flex items-center" href="/" onClick={() => setSideMenuOpen(false)}>
+            <Link className="flex flex-col items-start" href="/" onClick={() => setSideMenuOpen(false)}>
               <Image 
-                src="/images/logo_powered.svg" 
+                src="/images/Logo_Dark.svg" 
                 alt="NWS" 
                 width={136}
                 height={56}
                 className="h-8 md:h-10 w-auto"
                 priority
               />
+              <p className="mt-0.5 text-[10px] text-gray-500">Powered by NWS Facts</p>
             </Link>
 
             {/* Navigation - Hidden on mobile, shown on desktop */}

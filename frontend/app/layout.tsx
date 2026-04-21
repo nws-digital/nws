@@ -46,14 +46,15 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = settings?.description || demo.description
 
   const metadataBase = getMetadataBase()
+  const settingsOgImage = resolveOpenGraphImage(settings?.ogImage)
   const fallbackImage = {
     url: '/images/tile-1-black.png',
     alt: title,
     width: 1200,
     height: 630,
   }
-  // Home page always uses local fallback (logo) for consistency
-  const images = [fallbackImage]
+  // Home page uses Site Settings OG image when available.
+  const images = settingsOgImage ? [settingsOgImage] : [fallbackImage]
 
   return {
     metadataBase,

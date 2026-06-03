@@ -47,40 +47,42 @@ export default async function AuthorPage(props: Props) {
     ? urlForImage(author.picture)?.width(320).height(320).fit('crop').url()
     : null
 
-  const hasBio = author.bio && Array.isArray(author.bio) && author.bio.length > 0
+  const hasBio = !!(author.bio as any)?.length
 
   return (
     <div className="pt-20 min-h-screen bg-gray-50">
       <div className="max-w-[1366px] mx-auto px-4 py-12">
 
         {/* Author profile header */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-10 flex flex-col sm:flex-row items-center sm:items-start gap-8">
-          {pictureUrl && (
-            <div className="flex-shrink-0">
-              <Image
-                src={pictureUrl}
-                alt={`${author.firstName} ${author.lastName}`}
-                width={120}
-                height={120}
-                className="rounded-full object-cover border-4 border-gray-100 shadow"
-              />
-            </div>
-          )}
-          <div className="flex-1 text-center sm:text-left">
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">
-              {author.firstName} {author.lastName}
-            </h1>
-            {author.designation && (
-              <p className="text-red-600 font-semibold text-sm uppercase tracking-wide mb-4">
-                {author.designation}
-              </p>
-            )}
-            {hasBio && (
-              <div className="prose prose-gray max-w-2xl text-sm">
-                <PortableText value={author.bio} />
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-10">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-4">
+            {pictureUrl && (
+              <div className="flex-shrink-0">
+                <Image
+                  src={pictureUrl}
+                  alt={`${author.firstName} ${author.lastName}`}
+                  width={120}
+                  height={120}
+                  className="rounded-full object-cover border-4 border-gray-100 shadow"
+                />
               </div>
             )}
+            <div className="flex-1 text-center sm:text-left">
+              <h1 className="text-3xl font-bold text-gray-900 mb-1">
+                {author.firstName} {author.lastName}
+              </h1>
+              {author.designation && (
+                <p className="text-red-600 font-semibold text-sm uppercase tracking-wide">
+                  {author.designation}
+                </p>
+              )}
+            </div>
           </div>
+          {hasBio && (
+            <div className="prose prose-gray max-w-none text-sm">
+              <PortableText value={author.bio as any} />
+            </div>
+          )}
         </div>
 
         {/* Articles section */}

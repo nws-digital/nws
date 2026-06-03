@@ -185,7 +185,7 @@ export default async function PostPage(props: Props) {
               <div className="">
                 {post?.coverImage && <CoverImage image={post.coverImage} priority />}
               </div>
-              {post.content?.length && (
+              {Array.isArray(post.content) && post.content.length > 0 && (
                 <PortableText className="max-w-2xl" value={post.content as PortableTextBlock[]} />
               )}
             </article>

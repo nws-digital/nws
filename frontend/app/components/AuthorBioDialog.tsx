@@ -56,7 +56,7 @@ export function AuthorBioDialog({isOpen, onClose, person, authorId}: Props) {
     return () => dialog.removeEventListener('click', handleClick)
   }, [onClose])
 
-  if (!person.bio) return null
+  if (!Array.isArray(person.bio) || person.bio.length === 0) return null
 
   return (
     <dialog

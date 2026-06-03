@@ -253,7 +253,7 @@ export default async function ArticlePage(props: Props) {
               </div>
               <article className="gap-1 grid w-full overflow-hidden">
                 <div className="">{post?.coverImage && <CoverImage image={post.coverImage} priority />}</div>
-                {post.content?.length && (
+                {Array.isArray(post.content) && post.content.length > 0 && (
                   <PortableText className="" value={post.content as PortableTextBlock[]} />
                 )}
               </article>

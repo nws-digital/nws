@@ -17,6 +17,21 @@ export const featuredArticleQuery = defineQuery(`
   }
 `)
 
+export const featuredArticlesQuery = defineQuery(`
+  *[_type == "article" && featured == true] | order(date desc)[0...6] {
+    _id,
+    _updatedAt,
+    title,
+    slug,
+    excerpt,
+    date,
+    lastPublishedDate,
+    category,
+    "author": author->{firstName, lastName},
+    coverImage
+  }
+`)
+
 export const commentaryArticlesQuery = defineQuery(`
   *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {
     _id,
@@ -109,8 +124,8 @@ const postFields = /* groq */ `
   coverImage,
   "date": coalesce(date, _createdAt),
   lastPublishedDate,
-  "author": author->{firstName, lastName, designation, picture, bio},
-  "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio},
+  "author": author->{_id, firstName, lastName, designation, picture, bio},
+  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},
   category,
 `
 
@@ -195,4 +210,30 @@ export const postPagesSlugs = defineQuery(`
 export const pagesSlugs = defineQuery(`
   *[_type == "page" && defined(slug.current)]
   {"slug": slug.current}
+`)
+
+export const authorByIdQuery = defineQuery(`
+  *[_type == "person" && _id == $id][0] {
+    _id,
+    firstName,
+    lastName,
+    designation,
+    bio,
+    picture
+  }
+`)
+
+export const authorArticlesQuery = defineQuery(`
+  *[_type == "article" && author._ref == $id] | order(date desc) {
+    _id,
+    title,
+    slug,
+    excerpt,
+    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
+    date,
+    lastPublishedDate,
+    category,
+    coverImage,
+    "author": author->{_id, firstName, lastName, designation, picture, bio}
+  }
 `)

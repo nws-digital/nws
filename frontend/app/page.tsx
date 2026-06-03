@@ -6,11 +6,11 @@ import {AllPosts} from '@/app/components/Posts'
 import GetStartedCode from '@/app/components/GetStartedCode'
 import SideBySideIcons from '@/app/components/SideBySideIcons'
 import {NewsTicker} from '@/app/components/NewsTicker'
-import {FeaturedArticle} from '@/app/components/FeaturedArticle'
+import {FeaturedCarousel} from '@/app/components/FeaturedCarousel'
 import {FeaturedPlaceholder} from '@/app/components/FeaturedPlaceholder'
 import {CommentarySection} from '@/app/components/CommentarySection'
 import {LatestArticles} from '@/app/components/LatestArticles'
-import {settingsQuery, featuredArticleQuery, commentaryArticlesQuery, latestArticlesQuery} from '@/sanity/lib/queries'
+import {settingsQuery, featuredArticlesQuery, commentaryArticlesQuery, latestArticlesQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
 
 export default async function Page() {
@@ -18,30 +18,33 @@ export default async function Page() {
     query: settingsQuery,
   })
 
-  const {data: featuredArticle} = await sanityFetch({
-    query: featuredArticleQuery,
+  const {data: featuredArticles} = await sanityFetch({
+    query: featuredArticlesQuery,
   })
 
   const {data: commentaryArticles} = await sanityFetch({
     query: commentaryArticlesQuery,
   })
 
+  const featuredList = (featuredArticles as any[]) || []
+  const topFeaturedId = featuredList[0]?._id ?? ''
+
   const {data: latestArticles} = await sanityFetch({
     query: latestArticlesQuery,
     params: {
-      excludeId: (featuredArticle as any)?._id ?? '',
+      excludeId: topFeaturedId,
     },
   })
 
   return (
     <>
       <div className="w-full pt-20">
-        {/* Featured Article Section with News Ticker Overlay */}
+        {/* Featured Carousel Section with News Ticker Overlay */}
         <div className="relative w-full">
-          {/* Featured Article - Full width */}
+          {/* Carousel - Full width */}
           <div className="w-full h-[600px]">
-            {featuredArticle ? (
-              <FeaturedArticle article={featuredArticle} />
+            {featuredList.length > 0 ? (
+              <FeaturedCarousel articles={featuredList} />
             ) : (
               <FeaturedPlaceholder />
             )}

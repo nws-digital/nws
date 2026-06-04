@@ -54,7 +54,7 @@ export function NewsTicker() {
       className="w-full flex flex-col shrink-0 h-full"
     >
       <div className="bg-red-600 rounded-t-3xl px-6 py-3">
-        <h2 className="text-white text-2xl font-semibold">Breaking</h2>
+        <h2 className="text-white text-2xl font-semibold">Just In</h2>
       </div>
       <div className="relative bg-black/65 backdrop-blur rounded-b-3xl overflow-hidden flex-1">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black via-black/90 to-transparent/40 z-10" />

@@ -3,11 +3,13 @@
 import {useEffect, useRef} from 'react'
 import {PortableText} from '@portabletext/react'
 import {Image} from 'next-sanity/image'
+import Link from 'next/link'
 import {urlForImage} from '@/sanity/lib/utils'
 
 type Props = {
   isOpen: boolean
   onClose: () => void
+  authorId?: string
   person: {
     firstName: string | null
     lastName: string | null
@@ -17,7 +19,7 @@ type Props = {
   }
 }
 
-export function AuthorBioDialog({isOpen, onClose, person}: Props) {
+export function AuthorBioDialog({isOpen, onClose, person, authorId}: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export function AuthorBioDialog({isOpen, onClose, person}: Props) {
     return () => dialog.removeEventListener('click', handleClick)
   }, [onClose])
 
-  if (!person.bio) return null
+  if (!Array.isArray(person.bio) || person.bio.length === 0) return null
 
   return (
     <dialog
@@ -124,6 +126,22 @@ export function AuthorBioDialog({isOpen, onClose, person}: Props) {
             <PortableText value={person.bio} />
           </div>
         </div>
+
+        {/* Footer: More about Author */}
+        {authorId && (
+          <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+            <Link
+              href={`/author/${authorId}`}
+              onClick={onClose}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-red-600 hover:text-red-700 transition-colors"
+            >
+              More about {person.firstName}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
+        )}
       </div>
     </dialog>
   )

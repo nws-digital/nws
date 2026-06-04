@@ -22,6 +22,7 @@ type Props = {
 }
 
 type ArticleAuthor = {
+  _id?: string | null
   firstName?: string | null
   lastName?: string | null
   designation?: string | null
@@ -183,6 +184,7 @@ export default async function ArticlePage(props: Props) {
 
   const authorForAvatar = post.author
     ? {
+        _id: post.author._id ?? null,
         firstName: post.author.firstName ?? null,
         lastName: post.author.lastName ?? null,
         designation: post.author.designation ?? null,
@@ -193,6 +195,7 @@ export default async function ArticlePage(props: Props) {
 
   const coAuthorForAvatar = post.coAuthor
     ? {
+        _id: post.coAuthor._id ?? null,
         firstName: post.coAuthor.firstName ?? null,
         lastName: post.coAuthor.lastName ?? null,
         designation: post.coAuthor.designation ?? null,
@@ -230,6 +233,11 @@ export default async function ArticlePage(props: Props) {
                   <h2 className="text-xl font-bold tracking-tight text-black sm:text-2xl lg:text-3xl">
                     {post.title}
                   </h2>
+                  {post.excerpt && (
+                    <p className="text-gray-600 text-base leading-relaxed">
+                      {post.excerpt}
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center justify-between gap-4 mt-3">
                   {/* Author - Left Side */}
@@ -245,7 +253,7 @@ export default async function ArticlePage(props: Props) {
               </div>
               <article className="gap-1 grid w-full overflow-hidden">
                 <div className="">{post?.coverImage && <CoverImage image={post.coverImage} priority />}</div>
-                {post.content?.length && (
+                {Array.isArray(post.content) && post.content.length > 0 && (
                   <PortableText className="" value={post.content as PortableTextBlock[]} />
                 )}
               </article>

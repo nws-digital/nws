@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * This component uses Portable Text to render a post body.
  *
@@ -11,7 +13,8 @@
 import {PortableText, type PortableTextComponents, type PortableTextBlock} from 'next-sanity'
 import Image from 'next/image'
 import {urlForImage} from '@/sanity/lib/utils'
-import { Tweet } from 'react-tweet'
+import dynamic from 'next/dynamic'
+const Tweet = dynamic(() => import('react-tweet').then(m => ({default: m.Tweet})), {ssr: false})
 import ResolvedLink from '@/app/components/ResolvedLink'
 
 export default function CustomPortableText({

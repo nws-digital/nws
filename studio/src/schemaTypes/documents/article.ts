@@ -56,8 +56,9 @@ export const article = defineType({
     }),
     defineField({
       name: 'excerpt',
-      title: 'Excerpt',
+      title: 'Blurb',
       type: 'text',
+      description: 'A short summary shown below the article title and used in article cards.',
     }),
     defineField({
       name: 'coverImage',

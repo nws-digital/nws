@@ -13,8 +13,7 @@
 import {PortableText, type PortableTextComponents, type PortableTextBlock} from 'next-sanity'
 import Image from 'next/image'
 import {urlForImage} from '@/sanity/lib/utils'
-import dynamic from 'next/dynamic'
-const Tweet = dynamic(() => import('react-tweet').then(m => ({default: m.Tweet})), {ssr: false})
+import TweetEmbed from '@/app/components/TweetEmbed'
 import ResolvedLink from '@/app/components/ResolvedLink'
 
 export default function CustomPortableText({
@@ -136,13 +135,13 @@ export default function CustomPortableText({
         if (value.type === 'twitter') {
           // Use react-tweet for X/Twitter embeds
           // Extract tweet ID from URL
-          const match = value.url.match(/twitter.com\/.+\/status\/(\d+)/)
+          const match = value.url.match(/(?:twitter|x)\.com\/.+\/status\/(\d+)/)
           const tweetId = match ? match[1] : null
           if (!tweetId) return null
           return (
             <div className="my-8 max-w-full overflow-hidden flex justify-center">
               <div className="w-full max-w-xl">
-                <Tweet id={tweetId} />
+                <TweetEmbed id={tweetId} />
               </div>
             </div>
           )

@@ -48,8 +48,10 @@
   animation: scroll 90s linear infinite;
 }
 
-.animate-scroll:hover {
-  animation-play-state: paused;
+@media (hover: hover) {
+  .animate-scroll:hover {
+    animation-play-state: paused;
+  }
 }
 
 /* Article content font size customization */

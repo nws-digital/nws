@@ -1,7 +1,7 @@
 'use client'
 
 import {supabase, type RssArticle} from '@/lib/supabase'
-import {useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {motion} from 'framer-motion'
 import Link from 'next/link'
 
@@ -37,6 +37,9 @@ const getTimeAgo = (dateString: string) => {
 
 export function NewsTicker() {
   const [breakingNews, setBreakingNews] = useState<RssArticle[]>([])
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isPausedByLongPress = useRef(false)
 
   useEffect(() => {
     getAllNews().then((news) => {
@@ -45,6 +48,23 @@ export function NewsTicker() {
       setBreakingNews(validNews)
     })
   }, [])
+
+  const handleTouchStart = () => {
+    longPressTimer.current = setTimeout(() => {
+      if (scrollRef.current) {
+        scrollRef.current.style.animationPlayState = 'paused'
+        isPausedByLongPress.current = true
+      }
+    }, 500)
+  }
+
+  const handleTouchEnd = () => {
+    if (longPressTimer.current) clearTimeout(longPressTimer.current)
+    if (isPausedByLongPress.current && scrollRef.current) {
+      scrollRef.current.style.animationPlayState = 'running'
+      isPausedByLongPress.current = false
+    }
+  }
 
   return (
     <motion.div
@@ -59,7 +79,14 @@ export function NewsTicker() {
       <div className="relative bg-black/65 backdrop-blur rounded-b-3xl overflow-hidden flex-1">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black via-black/90 to-transparent/40 z-10" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black via-black/90 to-transparent/40 z-10" />
-        <div className="animate-scroll py-6">
+        <div
+          ref={scrollRef}
+          className={`${breakingNews.length > 0 ? 'animate-scroll' : ''} py-6 select-none`}
+          style={{WebkitTouchCallout: 'none'} as React.CSSProperties}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
+        >
           {[...breakingNews, ...breakingNews].map((news, index) => (
               <div key={`${news.id}-${index}`} className="px-6 py-3 cursor-pointer transition-colors hover:bg-white/10">
                 <h3 className="text-sm font-semibold mb-2 text-white">

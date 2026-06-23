@@ -9,6 +9,7 @@ import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './src/schemaTypes'
 import {structure} from './src/structure'
 import {publishWithDates} from './src/actions/publishWithDates'
+import {previewAction} from './src/actions/previewAction'
 import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
 import {
   presentationTool,
@@ -79,8 +80,8 @@ export default defineConfig({
             filter: `_type == "page" && slug.current == $slug || _id == $slug`,
           },
           {
-            route: '/posts/:slug',
-            filter: `_type == "article" && slug.current == $slug || _id == $slug`,
+            route: '/:category/:slug',
+            filter: `_type == "article" && slug.current == $slug`,
           },
         ]),
         // Locations Resolver API allows you to define where data is being used in your application. https://www.sanity.io/docs/presentation-resolver-api#8d8bca7bfcd7
@@ -108,17 +109,14 @@ export default defineConfig({
             select: {
               title: 'title',
               slug: 'slug.current',
+              category: 'category',
             },
             resolve: (doc) => ({
               locations: [
-                {
-                  title: doc?.title || 'Untitled',
-                  href: resolveHref('article', doc?.slug)!,
-                },
-                {
-                  title: 'Home',
-                  href: '/',
-                } satisfies DocumentLocation,
+                doc?.slug && doc?.category
+                  ? {title: doc.title || 'Untitled', href: `/${doc.category}/${doc.slug}`}
+                  : null,
+                {title: 'Home', href: '/'} satisfies DocumentLocation,
               ].filter(Boolean) as DocumentLocation[],
             }),
           }),
@@ -152,9 +150,11 @@ export default defineConfig({
     actions: (prev, context) => {
       // Only use custom publish action for articles
       if (context.schemaType === 'article') {
-        return prev.map((originalAction) =>
-          originalAction.action === 'publish' ? publishWithDates : originalAction
-        )
+        return [
+          publishWithDates,
+          previewAction,
+          ...prev.filter((a) => a.action !== 'publish'),
+        ]
       }
       return prev
     },

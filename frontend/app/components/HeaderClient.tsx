@@ -29,16 +29,15 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
         <div className="max-w-[1366px] container mx-auto px-4 md:px-6">
           <div className="flex items-center justify-between">
             {/* Logo/Title */}
-            <Link className="flex flex-col items-start" href="/" onClick={() => setSideMenuOpen(false)}>
-              <Image 
-                src="/images/Logo_Dark.svg" 
-                alt="NWS" 
-                width={136}
-                height={56}
-                className="h-8 md:h-10 w-auto"
+            <Link className="flex items-center" href="/" onClick={() => setSideMenuOpen(false)}>
+              <Image
+                src="/images/Logo_Dark.svg"
+                alt="NWS"
+                width={367}
+                height={200}
+                className="h-12 md:h-14 w-auto"
                 priority
               />
-              <p className="mt-0.5 text-[10px] text-gray-500">Powered by NWS Facts</p>
             </Link>
 
             {/* Navigation - Hidden on mobile, shown on desktop */}
@@ -46,17 +45,17 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
               <ul className="flex items-center gap-6 lg:gap-8 text-xs lg:text-sm font-bold uppercase tracking-wide text-black">
                 <li>
                   <Link href="/world-exclusive" className="hover:text-red-600 transition-colors">
-                    World Exclusive
+                    World
                   </Link>
                 </li>
                 <li>
                   <Link href="/india-exclusive" className="hover:text-red-600 transition-colors">
-                    India Exclusive
+                    India
                   </Link>
                 </li>
                 <li>
                   <Link href="/osint-exclusive" className="hover:text-red-600 transition-colors">
-                    OSINT Exclusive
+                    OSINT
                   </Link>
                 </li>
                               <li>

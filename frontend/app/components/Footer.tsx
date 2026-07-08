@@ -31,17 +31,17 @@ export default function Footer() {
             <ul className="space-y-2 text-gray-400 text-sm leading-relaxed">
               <li>
                 <Link href="/world-exclusive" className="hover:text-red-500 transition-colors">
-                  World Exclusive
+                  World
                 </Link>
               </li>
               <li>
                 <Link href="/india-exclusive" className="hover:text-red-500 transition-colors">
-                  India Exclusive
+                  India
                 </Link>
               </li>
               <li>
                 <Link href="/osint-exclusive" className="hover:text-red-500 transition-colors">
-                  OSINT Exclusive
+                  OSINT
                 </Link>
               </li>
               <li>

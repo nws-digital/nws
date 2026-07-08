@@ -27,9 +27,9 @@ interface CategoryArticlesListProps {
 }
 
 const categoryLabels: Record<string, string> = {
-  'world-exclusive': 'World Exclusive',
-  'india-exclusive': 'India Exclusive',
-  'osint-exclusive': 'OSINT Exclusive',
+  'world-exclusive': 'World',
+  'india-exclusive': 'India',
+  'osint-exclusive': 'OSINT',
   'commentary': 'Commentary',
 }
 

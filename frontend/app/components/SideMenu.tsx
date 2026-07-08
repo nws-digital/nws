@@ -49,12 +49,12 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
         {/* Header with Close Button */}
         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between z-10">
           <Link href="/" onClick={onClose}>
-            <Image 
-              src="/images/Logo_Dark.svg" 
-              alt="NWS" 
-              width={136}
-              height={56}
-              className="h-10 w-auto"
+            <Image
+              src="/images/Logo_Dark.svg"
+              alt="NWS"
+              width={367}
+              height={200}
+              className="h-14 w-auto"
             />
           </Link>
           <button 
@@ -86,26 +86,26 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
             transition={{delay: 0.1, duration: 0.3}}
             className="md:hidden space-y-2"
           >
-            <Link 
-              href="/world-exclusive" 
+            <Link
+              href="/world-exclusive"
               className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >
-              World Exclusive
+              World
             </Link>
-            <Link 
-              href="/india-exclusive" 
+            <Link
+              href="/india-exclusive"
               className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >
-              India Exclusive
+              India
             </Link>
-            <Link 
-              href="/osint-exclusive" 
+            <Link
+              href="/osint-exclusive"
               className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >
-              OSINT Exclusive
+              OSINT
             </Link>
             <Link 
               href="/commentary" 

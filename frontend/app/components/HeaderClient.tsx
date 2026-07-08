@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import {useState} from 'react'
+import {usePathname} from 'next/navigation'
 import SearchModal from '@/app/components/SearchModal'
 import SideMenu from '@/app/components/SideMenu'
 
@@ -22,6 +23,14 @@ interface HeaderClientProps {
 export default function HeaderClient({latestArticles}: HeaderClientProps) {
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [searchModalOpen, setSearchModalOpen] = useState(false)
+  const pathname = usePathname()
+
+  const navLinks = [
+    {href: '/world-exclusive', label: 'World'},
+    {href: '/india-exclusive', label: 'India'},
+    {href: '/osint-exclusive', label: 'OSINT'},
+    {href: '/commentary', label: 'Commentary'},
+  ]
 
   return (
     <>
@@ -43,28 +52,24 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
             {/* Navigation - Hidden on mobile, shown on desktop */}
             <nav className="hidden md:flex flex-1 justify-center">
               <ul className="flex items-center gap-6 lg:gap-8 text-xs lg:text-sm font-bold uppercase tracking-wide text-black">
-                <li>
-                  <Link href="/world-exclusive" className="hover:text-red-600 transition-colors">
-                    World
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/india-exclusive" className="hover:text-red-600 transition-colors">
-                    India
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/osint-exclusive" className="hover:text-red-600 transition-colors">
-                    OSINT
-                  </Link>
-                </li>
-                              <li>
-                                <Link href="/commentary" className="hover:text-red-600 transition-colors">
-                                  Commentary
-                                </Link>
-                              </li>
-                            </ul>
-                          </nav>
+                {navLinks.map(({href, label}) => {
+                  const isActive = pathname === href
+                  return (
+                    <li key={href}>
+                      <Link
+                        href={href}
+                        className="relative pb-1 transition-colors hover:text-red-600"
+                      >
+                        {label}
+                        {isActive && (
+                          <span className="absolute bottom-0 left-0 w-full h-0.25 bg-gray-300 rounded-full" />
+                        )}
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            </nav>
                 
                           {/* Right side buttons */}
                           <div className="flex items-center gap-2">

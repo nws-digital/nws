@@ -109,9 +109,16 @@ export default async function Page(props: Props) {
             )}
           </div>
 
-          {/* Page Builder Content */}
+          {/* Page Content */}
           <div className="w-full">
-            <PageBuilder page={page} />
+            {(page as any).rawHtml ? (
+              <div
+                className="prose prose-gray max-w-none"
+                dangerouslySetInnerHTML={{__html: (page as any).rawHtml}}
+              />
+            ) : (
+              <PageBuilder page={page} />
+            )}
           </div>
         </div>
       </div>

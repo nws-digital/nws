@@ -59,6 +59,13 @@ export const page = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'rawHtml',
+      title: 'Custom HTML',
+      type: 'text',
+      description: 'Paste raw HTML here. If filled, this will be used instead of the Page Builder below.',
+      rows: 20,
+    }),
+    defineField({
       name: 'pageBuilder',
       title: 'Page builder',
       type: 'array',

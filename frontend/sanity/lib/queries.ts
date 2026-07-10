@@ -151,6 +151,7 @@ export const getPageQuery = defineQuery(`
     slug,
     heading,
     subheading,
+    rawHtml,
     "pageBuilder": pageBuilder[]{
       ...,
       _type == "callToAction" => {

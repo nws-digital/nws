@@ -1,0 +1,145 @@
+import './globals.css'
+
+import {SpeedInsights} from '@vercel/speed-insights/next'
+import type {Metadata} from 'next'
+import {Inter} from 'next/font/google'
+import {draftMode} from 'next/headers'
+import {VisualEditing, toPlainText} from 'next-sanity'
+import {Toaster} from 'sonner'
+import Script from 'next/script'
+
+import DraftModeToast from '@/app/components/DraftModeToast'
+import Footer from '@/app/components/Footer'
+import HeaderWrapper from '@/app/components/HeaderWrapper'
+import {ContentProtection} from '@/app/components/ContentProtection'
+import * as demo from '@/sanity/lib/demo'
+import {sanityFetch, SanityLive} from '@/sanity/lib/live'
+import {settingsQuery} from '@/sanity/lib/queries'
+import {resolveOpenGraphImage} from '@/sanity/lib/utils'
+import {handleError} from './client-utils'
+
+function getMetadataBase() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL
+  if (configured) {
+    const normalized = configured.startsWith('http') ? configured : `https://${configured}`
+    try {
+      return new URL(normalized)
+    } catch {
+      return undefined
+    }
+  }
+
+  return process.env.NODE_ENV === 'development' ? new URL('http://localhost:3000') : undefined
+}
+
+/**
+ * Generate metadata for the page.
+ * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const {data: settings} = await sanityFetch({
+    query: settingsQuery,
+    // Metadata should never contain stega
+    stega: false,
+  })
+  const title = settings?.title || demo.title
+  const description = settings?.description || demo.description
+
+  const metadataBase = getMetadataBase()
+  const settingsOgImage = resolveOpenGraphImage(settings?.ogImage)
+  const fallbackImage = {
+    url: '/images/tile-1-black.png',
+    alt: title,
+    width: 1200,
+    height: 630,
+  }
+  // Home page uses Site Settings OG image when available.
+  const images = settingsOgImage ? [settingsOgImage] : [fallbackImage]
+
+  return {
+    metadataBase,
+    title: {
+      template: `%s | ${title}`,
+      default: title,
+    },
+    description: toPlainText(description),
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
+      },
+    },
+    openGraph: {
+      title,
+      description: toPlainText(description),
+      type: 'website',
+      images,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: toPlainText(description),
+      images,
+    },
+  }
+}
+
+const inter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+export default async function RootLayout({children}: {children: React.ReactNode}) {
+  const {isEnabled: isDraftMode} = await draftMode()
+
+  return (
+    <html lang="en" className={`${inter.variable} bg-white text-black`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+      </head>
+      <body>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-1EDSXK0SJX"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-1EDSXK0SJX');
+          `}
+        </Script>
+
+        {/* Content Protection - Prevents copying, right-click, and keyboard shortcuts */}
+        <ContentProtection />
+        <section className="min-h-screen">
+          {/* The <Toaster> component is responsible for rendering toast notifications used in /app/client-utils.ts and /app/components/DraftModeToast.tsx */}
+          <Toaster />
+          {isDraftMode && (
+            <>
+              <DraftModeToast />
+              {/*  Enable Visual Editing, only to be rendered when Draft Mode is enabled */}
+              <VisualEditing />
+            </>
+          )}
+          {/* The <SanityLive> component is responsible for making all sanityFetch calls in your application live, so should always be rendered. */}
+          <SanityLive onError={handleError} />
+          <HeaderWrapper />
+          <main>{children}</main>
+          <Footer />
+        </section>
+        <SpeedInsights />
+      </body>
+    </html>
+  )
+}

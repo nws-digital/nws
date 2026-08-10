@@ -1,0 +1,39 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+jobs:
+  deploy-studio:
+    name: Deploy Studio (Staging)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      
+      - name: Install dependencies
+        run: |
+          cd studio
+          npm ci
+      
+      - name: Build Studio
+        run: |
+          cd studio
+          npm run build
+      
+      - name: Deploy to Sanity
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: |
+          cd studio
+          npx sanity deploy --config sanity.config.staging.ts --no-build

@@ -40,9 +40,9 @@ export const article = defineType({
       type: 'string',
       options: {
         list: [
-          {title: 'World Exclusive', value: 'world-exclusive'},
-          {title: 'India Exclusive', value: 'india-exclusive'},
-          {title: 'OSINT Exclusive', value: 'osint-exclusive'},
+          {title: 'World Exclusive', value: 'world'},
+          {title: 'India Exclusive', value: 'india'},
+          {title: 'OSINT Exclusive', value: 'osint'},
           {title: 'Commentary', value: 'commentary'},
         ],
         layout: 'radio',

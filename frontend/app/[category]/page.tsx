@@ -5,9 +5,9 @@ import {categoryArticlesQuery, categoryArticlesCountQuery, commentaryArticlesPag
 import {sanityFetch} from '@/sanity/lib/live'
 
 const validCategories = [
-  'world-exclusive',
-  'india-exclusive',
-  'osint-exclusive',
+  'world',
+  'india',
+  'osint',
   'commentary',
 ]
 

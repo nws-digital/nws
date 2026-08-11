@@ -37,8 +37,8 @@ export const SOCIAL_ICONS: Record<string, {viewBox: string; path: string}> = {
 }
 
 export const CATEGORY_LABELS: Record<string, string> = {
-  'world-exclusive': 'World',
-  'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
+  'world': 'World',
+  'india': 'India',
+  'osint': 'OSINT',
   'commentary': 'Commentary',
 } as const

@@ -23,9 +23,9 @@ interface FeaturedArticleProps {
 }
 
 const categoryLabels: Record<string, string> = {
-  'world-exclusive': 'World',
-  'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
+  'world': 'World',
+  'india': 'India',
+  'osint': 'OSINT',
   'commentary': 'Commentary',
 }
 

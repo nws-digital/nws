@@ -46,16 +46,16 @@ type ArticlePost = {
 }
 
 const validCategories = [
-  'world-exclusive',
-  'india-exclusive',
-  'osint-exclusive',
+  'world',
+  'india',
+  'osint',
   'commentary',
 ]
 
 const categoryLabels: Record<string, string> = {
-  'world-exclusive': 'World',
-  'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
+  'world': 'World',
+  'india': 'India',
+  'osint': 'OSINT',
   'commentary': 'Commentary',
 
 }

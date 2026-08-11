@@ -24,9 +24,9 @@ interface LatestArticlesProps {
 }
 
 const categoryLabels: Record<string, string> = {
-  'world-exclusive': 'World',
-  'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
+  'world': 'World',
+  'india': 'India',
+  'osint': 'OSINT',
   'commentary': 'Commentary',
 }
 
@@ -52,9 +52,9 @@ export function LatestArticles({articles}: LatestArticlesProps) {
   const displayArticles = articles.filter(article => article.slug?.current).slice(0, 6)
 
   const dropdownOptions = [
-    {label: 'World', href: '/world-exclusive'},
-    {label: 'India', href: '/india-exclusive'},
-    {label: 'OSINT', href: '/osint-exclusive'},
+    {label: 'World', href: '/world'},
+    {label: 'India', href: '/india'},
+    {label: 'OSINT', href: '/osint'},
   ]
 
   useEffect(() => {

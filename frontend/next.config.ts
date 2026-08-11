@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+async redirects() {
+    return [
+      { source: '/world-exclusive', destination: '/world', permanent: true },
+      { source: '/world-exclusive/:slug', destination: '/world/:slug', permanent: true },
+      { source: '/india-exclusive', destination: '/india', permanent: true },
+      { source: '/india-exclusive/:slug', destination: '/india/:slug', permanent: true },
+      { source: '/osint-exclusive', destination: '/osint', permanent: true },
+      { source: '/osint-exclusive/:slug', destination: '/osint/:slug', permanent: true },
+    ]
+  },
   async headers() {
     return [
       {

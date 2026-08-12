@@ -3,13 +3,10 @@ import {CategoryArticlesList} from '@/app/components/CategoryArticlesList'
 import {CommentaryArticlesList} from '@/app/components/CommentaryArticlesList'
 import {categoryArticlesQuery, categoryArticlesCountQuery, commentaryArticlesPageQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
+import {URL_SLUG_TO_CATEGORY} from '@/lib/constants'
 
-const validCategories = [
-  'world-exclusive',
-  'india-exclusive',
-  'osint-exclusive',
-  'commentary',
-]
+// URL-facing slugs (what visitors see and what generateStaticParams builds)
+const validCategories = Object.keys(URL_SLUG_TO_CATEGORY)
 
 interface CategoryPageProps {
   params: Promise<{
@@ -24,12 +21,15 @@ export async function generateStaticParams() {
 }
 
 export default async function CategoryPage({params}: CategoryPageProps) {
-  const {category} = await params
+  const {category: urlCategory} = await params
 
-  // Validate category
-  if (!validCategories.includes(category)) {
+  // Validate the URL-facing slug
+  if (!validCategories.includes(urlCategory)) {
     notFound()
   }
+
+  // Translate back to the raw value stored in Sanity for querying
+  const category = URL_SLUG_TO_CATEGORY[urlCategory]
 
   // Commentary page uses different query and component
   if (category === 'commentary') {

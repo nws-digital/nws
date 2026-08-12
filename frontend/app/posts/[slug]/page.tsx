@@ -2,6 +2,7 @@ import type {Metadata} from 'next'
 import {notFound} from 'next/navigation'
 import {type PortableTextBlock} from 'next-sanity'
 import {Suspense} from 'react'
+import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
 
 import Avatar from '@/app/components/Avatar'
 import CoverImage from '@/app/components/CoverImage'
@@ -162,7 +163,7 @@ export default async function PostPage(props: Props) {
               {label: 'Home', href: '/'},
               ...(categoryLabel && post.category ? [{
                 label: categoryLabel, 
-                href: `/category/${post.category}`
+                href: `/category/${cleanCategorySlug(post.category)}`
               }] : []),
               {label: articleSlug},
             ]}

@@ -7,6 +7,7 @@ import {formatDistanceToNow} from 'date-fns'
 import {motion} from 'framer-motion'
 import {urlForImage} from '@/sanity/lib/utils'
 import {loadMoreArticles} from '@/app/actions/articles'
+import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
 
 interface Article {
@@ -100,7 +101,7 @@ export function CategoryArticlesList({
               transition={{type: 'spring', stiffness: 300}}
             >
               <Link
-                href={`/${category}/${article.slug.current}`}
+                href={`/${cleanCategorySlug(category)}/${article.slug.current}`}
                 className="group flex flex-col bg-white rounded-lg overflow-hidden h-full border border-gray-200"
               >
                 {/* Cover Image */}

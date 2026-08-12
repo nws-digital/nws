@@ -87,21 +87,21 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
             className="md:hidden space-y-2"
           >
             <Link
-              href="/world-exclusive"
+              href="/world"
               className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >
               World
             </Link>
             <Link
-              href="/india-exclusive"
+              href="/india"
               className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >
               India
             </Link>
             <Link
-              href="/osint-exclusive"
+              href="/osint"
               className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >

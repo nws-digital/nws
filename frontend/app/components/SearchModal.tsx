@@ -333,7 +333,7 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
                   return (
                     <Link
                       key={result._id}
-                      href={`/${result.category}/${result.slug.current}`}
+                      href={`/${cleanCategorySlug(result.category)}/${result.slug.current}`}
                       onClick={onClose}
                       className="flex gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group"
                     >

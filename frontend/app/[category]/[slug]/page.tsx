@@ -13,6 +13,7 @@ import {sanityFetch} from '@/sanity/lib/live'
 import {postQuery, allPostsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 import * as demo from '@/sanity/lib/demo'
+import {CATEGORY_TO_URL_SLUG, URL_SLUG_TO_CATEGORY} from '@/lib/constants'
 
 type Props = {
   params: Promise<{
@@ -45,12 +46,8 @@ type ArticlePost = {
   coAuthor?: ArticleAuthor | null
 }
 
-const validCategories = [
-  'world-exclusive',
-  'india-exclusive',
-  'osint-exclusive',
-  'commentary',
-]
+// URL-facing slugs (what visitors see in the address bar)
+const validCategories = Object.keys(URL_SLUG_TO_CATEGORY)
 
 const categoryLabels: Record<string, string> = {
   'world-exclusive': 'World',
@@ -91,9 +88,9 @@ export async function generateStaticParams() {
   })
   
   const params = (data || [])
-    .filter((post: any) => post.category && validCategories.includes(post.category))
+    .filter((post: any) => post.category && CATEGORY_TO_URL_SLUG[post.category])
     .map((post: any) => ({
-      category: post.category,
+      category: CATEGORY_TO_URL_SLUG[post.category],
       slug: post.slug,
     }))
   
@@ -166,21 +163,25 @@ export default async function ArticlePage(props: Props) {
     return notFound()
   }
 
-  // Normalize and compare categories (trim whitespace and invisible characters)
+  // Normalize and compare categories (trim whitespace and invisible characters).
+  // post.category is the raw value stored in Sanity (e.g. "india-exclusive");
+  // params.category is the clean URL-facing slug (e.g. "india") - translate
+  // the raw value to its URL slug before comparing.
   const normalizedPostCategory = post.category?.trim().replace(/[\u200B-\u200D\uFEFF]/g, '')
+  const normalizedPostCategoryUrlSlug = normalizedPostCategory ? CATEGORY_TO_URL_SLUG[normalizedPostCategory] : undefined
   const normalizedParamsCategory = params.category.trim()
-  
-  if (normalizedPostCategory !== normalizedParamsCategory) {
+
+  if (normalizedPostCategoryUrlSlug !== normalizedParamsCategory) {
     console.log('Category mismatch:', {
       urlCategory: params.category,
       articleCategory: post.category,
-      normalizedArticleCategory: normalizedPostCategory,
+      normalizedArticleCategoryUrlSlug: normalizedPostCategoryUrlSlug,
       slug: params.slug
     })
     notFound()
   }
 
-  const categoryLabel = categoryLabels[params.category] || params.category
+  const categoryLabel = categoryLabels[URL_SLUG_TO_CATEGORY[params.category]] || params.category
 
   const authorForAvatar = post.author
     ? {

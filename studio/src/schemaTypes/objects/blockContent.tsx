@@ -1,5 +1,6 @@
 import {defineArrayMember, defineType, defineField} from 'sanity'
 import {embed} from './embed'
+import {urlForCroppedThumbnail} from '../../lib/imageUrl'
 
 /**
  * This is the schema definition for the rich text fields used for
@@ -115,6 +116,26 @@ export const blockContent = defineType({
           description: 'Optional caption displayed below the image.',
         }),
       ],
+      // Studio's default preview for this block shows the full original
+      // asset, ignoring the saved crop. Render the thumbnail ourselves via
+      // @sanity/image-url, which does apply crop/hotspot, so the editor
+      // matches what actually gets rendered on the frontend.
+      preview: {
+        select: {
+          asset: 'asset',
+          crop: 'crop',
+          hotspot: 'hotspot',
+          alt: 'alt',
+          caption: 'caption',
+        },
+        prepare({asset, crop, hotspot, alt, caption}) {
+          const url = asset ? urlForCroppedThumbnail({asset, crop, hotspot}) : undefined
+          return {
+            title: caption || alt || 'Image',
+            media: url ? <img src={url} alt={alt || ''} /> : undefined,
+          }
+        },
+      },
     }),
     // Add embed support
     defineArrayMember({

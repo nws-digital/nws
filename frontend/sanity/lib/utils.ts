@@ -38,6 +38,50 @@ export const urlForImage = (source: any) => {
   return imageBuilder?.image(source).auto('format')
 }
 
+/**
+ * Returns the image's displayed width/height after the editor's saved crop
+ * (or the full asset size if uncropped) - i.e. the actual aspect ratio that
+ * should be preserved when rendering without any further forced cropping.
+ */
+export const getImageDisplayDimensions = (source: any) => {
+  if (!source?.asset?._ref) {
+    return undefined
+  }
+
+  const {width, height} = getImageDimensions(source.asset._ref)
+  const crop = source.crop
+
+  if (!crop) {
+    return {width, height}
+  }
+
+  return {
+    width: Math.floor(width * (1 - (crop.right + crop.left))),
+    height: Math.floor(height * (1 - (crop.top + crop.bottom))),
+  }
+}
+
+/**
+ * Scales the image's cropped aspect ratio DOWN to fit within a
+ * maxWidth x maxHeight box on whichever axis is the tighter constraint,
+ * without cropping - i.e. `object-fit: contain` math, capped at 1x. Sources
+ * already smaller than the box in both dimensions are left at their natural
+ * size (never upscaled).
+ */
+export const getContainedImageDimensions = (source: any, maxWidth: number, maxHeight: number) => {
+  const natural = getImageDisplayDimensions(source)
+  if (!natural || !natural.width || !natural.height) {
+    return undefined
+  }
+
+  const scale = Math.min(1, maxWidth / natural.width, maxHeight / natural.height)
+
+  return {
+    width: Math.round(natural.width * scale),
+    height: Math.round(natural.height * scale),
+  }
+}
+
 export function resolveOpenGraphImage(image: any, width = 1200, height = 630) {
   if (!image) return
   const imageRef = image?.asset?._ref as string | undefined

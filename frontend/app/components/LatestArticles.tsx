@@ -6,13 +6,13 @@ import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
 import {motion, AnimatePresence} from 'framer-motion'
 import {urlForImage} from '@/sanity/lib/utils'
-import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 
 interface LatestArticle {
   _id: string
   title: string
   slug: {current: string}
-  excerpt?: string
+  excerpt?: string | null
   contentPreview?: string
   date: string
   category?: string
@@ -52,9 +52,9 @@ export function LatestArticles({articles}: LatestArticlesProps) {
   const displayArticles = articles.filter(article => article.slug?.current).slice(0, 6)
 
   const dropdownOptions = [
-    {label: 'World', href: '/world-exclusive'},
-    {label: 'India', href: '/india-exclusive'},
-    {label: 'OSINT', href: '/osint-exclusive'},
+    {label: 'World', href: '/world'},
+    {label: 'India', href: '/india'},
+    {label: 'OSINT', href: '/osint'},
   ]
 
   useEffect(() => {
@@ -184,7 +184,7 @@ export function LatestArticles({articles}: LatestArticlesProps) {
                 transition={{type: 'spring', stiffness: 300}}
               >
                 <Link
-                  href={`/${article.category ? cleanCategorySlug(article.category) : 'posts'}/${article.slug.current}`}
+                  href={`/${article.category ? categoryToUrlSlug(article.category) : 'posts'}/${article.slug.current}`}
                   className="flex flex-col h-full"
                 >
                   {/* Cover Image */}

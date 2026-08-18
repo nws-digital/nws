@@ -3,13 +3,11 @@ import {CategoryArticlesList} from '@/app/components/CategoryArticlesList'
 import {CommentaryArticlesList} from '@/app/components/CommentaryArticlesList'
 import {categoryArticlesQuery, categoryArticlesCountQuery, commentaryArticlesPageQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
+import {urlSlugToCategory} from '@/sanity/lib/cleanCategorySlug'
+import {withDefinedSlug} from '@/sanity/lib/utils'
 
-const validCategories = [
-  'world-exclusive',
-  'india-exclusive',
-  'osint-exclusive',
-  'commentary',
-]
+// URL segment values (short form) -- the underlying Sanity `category` field is unchanged.
+const validCategorySlugs = ['world', 'india', 'osint', 'commentary']
 
 interface CategoryPageProps {
   params: Promise<{
@@ -18,18 +16,19 @@ interface CategoryPageProps {
 }
 
 export async function generateStaticParams() {
-  return validCategories.map((category) => ({
+  return validCategorySlugs.map((category) => ({
     category,
   }))
 }
 
 export default async function CategoryPage({params}: CategoryPageProps) {
-  const {category} = await params
+  const {category: categorySlug} = await params
 
-  // Validate category
-  if (!validCategories.includes(category)) {
+  // Validate category and resolve the short URL slug back to the Sanity category value
+  if (!validCategorySlugs.includes(categorySlug)) {
     notFound()
   }
+  const category = urlSlugToCategory(categorySlug)!
 
   // Commentary page uses different query and component
   if (category === 'commentary') {
@@ -49,7 +48,7 @@ export default async function CategoryPage({params}: CategoryPageProps) {
     return (
       <div className="pt-20 min-h-screen bg-gray-50">
         <CommentaryArticlesList
-          initialArticles={articles || []}
+          initialArticles={withDefinedSlug(articles || [])}
           totalCount={totalCount || 0}
         />
       </div>
@@ -74,8 +73,9 @@ export default async function CategoryPage({params}: CategoryPageProps) {
   return (
     <div className="pt-20 min-h-screen bg-gray-50">
       <CategoryArticlesList
-        initialArticles={articles || []}
+        initialArticles={withDefinedSlug(articles || [])}
         category={category}
+        categorySlug={categorySlug}
         totalCount={totalCount || 0}
       />
     </div>

@@ -12,6 +12,7 @@ import {ShareArticle} from '@/app/components/ShareArticle'
 import {sanityFetch} from '@/sanity/lib/live'
 import {postQuery, allPostsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
+import {categoryToUrlSlug, urlSlugToCategory} from '@/sanity/lib/cleanCategorySlug'
 import * as demo from '@/sanity/lib/demo'
 
 type Props = {
@@ -45,19 +46,14 @@ type ArticlePost = {
   coAuthor?: ArticleAuthor | null
 }
 
-const validCategories = [
-  'world-exclusive',
-  'india-exclusive',
-  'osint-exclusive',
-  'commentary',
-]
+// URL segment values (short form) -- the underlying Sanity `category` field is unchanged.
+const validCategories = ['world', 'india', 'osint', 'commentary']
 
 const categoryLabels: Record<string, string> = {
-  'world-exclusive': 'World',
-  'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
-  'commentary': 'Commentary',
-
+  world: 'World',
+  india: 'India',
+  osint: 'OSINT',
+  commentary: 'Commentary',
 }
 
 function getMetadataBaseForArticle() {
@@ -91,12 +87,12 @@ export async function generateStaticParams() {
   })
   
   const params = (data || [])
-    .filter((post: any) => post.category && validCategories.includes(post.category))
+    .filter((post: any) => post.category && validCategories.includes(categoryToUrlSlug(post.category)))
     .map((post: any) => ({
-      category: post.category,
+      category: categoryToUrlSlug(post.category),
       slug: post.slug,
     }))
-  
+
   return params
 }
 
@@ -166,13 +162,16 @@ export default async function ArticlePage(props: Props) {
     return notFound()
   }
 
-  // Normalize and compare categories (trim whitespace and invisible characters)
+  // Normalize and compare categories (trim whitespace and invisible characters).
+  // params.category is the short URL slug (e.g. "world"); map it back to the
+  // full Sanity category value (e.g. "world-exclusive") before comparing.
   const normalizedPostCategory = post.category?.trim().replace(/[\u200B-\u200D\uFEFF]/g, '')
-  const normalizedParamsCategory = params.category.trim()
-  
+  const normalizedParamsCategory = urlSlugToCategory(params.category)
+
   if (normalizedPostCategory !== normalizedParamsCategory) {
     console.log('Category mismatch:', {
       urlCategory: params.category,
+      resolvedCategory: normalizedParamsCategory,
       articleCategory: post.category,
       normalizedArticleCategory: normalizedPostCategory,
       slug: params.slug

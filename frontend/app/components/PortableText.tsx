@@ -122,7 +122,7 @@ export default function CustomPortableText({
                 width={dims.width}
                 height={dims.height}
                 sizes={`(max-width: 768px) 100vw, ${dims.width}px`}
-                className="rounded-lg"
+                // className="rounded-lg"
                 // width:auto/height:auto (e.g. via Tailwind's w-auto/h-auto)
                 // only holds until the image decodes - once real pixel data
                 // arrives, browsers size a plain <img> to ITS OWN natural

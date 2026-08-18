@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
 import {motion} from 'framer-motion'
-import {urlForImage} from '@/sanity/lib/utils'
+import {urlForImage, withDefinedSlug} from '@/sanity/lib/utils'
 import {loadMoreCommentaryArticles} from '@/app/actions/articles'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
 import Avatar from '@/app/components/Avatar'
@@ -14,21 +14,21 @@ interface CommentaryArticle {
   _id: string
   title: string
   slug: {current: string}
-  excerpt?: string
+  excerpt?: string | null
   contentPreview?: string
   date: string
   author?: {
     firstName: string
     lastName: string
-    designation?: string
+    designation?: string | null
     picture?: any
   }
   coAuthor?: {
     firstName: string
     lastName: string
-    designation?: string
+    designation?: string | null
     picture?: any
-  }
+  } | null
 }
 
 interface CommentaryArticlesListProps {
@@ -51,7 +51,7 @@ export function CommentaryArticlesList({
     try {
       const newArticles = await loadMoreCommentaryArticles(offset, offset + 12)
 
-      setArticles([...articles, ...newArticles])
+      setArticles([...articles, ...withDefinedSlug(newArticles)])
       setOffset(offset + 12)
     } catch (error) {
       console.error('Error loading more articles:', error)

@@ -9,23 +9,23 @@ interface CommentaryArticle {
   _id: string
   title: string
   slug: {current: string}
-  excerpt?: string
+  excerpt?: string | null
   contentPreview?: string
   date: string
   author?: {
     firstName: string
     lastName: string
-    designation?: string
+    designation?: string | null
     picture?: any
     bio?: any
   }
   coAuthor?: {
     firstName: string
     lastName: string
-    designation?: string
+    designation?: string | null
     picture?: any
     bio?: any
-  }
+  } | null
 }
 
 interface CommentarySectionProps {

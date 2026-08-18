@@ -7,7 +7,7 @@ import {formatDistanceToNow} from 'date-fns'
 import {sanityFetch} from '@/sanity/lib/live'
 import {authorByIdQuery, authorArticlesQuery} from '@/sanity/lib/queries'
 import {urlForImage} from '@/sanity/lib/utils'
-import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 
 type Props = {
   params: Promise<{id: string}>
@@ -101,7 +101,7 @@ export default async function AuthorPage(props: Props) {
               {(articles as any[]).map((article) => {
                 const coverBuilder = article.coverImage ? urlForImage(article.coverImage) : null
                 const coverImageUrl = coverBuilder?.width(600).height(400).fit('crop').url()
-                const categorySlug = article.category ? cleanCategorySlug(article.category) : 'posts'
+                const categorySlug = article.category ? categoryToUrlSlug(article.category) : 'posts'
                 const categoryLabel = article.category ? (categoryLabels[article.category] || article.category) : ''
                 const timeAgo = article.date
                   ? formatDistanceToNow(new Date(article.date), {addSuffix: true})

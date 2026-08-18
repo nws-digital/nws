@@ -132,7 +132,7 @@ const postFields = /* groq */ `
 const linkReference = /* groq */ `
   _type == "link" => {
     "page": page->slug.current,
-    "article": article->slug.current
+    "article": article->{"slug": slug.current, category}
   }
 `
 
@@ -175,6 +175,7 @@ export const sitemapData = defineQuery(`
     "slug": slug.current,
     _type,
     _updatedAt,
+    category,
   }
 `)
 

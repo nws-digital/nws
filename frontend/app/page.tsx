@@ -2,7 +2,6 @@ import {Suspense} from 'react'
 import Link from 'next/link'
 import {PortableText} from '@portabletext/react'
 
-import {AllPosts} from '@/app/components/Posts'
 import GetStartedCode from '@/app/components/GetStartedCode'
 import SideBySideIcons from '@/app/components/SideBySideIcons'
 import {NewsTicker} from '@/app/components/NewsTicker'
@@ -12,6 +11,7 @@ import {CommentarySection} from '@/app/components/CommentarySection'
 import {LatestArticles} from '@/app/components/LatestArticles'
 import {settingsQuery, featuredArticlesQuery, commentaryArticlesQuery, latestArticlesQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
+import {withDefinedSlug} from '@/sanity/lib/utils'
 
 export default async function Page() {
   const {data: settings} = await sanityFetch({
@@ -73,7 +73,7 @@ export default async function Page() {
       </div>
 
       {/* Latest Articles Section */}
-      <LatestArticles articles={latestArticles || []} />
+      <LatestArticles articles={withDefinedSlug(latestArticles || [])} />
 
       {/* Separator */}
       <div className="bg-gray-50 pt-12">
@@ -83,15 +83,7 @@ export default async function Page() {
       </div>
 
       {/* Commentary Section */}
-      <CommentarySection articles={commentaryArticles || []} />
-
-      {/* <div className="border-t border-gray-100 bg-gray-50">
-        <div className="max-w-[1366px] mx-auto px-4">
-          <aside className="py-12 sm:py-20"> */}
-            {/* <Suspense>{await AllPosts()}</Suspense> */}
-          {/* </aside>
-        </div>
-      </div> */}
+      <CommentarySection articles={withDefinedSlug(commentaryArticles || [])} />
     </>
   )
 }

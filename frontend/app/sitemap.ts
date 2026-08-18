@@ -1,6 +1,7 @@
 import {MetadataRoute} from 'next'
 import {sanityFetch} from '@/sanity/lib/live'
 import {sitemapData} from '@/sanity/lib/queries'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 
 function getBaseUrl() {
   const configured = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL
@@ -52,7 +53,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       | undefined
     let url: string
 
-    for (const p of allPostsAndPages.data as Array<{_type: string; slug: string; _updatedAt: string}>) {
+    for (const p of allPostsAndPages.data as Array<{
+      _type: string
+      slug: string
+      _updatedAt: string
+      category?: string
+    }>) {
       switch (p._type) {
         case 'page':
           priority = 0.8
@@ -60,9 +66,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           url = new URL(`/${p.slug}`, baseUrl).toString()
           break
         case 'article':
+          if (!p.category) continue
           priority = 0.7
           changeFrequency = 'daily'
-          url = new URL(`/posts/${p.slug}`, baseUrl).toString()
+          url = new URL(`/${categoryToUrlSlug(p.category)}/${p.slug}`, baseUrl).toString()
           break
         default:
           continue

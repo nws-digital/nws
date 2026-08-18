@@ -26,9 +26,9 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
   const pathname = usePathname()
 
   const navLinks = [
-    {href: '/world-exclusive', label: 'World'},
-    {href: '/india-exclusive', label: 'India'},
-    {href: '/osint-exclusive', label: 'OSINT'},
+    {href: '/world', label: 'World'},
+    {href: '/india', label: 'India'},
+    {href: '/osint', label: 'OSINT'},
     {href: '/commentary', label: 'Commentary'},
   ]
 

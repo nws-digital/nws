@@ -4,7 +4,7 @@ import {useEffect, useRef, useState, useCallback} from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {urlForImage} from '@/sanity/lib/utils'
-import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 
 interface FeaturedArticle {
   _id: string
@@ -74,7 +74,7 @@ export function FeaturedCarousel({articles}: FeaturedCarouselProps) {
             style={{opacity: i === current ? 1 : 0, pointerEvents: i === current ? 'auto' : 'none'}}
           >
             <Link
-              href={`/${cleanCategorySlug(article.category || '')}/${article.slug.current}`}
+              href={`/${categoryToUrlSlug(article.category || '')}/${article.slug.current}`}
               className="group block w-full h-full relative overflow-hidden shadow-2xl"
             >
               {/* Image */}

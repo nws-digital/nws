@@ -8,6 +8,7 @@ import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './src/schemaTypes'
 import {structure} from './src/structure'
 import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
+import {previewAction} from './src/actions/previewAction'
 import {
   presentationTool,
   defineDocuments,
@@ -28,8 +29,6 @@ const homeLocation = {
 
 function resolveHref(documentType?: string, slug?: string): string | undefined {
   switch (documentType) {
-    case 'article':
-      return slug ? `/posts/${slug}` : undefined
     case 'page':
       return slug ? `/${slug}` : undefined
     default:
@@ -63,8 +62,8 @@ export default defineConfig({
             filter: `_type == "page" && slug.current == $slug || _id == $slug`,
           },
           {
-            route: '/posts/:slug',
-            filter: `_type == "article" && slug.current == $slug || _id == $slug`,
+            route: '/:category/:slug',
+            filter: `_type == "article" && slug.current == $slug`,
           },
         ]),
         locations: {
@@ -91,17 +90,14 @@ export default defineConfig({
             select: {
               title: 'title',
               slug: 'slug.current',
+              category: 'category',
             },
             resolve: (doc) => ({
               locations: [
-                {
-                  title: doc?.title || 'Untitled',
-                  href: resolveHref('article', doc?.slug)!,
-                },
-                {
-                  title: 'Home',
-                  href: '/',
-                } satisfies DocumentLocation,
+                doc?.slug && doc?.category
+                  ? {title: doc.title || 'Untitled', href: `/${doc.category}/${doc.slug}`}
+                  : null,
+                {title: 'Home', href: '/'} satisfies DocumentLocation,
               ].filter(Boolean) as DocumentLocation[],
             }),
           }),
@@ -116,5 +112,14 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
+  },
+
+  document: {
+    actions: (prev, context) => {
+      if (context.schemaType === 'article') {
+        return [...prev, previewAction]
+      }
+      return prev
+    },
   },
 })

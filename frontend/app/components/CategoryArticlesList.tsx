@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
 import {motion} from 'framer-motion'
-import {urlForImage} from '@/sanity/lib/utils'
+import {urlForImage, withDefinedSlug} from '@/sanity/lib/utils'
 import {loadMoreArticles} from '@/app/actions/articles'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
 
@@ -13,7 +13,7 @@ interface Article {
   _id: string
   title: string
   slug: {current: string}
-  excerpt?: string
+  excerpt?: string | null
   contentPreview?: string
   date: string
   category?: string
@@ -23,6 +23,7 @@ interface Article {
 interface CategoryArticlesListProps {
   initialArticles: Article[]
   category: string
+  categorySlug: string
   totalCount: number
 }
 
@@ -36,6 +37,7 @@ const categoryLabels: Record<string, string> = {
 export function CategoryArticlesList({
   initialArticles,
   category,
+  categorySlug,
   totalCount,
 }: CategoryArticlesListProps) {
   const [articles, setArticles] = useState<Article[]>(initialArticles)
@@ -49,7 +51,7 @@ export function CategoryArticlesList({
     try {
       const newArticles = await loadMoreArticles(category, offset, offset + 12)
 
-      setArticles([...articles, ...newArticles])
+      setArticles([...articles, ...withDefinedSlug(newArticles)])
       setOffset(offset + 12)
     } catch (error) {
       console.error('Error loading more articles:', error)
@@ -100,7 +102,7 @@ export function CategoryArticlesList({
               transition={{type: 'spring', stiffness: 300}}
             >
               <Link
-                href={`/${category}/${article.slug.current}`}
+                href={`/${categorySlug}/${article.slug.current}`}
                 className="group flex flex-col bg-white rounded-lg overflow-hidden h-full border border-gray-200"
               >
                 {/* Cover Image */}

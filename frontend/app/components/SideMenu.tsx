@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
 import {urlForImage} from '@/sanity/lib/utils'
@@ -87,21 +87,21 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
             className="md:hidden space-y-2"
           >
             <Link
-              href="/world-exclusive"
+              href="/world"
               className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >
               World
             </Link>
             <Link
-              href="/india-exclusive"
+              href="/india"
               className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >
               India
             </Link>
             <Link
-              href="/osint-exclusive"
+              href="/osint"
               className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
               onClick={onClose}
             >
@@ -143,7 +143,7 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
                 return (
                   <Link
                     key={article._id}
-                    href={`/${cleanCategorySlug(article.category)}/${article.slug.current}`}
+                    href={`/${categoryToUrlSlug(article.category)}/${article.slug.current}`}
                     className="flex gap-3 group"
                     onClick={onClose}
                   >

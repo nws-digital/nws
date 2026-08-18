@@ -13,6 +13,28 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    // Category URLs were shortened (world-exclusive -> world, etc). Redirect
+    // old, already-indexed/shared links to the new short URLs.
+    const renamedCategories: Array<[string, string]> = [
+      ['world-exclusive', 'world'],
+      ['india-exclusive', 'india'],
+      ['osint-exclusive', 'osint'],
+    ]
+
+    return renamedCategories.flatMap(([from, to]) => [
+      {
+        source: `/${from}`,
+        destination: `/${to}`,
+        permanent: true,
+      },
+      {
+        source: `/${from}/:slug`,
+        destination: `/${to}/:slug`,
+        permanent: true,
+      },
+    ])
+  },
   async headers() {
     return [
       {

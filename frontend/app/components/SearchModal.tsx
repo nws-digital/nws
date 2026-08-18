@@ -7,7 +7,7 @@ import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
 import {urlForImage} from '@/sanity/lib/utils'
 import {searchArticles, getLatestArticles} from '@/app/actions/search'
-import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 import {motion, AnimatePresence} from 'framer-motion'
 
 interface SearchModalProps {
@@ -282,7 +282,7 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
                     return (
                       <Link
                         key={article._id}
-                        href={`/${cleanCategorySlug(article.category)}/${article.slug.current}`}
+                        href={`/${categoryToUrlSlug(article.category)}/${article.slug.current}`}
                         onClick={onClose}
                         className="flex gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group"
                       >
@@ -333,7 +333,7 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
                   return (
                     <Link
                       key={result._id}
-                      href={`/${result.category}/${result.slug.current}`}
+                      href={`/${categoryToUrlSlug(result.category)}/${result.slug.current}`}
                       onClick={onClose}
                       className="flex gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group"
                     >

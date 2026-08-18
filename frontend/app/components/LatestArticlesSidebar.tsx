@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import {Image} from 'next-sanity/image'
 import {urlForImage} from '@/sanity/lib/utils'
-import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 import {formatDistanceToNow} from 'date-fns'
 import {sidebarArticlesQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
@@ -63,7 +63,7 @@ export async function LatestArticlesSidebar({currentArticleId}: LatestArticlesSi
           return (
             <Link
               key={article._id}
-              href={`/${cleanCategorySlug(article.category)}/${article.slug.current}`}
+              href={`/${categoryToUrlSlug(article.category)}/${article.slug.current}`}
               className="group flex gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0"
             >
               {/* Square Image - Left */}

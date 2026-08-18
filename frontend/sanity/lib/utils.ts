@@ -1,8 +1,8 @@
 import createImageUrlBuilder from '@sanity/image-url'
-import {Link} from '@/sanity.types'
 import {dataset, projectId, studioUrl} from '@/sanity/lib/api'
 import {createDataAttribute, CreateDataAttributeProps} from 'next-sanity'
 import {getImageDimensions} from '@sanity/asset-utils'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 
 const imageBuilder = createImageUrlBuilder({
   projectId: projectId || '',
@@ -38,6 +38,50 @@ export const urlForImage = (source: any) => {
   return imageBuilder?.image(source).auto('format')
 }
 
+/**
+ * Returns the image's displayed width/height after the editor's saved crop
+ * (or the full asset size if uncropped) - i.e. the actual aspect ratio that
+ * should be preserved when rendering without any further forced cropping.
+ */
+export const getImageDisplayDimensions = (source: any) => {
+  if (!source?.asset?._ref) {
+    return undefined
+  }
+
+  const {width, height} = getImageDimensions(source.asset._ref)
+  const crop = source.crop
+
+  if (!crop) {
+    return {width, height}
+  }
+
+  return {
+    width: Math.floor(width * (1 - (crop.right + crop.left))),
+    height: Math.floor(height * (1 - (crop.top + crop.bottom))),
+  }
+}
+
+/**
+ * Scales the image's cropped aspect ratio DOWN to fit within a
+ * maxWidth x maxHeight box on whichever axis is the tighter constraint,
+ * without cropping - i.e. `object-fit: contain` math, capped at 1x. Sources
+ * already smaller than the box in both dimensions are left at their natural
+ * size (never upscaled).
+ */
+export const getContainedImageDimensions = (source: any, maxWidth: number, maxHeight: number) => {
+  const natural = getImageDisplayDimensions(source)
+  if (!natural || !natural.width || !natural.height) {
+    return undefined
+  }
+
+  const scale = Math.min(1, maxWidth / natural.width, maxHeight / natural.height)
+
+  return {
+    width: Math.round(natural.width * scale),
+    height: Math.round(natural.height * scale),
+  }
+}
+
 export function resolveOpenGraphImage(image: any, width = 1200, height = 630) {
   if (!image) return
   const imageRef = image?.asset?._ref as string | undefined
@@ -66,29 +110,50 @@ export function resolveOpenGraphImage(image: any, width = 1200, height = 630) {
   return {url, alt: image?.alt as string, width, height}
 }
 
-// Depending on the type of link, we need to fetch the corresponding page, post, or URL.  Otherwise return null.
-export function linkResolver(link: Link | undefined) {
+// The shape of a `link` object after the GROQ `linkReference` projection has
+// resolved `page`/`article` references (see sanity/lib/queries.ts) - not the
+// raw schema type, which only has unresolved reference objects.
+type ResolvedLinkValue = {
+  _type?: 'link'
+  linkType?: 'href' | 'page' | 'article'
+  href?: string | null
+  openInNewTab?: boolean
+  page?: string | null
+  article?: {slug: string | null; category: string | null} | null
+}
+
+// Depending on the type of link, we need to resolve the corresponding page, article, or URL. Otherwise return null.
+export function linkResolver(link: ResolvedLinkValue | undefined | null) {
   if (!link) return null
 
   // If linkType is not set but href is, lets set linkType to "href".  This comes into play when pasting links into the portable text editor because a link type is not assumed.
-  if (!link.linkType && link.href) {
-    link.linkType = 'href'
-  }
+  const linkType = link.linkType || (link.href ? 'href' : undefined)
 
-  switch (link.linkType) {
+  switch (linkType) {
     case 'href':
       return link.href || null
     case 'page':
-      if (link?.page && typeof link.page === 'string') {
-        return `/${link.page}`
-      }
-    case 'post':
-      if (link?.post && typeof link.post === 'string') {
-        return `/posts/${link.post}`
-      }
+      return link.page ? `/${link.page}` : null
+    case 'article':
+      return link.article?.slug && link.article?.category
+        ? `/${categoryToUrlSlug(link.article.category)}/${link.article.slug}`
+        : null
     default:
       return null
   }
+}
+
+// Sanity's `slug` and `date` fields are optional at the schema level, but
+// every published article gets both via the studio's publish action (see
+// publishWithDates). Filter out the theoretical unpublished-shape case so
+// components can rely on a real slug/date instead of widening every prop
+// type to allow null.
+export function withDefinedSlug<T extends {slug: {current: string} | null; date?: string | null}>(
+  items: T[]
+): (T & {slug: {current: string}; date: string})[] {
+  return items.filter(
+    (item): item is T & {slug: {current: string}; date: string} => !!item.slug?.current && !!item.date
+  )
 }
 
 type DataAttributeConfig = CreateDataAttributeProps &

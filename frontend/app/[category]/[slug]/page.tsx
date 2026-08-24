@@ -24,6 +24,7 @@ type Props = {
 
 type ArticleAuthor = {
   _id?: string | null
+  slug?: string | null
   firstName?: string | null
   lastName?: string | null
   designation?: string | null
@@ -184,6 +185,7 @@ export default async function ArticlePage(props: Props) {
   const authorForAvatar = post.author
     ? {
         _id: post.author._id ?? null,
+        slug: post.author.slug ?? null,
         firstName: post.author.firstName ?? null,
         lastName: post.author.lastName ?? null,
         designation: post.author.designation ?? null,
@@ -195,6 +197,7 @@ export default async function ArticlePage(props: Props) {
   const coAuthorForAvatar = post.coAuthor
     ? {
         _id: post.coAuthor._id ?? null,
+        slug: post.coAuthor.slug ?? null,
         firstName: post.coAuthor.firstName ?? null,
         lastName: post.coAuthor.lastName ?? null,
         designation: post.coAuthor.designation ?? null,

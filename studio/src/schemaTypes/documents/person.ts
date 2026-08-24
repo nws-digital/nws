@@ -25,6 +25,30 @@ export const person = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      description: 'Used to build this author\'s public profile URL (/author/<slug>).',
+      options: {
+        source: (doc) => `${(doc as {firstName?: string}).firstName ?? ''} ${(doc as {lastName?: string}).lastName ?? ''}`.trim(),
+        maxLength: 96,
+      },
+      validation: (rule) =>
+        rule
+          .required()
+          .custom(async (slug, context) => {
+            if (!slug?.current) return true
+            const {document, getClient} = context
+            const client = getClient({apiVersion: '2024-01-01'})
+            const id = document?._id.replace(/^drafts\./, '')
+            const isUnique = await client.fetch(
+              `!defined(*[_type == "person" && !(_id in [$draft, $published]) && slug.current == $slug][0]._id)`,
+              {draft: `drafts.${id}`, published: id, slug: slug.current}
+            )
+            return isUnique || 'Another author already uses this slug — pick a different one.'
+          }),
+    }),
+    defineField({
       name: 'designation',
       title: 'Designation',
       type: 'string',

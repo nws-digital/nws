@@ -9,7 +9,7 @@ import {urlForImage} from '@/sanity/lib/utils'
 type Props = {
   isOpen: boolean
   onClose: () => void
-  authorId?: string
+  authorSlug?: string
   person: {
     firstName: string | null
     lastName: string | null
@@ -19,7 +19,7 @@ type Props = {
   }
 }
 
-export function AuthorBioDialog({isOpen, onClose, person, authorId}: Props) {
+export function AuthorBioDialog({isOpen, onClose, person, authorSlug}: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
@@ -128,10 +128,10 @@ export function AuthorBioDialog({isOpen, onClose, person, authorId}: Props) {
         </div>
 
         {/* Footer: More about Author */}
-        {authorId && (
+        {authorSlug && (
           <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
             <Link
-              href={`/author/${authorId}`}
+              href={`/author/${authorSlug}`}
               onClick={onClose}
               className="inline-flex items-center gap-2 text-sm font-semibold text-red-600 hover:text-red-700 transition-colors"
             >

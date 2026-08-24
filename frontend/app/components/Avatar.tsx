@@ -10,6 +10,7 @@ import {AuthorBioDialog} from './AuthorBioDialog'
 type Props = {
   person: {
     _id?: string | null
+    slug?: string | null
     firstName: string | null
     lastName: string | null
     designation?: string | null
@@ -18,6 +19,7 @@ type Props = {
   }
   coAuthor?: {
     _id?: string | null
+    slug?: string | null
     firstName: string | null
     lastName: string | null
     designation?: string | null
@@ -126,7 +128,7 @@ export default function Avatar({person, coAuthor, date, small = false}: Props) {
       </div>
 
       {hasBio && (
-        <AuthorBioDialog isOpen={showBio} onClose={() => setShowBio(false)} person={person} authorId={person._id ?? undefined} />
+        <AuthorBioDialog isOpen={showBio} onClose={() => setShowBio(false)} person={person} authorSlug={person.slug ?? undefined} />
       )}
 
       {coAuthorHasBio && coAuthor && (
@@ -134,7 +136,7 @@ export default function Avatar({person, coAuthor, date, small = false}: Props) {
           isOpen={showCoAuthorBio}
           onClose={() => setShowCoAuthorBio(false)}
           person={coAuthor}
-          authorId={coAuthor._id ?? undefined}
+          authorSlug={coAuthor.slug ?? undefined}
         />
       )}
     </>

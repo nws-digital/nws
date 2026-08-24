@@ -14,6 +14,7 @@
     "deploy:production": "sanity deploy --config sanity.config.production.ts",
     "deploy:staging": "sanity deploy --config sanity.config.staging.ts",
     "dev": "sanity dev",
+    "backfill-author-slugs": "sanity exec scripts/backfillAuthorSlugs.ts --with-user-token",
     "dev:production": "sanity dev --config sanity.config.production.ts",
     "dev:staging": "sanity dev --config sanity.config.staging.ts",
     "extract-types": "sanity schema extract --enforce-required-fields",

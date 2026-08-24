@@ -18,12 +18,14 @@ interface CommentaryArticle {
   contentPreview?: string
   date: string
   author?: {
+    slug?: string | null
     firstName: string
     lastName: string
     designation?: string | null
     picture?: any
   }
   coAuthor?: {
+    slug?: string | null
     firstName: string
     lastName: string
     designation?: string | null
@@ -81,6 +83,7 @@ export function CommentaryArticlesList({
         {articles.map((article) => {
           const authorForAvatar = article.author
             ? {
+                slug: article.author.slug ?? null,
                 firstName: article.author.firstName ?? null,
                 lastName: article.author.lastName ?? null,
                 designation: article.author.designation ?? null,
@@ -91,6 +94,7 @@ export function CommentaryArticlesList({
 
           const coAuthorForAvatar = article.coAuthor
             ? {
+                slug: article.coAuthor.slug ?? null,
                 firstName: article.coAuthor.firstName ?? null,
                 lastName: article.coAuthor.lastName ?? null,
                 designation: article.coAuthor.designation ?? null,

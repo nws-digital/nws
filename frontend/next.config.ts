@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
       ['osint-exclusive', 'osint'],
     ]
 
-    return renamedCategories.flatMap(([from, to]) => [
+    const categoryRedirects = renamedCategories.flatMap(([from, to]) => [
       {
         source: `/${from}`,
         destination: `/${to}`,
@@ -34,6 +34,26 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
     ])
+
+    // Static pages live at /pages/<slug>, not at the bare root path.
+    const staticPageSlugs = ['about', 'contact', 'privacy', 'terms']
+    const staticPageRedirects = staticPageSlugs.map((slug) => ({
+      source: `/${slug}`,
+      destination: `/pages/${slug}`,
+      permanent: true,
+    }))
+
+    return [
+      ...categoryRedirects,
+      ...staticPageRedirects,
+      // The sitemap is now a sitemap-index at /index-sitemap.xml; keep the
+      // old /sitemap.xml URL working during the crawler/Search Console migration.
+      {
+        source: '/sitemap.xml',
+        destination: '/index-sitemap.xml',
+        permanent: true,
+      },
+    ]
   },
   async headers() {
     return [

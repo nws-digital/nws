@@ -232,9 +232,9 @@ export default async function ArticlePage(props: Props) {
             <div className="lg:col-span-3">
               <div className="pb-2 mb-2 border-b border-gray-100">
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-xl font-bold tracking-tight text-black sm:text-2xl lg:text-3xl">
+                  <h1 className="text-xl font-bold tracking-tight text-black sm:text-2xl lg:text-3xl">
                     {post.title}
-                  </h2>
+                  </h1>
                   {post.excerpt && (
                     <p className="text-gray-600 text-base leading-relaxed">
                       {post.excerpt}
@@ -272,7 +272,7 @@ export default async function ArticlePage(props: Props) {
 
             <div className="hidden lg:block lg:col-span-1">
               <div className="sticky top-24">
-                <h3 className="text-xl font-bold">Latest on NWS</h3>
+                <p className="text-xl font-bold">Latest on NWS</p>
                 <div className="w-7 h-1 bg-red-500 mb-6" />
                 <LatestArticlesSidebar currentArticleId={post._id} />
               </div>
@@ -281,7 +281,7 @@ export default async function ArticlePage(props: Props) {
 
           {/* Mobile Latest Articles - Below article content */}
           <div className="lg:hidden mt-12 pt-8 border-t border-gray-200">
-            <h3 className="text-xl font-bold">Latest on NWS</h3>
+            <p className="text-xl font-bold">Latest on NWS</p>
             <div className="w-7 h-1 bg-red-500 mb-6" />
             <LatestArticlesSidebar currentArticleId={post._id} />
           </div>

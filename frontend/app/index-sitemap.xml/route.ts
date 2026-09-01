@@ -4,7 +4,6 @@ export const revalidate = 300
 
 const CHILD_SITEMAPS = [
   'static-sitemap.xml',
-  'section-sitemap.xml',
   'world-news-sitemap.xml',
   'india-news-sitemap.xml',
   'osint-news-sitemap.xml',

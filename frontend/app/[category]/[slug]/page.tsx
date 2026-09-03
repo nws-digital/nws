@@ -3,6 +3,7 @@ import {notFound} from 'next/navigation'
 import {type PortableTextBlock} from 'next-sanity'
 import {Suspense} from 'react'
 import Avatar from '@/app/components/Avatar'
+import ArticleAuthors from '@/app/components/ArticleAuthors'
 import CoverImage from '@/app/components/CoverImage'
 import PortableText from '@/app/components/PortableText'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
@@ -24,6 +25,7 @@ type Props = {
 
 type ArticleAuthor = {
   _id?: string | null
+  slug?: string | null
   firstName?: string | null
   lastName?: string | null
   designation?: string | null
@@ -184,6 +186,7 @@ export default async function ArticlePage(props: Props) {
   const authorForAvatar = post.author
     ? {
         _id: post.author._id ?? null,
+        slug: post.author.slug ?? null,
         firstName: post.author.firstName ?? null,
         lastName: post.author.lastName ?? null,
         designation: post.author.designation ?? null,
@@ -195,6 +198,7 @@ export default async function ArticlePage(props: Props) {
   const coAuthorForAvatar = post.coAuthor
     ? {
         _id: post.coAuthor._id ?? null,
+        slug: post.coAuthor.slug ?? null,
         firstName: post.coAuthor.firstName ?? null,
         lastName: post.coAuthor.lastName ?? null,
         designation: post.coAuthor.designation ?? null,
@@ -229,9 +233,9 @@ export default async function ArticlePage(props: Props) {
             <div className="lg:col-span-3">
               <div className="pb-2 mb-2 border-b border-gray-100">
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-xl font-bold tracking-tight text-black sm:text-2xl lg:text-3xl">
+                  <h1 className="text-xl font-bold tracking-tight text-black sm:text-2xl lg:text-3xl">
                     {post.title}
-                  </h2>
+                  </h1>
                   {post.excerpt && (
                     <p className="text-gray-600 text-base leading-relaxed">
                       {post.excerpt}
@@ -241,7 +245,7 @@ export default async function ArticlePage(props: Props) {
                 <div className="flex items-center justify-between gap-4 mt-3">
                   {/* Author - Left Side */}
                   {authorForAvatar?.firstName && authorForAvatar?.lastName && (
-                    <Avatar person={authorForAvatar} coAuthor={coAuthorForAvatar} date={post.date} small />
+                    <Avatar person={authorForAvatar} coAuthor={coAuthorForAvatar} date={post.date} small interactive={false} />
                   )}
                   {/* Share Button - Right Side */}
                   <ShareArticle 
@@ -265,11 +269,13 @@ export default async function ArticlePage(props: Props) {
                   />
                 )}
               </div>
+
+              <ArticleAuthors author={authorForAvatar} coAuthor={coAuthorForAvatar} />
             </div>
 
             <div className="hidden lg:block lg:col-span-1">
               <div className="sticky top-24">
-                <h3 className="text-xl font-bold">Latest on NWS</h3>
+                <p className="text-xl font-bold">Latest on NWS</p>
                 <div className="w-7 h-1 bg-red-500 mb-6" />
                 <LatestArticlesSidebar currentArticleId={post._id} />
               </div>
@@ -278,7 +284,7 @@ export default async function ArticlePage(props: Props) {
 
           {/* Mobile Latest Articles - Below article content */}
           <div className="lg:hidden mt-12 pt-8 border-t border-gray-200">
-            <h3 className="text-xl font-bold">Latest on NWS</h3>
+            <p className="text-xl font-bold">Latest on NWS</p>
             <div className="w-7 h-1 bg-red-500 mb-6" />
             <LatestArticlesSidebar currentArticleId={post._id} />
           </div>

@@ -133,7 +133,7 @@ export function linkResolver(link: ResolvedLinkValue | undefined | null) {
     case 'href':
       return link.href || null
     case 'page':
-      return link.page ? `/${link.page}` : null
+      return link.page ? `/pages/${link.page}` : null
     case 'article':
       return link.article?.slug && link.article?.category
         ? `/${categoryToUrlSlug(link.article.category)}/${link.article.slug}`

@@ -42,8 +42,8 @@ export const commentaryArticlesQuery = defineQuery(`
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
     lastPublishedDate,
-    "author": author->{firstName, lastName, designation, picture, bio},
-    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}
+    "author": author->{firstName, lastName, designation, picture, bio, "slug": slug.current},
+    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio, "slug": slug.current}
   }
 `)
 
@@ -109,8 +109,8 @@ export const commentaryArticlesPageQuery = defineQuery(`
     "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
     date,
     lastPublishedDate,
-    "author": author->{firstName, lastName, designation, picture, bio},
-    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}
+    "author": author->{firstName, lastName, designation, picture, bio, "slug": slug.current},
+    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio, "slug": slug.current}
   }
 `)
 
@@ -124,8 +124,8 @@ const postFields = /* groq */ `
   coverImage,
   "date": coalesce(date, _createdAt),
   lastPublishedDate,
-  "author": author->{_id, firstName, lastName, designation, picture, bio},
-  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},
+  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},
+  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},
   category,
 `
 
@@ -170,12 +170,37 @@ export const getPageQuery = defineQuery(`
   }
 `)
 
-export const sitemapData = defineQuery(`
-  *[_type == "page" || _type == "article" && defined(slug.current)] | order(_type asc) {
+export const sitemapPagesQuery = defineQuery(`
+  *[_type == "page" && defined(slug.current)] {
     "slug": slug.current,
-    _type,
     _updatedAt,
+  }
+`)
+
+export const sitemapArticlesByCategoryQuery = defineQuery(`
+  *[_type == "article" && category == $category && defined(slug.current)] {
+    "slug": slug.current,
+    "lastmod": coalesce(lastPublishedDate, date, _updatedAt),
+  }
+`)
+
+// Google News requires a rolling feed of only recently published articles
+// (Google ignores/penalizes older entries left in a news sitemap).
+export const newsSitemapQuery = defineQuery(`
+  *[_type == "article" && defined(slug.current) && defined(category) && coalesce(date, _createdAt) >= $since] | order(date desc) [0...1000] {
+    "slug": slug.current,
     category,
+    "title": coalesce(title, "Untitled"),
+    "publicationDate": coalesce(date, _createdAt),
+  }
+`)
+
+// Only authors with at least one published article get a profile URL --
+// empty profiles shouldn't be submitted for indexing.
+export const sitemapAuthorsQuery = defineQuery(`
+  *[_type == "person" && defined(slug.current) && count(*[_type == "article" && references(^._id)]) > 0] {
+    "slug": slug.current,
+    _updatedAt,
   }
 `)
 
@@ -214,8 +239,8 @@ export const pagesSlugs = defineQuery(`
   {"slug": slug.current}
 `)
 
-export const authorByIdQuery = defineQuery(`
-  *[_type == "person" && _id == $id][0] {
+export const authorBySlugQuery = defineQuery(`
+  *[_type == "person" && slug.current == $slug][0] {
     _id,
     firstName,
     lastName,
@@ -226,7 +251,7 @@ export const authorByIdQuery = defineQuery(`
 `)
 
 export const authorArticlesQuery = defineQuery(`
-  *[_type == "article" && author._ref == $id] | order(date desc) {
+  *[_type == "article" && author->slug.current == $slug] | order(date desc) {
     _id,
     title,
     slug,

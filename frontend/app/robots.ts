@@ -18,7 +18,7 @@ function getBaseUrl() {
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = getBaseUrl()
-  const sitemap = new URL('/sitemap.xml', baseUrl).toString()
+  const sitemap = new URL('/index-sitemap.xml', baseUrl).toString()
 
   return {
     rules: [

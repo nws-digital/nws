@@ -258,6 +258,7 @@ export type Person = {
   _rev: string
   firstName: string
   lastName: string
+  slug: Slug
   designation?: string
   bio?: Array<{
     children?: Array<{
@@ -682,7 +683,7 @@ export type FeaturedArticlesQueryResult = Array<{
   } | null
 }>
 // Variable: commentaryArticlesQuery
-// Query: *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {    _id,    _updatedAt,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    "author": author->{firstName, lastName, designation, picture, bio},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}  }
+// Query: *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {    _id,    _updatedAt,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    "author": author->{firstName, lastName, designation, picture, bio, "slug": slug.current},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio, "slug": slug.current}  }
 export type CommentaryArticlesQueryResult = Array<{
   _id: string
   _updatedAt: string
@@ -727,6 +728,7 @@ export type CommentaryArticlesQueryResult = Array<{
       _type: 'block'
       _key: string
     }> | null
+    slug: string
   }
   coAuthor: {
     firstName: string
@@ -763,6 +765,7 @@ export type CommentaryArticlesQueryResult = Array<{
       _type: 'block'
       _key: string
     }> | null
+    slug: string
   } | null
 }>
 // Variable: latestArticlesQuery
@@ -1064,7 +1067,7 @@ export type CategoryArticlesQueryResult = Array<{
 // Query: count(*[_type == "article" && category == $category])
 export type CategoryArticlesCountQueryResult = number
 // Variable: commentaryArticlesPageQuery
-// Query: *[_type == "article" && category == "commentary"] | order(date desc)[$offset...$limit] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    "author": author->{firstName, lastName, designation, picture, bio},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}  }
+// Query: *[_type == "article" && category == "commentary"] | order(date desc)[$offset...$limit] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    "author": author->{firstName, lastName, designation, picture, bio, "slug": slug.current},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio, "slug": slug.current}  }
 export type CommentaryArticlesPageQueryResult = Array<{
   _id: string
   title: string
@@ -1108,6 +1111,7 @@ export type CommentaryArticlesPageQueryResult = Array<{
       _type: 'block'
       _key: string
     }> | null
+    slug: string
   }
   coAuthor: {
     firstName: string
@@ -1144,6 +1148,7 @@ export type CommentaryArticlesPageQueryResult = Array<{
       _type: 'block'
       _key: string
     }> | null
+    slug: string
   } | null
 }>
 // Variable: getPageQuery
@@ -1233,24 +1238,34 @@ export type GetPageQueryResult = {
       }
   > | null
 } | null
-// Variable: sitemapData
-// Query: *[_type == "page" || _type == "article" && defined(slug.current)] | order(_type asc) {    "slug": slug.current,    _type,    _updatedAt,    category,  }
-export type SitemapDataResult = Array<
-  | {
-      slug: string | null
-      _type: 'article'
-      _updatedAt: string
-      category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
-    }
-  | {
-      slug: string
-      _type: 'page'
-      _updatedAt: string
-      category: null
-    }
->
+// Variable: sitemapPagesQuery
+// Query: *[_type == "page" && defined(slug.current)] {    "slug": slug.current,    _updatedAt,  }
+export type SitemapPagesQueryResult = Array<{
+  slug: string
+  _updatedAt: string
+}>
+// Variable: sitemapArticlesByCategoryQuery
+// Query: *[_type == "article" && category == $category && defined(slug.current)] {    "slug": slug.current,    "lastmod": coalesce(lastPublishedDate, date, _updatedAt),  }
+export type SitemapArticlesByCategoryQueryResult = Array<{
+  slug: string | null
+  lastmod: string
+}>
+// Variable: newsSitemapQuery
+// Query: *[_type == "article" && defined(slug.current) && defined(category) && coalesce(date, _createdAt) >= $since] | order(date desc) [0...1000] {    "slug": slug.current,    category,    "title": coalesce(title, "Untitled"),    "publicationDate": coalesce(date, _createdAt),  }
+export type NewsSitemapQueryResult = Array<{
+  slug: string | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  title: string
+  publicationDate: string
+}>
+// Variable: sitemapAuthorsQuery
+// Query: *[_type == "person" && defined(slug.current) && count(*[_type == "article" && references(^._id)]) > 0] {    "slug": slug.current,    _updatedAt,  }
+export type SitemapAuthorsQueryResult = Array<{
+  slug: string
+  _updatedAt: string
+}>
 // Variable: allPostsQuery
-// Query: *[_type == "article" && defined(slug.current)] | order(date desc, _updatedAt desc) {      _id,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  lastPublishedDate,  "author": author->{_id, firstName, lastName, designation, picture, bio},  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},  category,  }
+// Query: *[_type == "article" && defined(slug.current)] | order(date desc, _updatedAt desc) {      _id,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  lastPublishedDate,  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},  category,  }
 export type AllPostsQueryResult = Array<{
   _id: string
   _updatedAt: string
@@ -1310,6 +1325,7 @@ export type AllPostsQueryResult = Array<{
       _type: 'block'
       _key: string
     }> | null
+    slug: string
   }
   coAuthor: {
     _id: string
@@ -1347,11 +1363,12 @@ export type AllPostsQueryResult = Array<{
       _type: 'block'
       _key: string
     }> | null
+    slug: string
   } | null
   category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
 }>
 // Variable: morePostsQuery
-// Query: *[_type == "article" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {      _id,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  lastPublishedDate,  "author": author->{_id, firstName, lastName, designation, picture, bio},  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},  category,  }
+// Query: *[_type == "article" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {      _id,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  lastPublishedDate,  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},  category,  }
 export type MorePostsQueryResult = Array<{
   _id: string
   _updatedAt: string
@@ -1411,6 +1428,7 @@ export type MorePostsQueryResult = Array<{
       _type: 'block'
       _key: string
     }> | null
+    slug: string
   }
   coAuthor: {
     _id: string
@@ -1448,11 +1466,12 @@ export type MorePostsQueryResult = Array<{
       _type: 'block'
       _key: string
     }> | null
+    slug: string
   } | null
   category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
 }>
 // Variable: postQuery
-// Query: *[_type == "article" && slug.current == $slug] [0] {    content[]{    ...,    markDefs[]{      ...,        _type == "link" => {    "page": page->slug.current,    "article": article->{"slug": slug.current, category}  }    }  },      _id,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  lastPublishedDate,  "author": author->{_id, firstName, lastName, designation, picture, bio},  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},  category,  }
+// Query: *[_type == "article" && slug.current == $slug] [0] {    content[]{    ...,    markDefs[]{      ...,        _type == "link" => {    "page": page->slug.current,    "article": article->{"slug": slug.current, category}  }    }  },      _id,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  lastPublishedDate,  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},  category,  }
 export type PostQueryResult = {
   content: Array<
     | {
@@ -1562,6 +1581,7 @@ export type PostQueryResult = {
       _type: 'block'
       _key: string
     }> | null
+    slug: string
   }
   coAuthor: {
     _id: string
@@ -1599,6 +1619,7 @@ export type PostQueryResult = {
       _type: 'block'
       _key: string
     }> | null
+    slug: string
   } | null
   category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
 } | null
@@ -1612,9 +1633,9 @@ export type PostPagesSlugsResult = Array<{
 export type PagesSlugsResult = Array<{
   slug: string
 }>
-// Variable: authorByIdQuery
-// Query: *[_type == "person" && _id == $id][0] {    _id,    firstName,    lastName,    designation,    bio,    picture  }
-export type AuthorByIdQueryResult = {
+// Variable: authorBySlugQuery
+// Query: *[_type == "person" && slug.current == $slug][0] {    _id,    firstName,    lastName,    designation,    bio,    picture  }
+export type AuthorBySlugQueryResult = {
   _id: string
   firstName: string
   lastName: string
@@ -1652,7 +1673,7 @@ export type AuthorByIdQueryResult = {
   }
 } | null
 // Variable: authorArticlesQuery
-// Query: *[_type == "article" && author._ref == $id] | order(date desc) {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    category,    coverImage,    "author": author->{_id, firstName, lastName, designation, picture, bio}  }
+// Query: *[_type == "article" && author->slug.current == $slug] | order(date desc) {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    category,    coverImage,    "author": author->{_id, firstName, lastName, designation, picture, bio}  }
 export type AuthorArticlesQueryResult = Array<{
   _id: string
   title: string
@@ -1730,21 +1751,24 @@ declare module '@sanity/client' {
     '*[_type == "settings"][0]': SettingsQueryResult
     '\n  *[_type == "article" && featured == true] | order(date desc)[0] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    date,\n    lastPublishedDate,\n    category,\n    "author": author->{firstName, lastName},\n    coverImage\n  }\n': FeaturedArticleQueryResult
     '\n  *[_type == "article" && featured == true] | order(date desc)[0...6] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    date,\n    lastPublishedDate,\n    category,\n    "author": author->{firstName, lastName},\n    coverImage\n  }\n': FeaturedArticlesQueryResult
-    '\n  *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': CommentaryArticlesQueryResult
+    '\n  *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    "author": author->{firstName, lastName, designation, picture, bio, "slug": slug.current},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio, "slug": slug.current}\n  }\n': CommentaryArticlesQueryResult
     '\n  *[_type == "article" && category != "commentary" && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...12] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': LatestArticlesQueryResult
     '\n  *[_type == "article" && category != "commentary" && (_id != $excludeId)] | order(date desc)[0...12] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': SidebarArticlesQueryResult
     '\n  *[_type == "article" && category == $category] | order(date desc)[$offset...$limit] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': CategoryArticlesQueryResult
     '\n  count(*[_type == "article" && category == $category])\n': CategoryArticlesCountQueryResult
-    '\n  *[_type == "article" && category == "commentary"] | order(date desc)[$offset...$limit] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': CommentaryArticlesPageQueryResult
+    '\n  *[_type == "article" && category == "commentary"] | order(date desc)[$offset...$limit] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    "author": author->{firstName, lastName, designation, picture, bio, "slug": slug.current},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio, "slug": slug.current}\n  }\n': CommentaryArticlesPageQueryResult
     '\n  *[_type == \'page\' && slug.current == $slug][0]{\n    _id,\n    _type,\n    name,\n    slug,\n    heading,\n    subheading,\n    rawHtml,\n    "pageBuilder": pageBuilder[]{\n      ...,\n      _type == "callToAction" => {\n        \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "article": article->{"slug": slug.current, category}\n  }\n\n      }\n,\n      },\n      _type == "infoSection" => {\n        content[]{\n          ...,\n          markDefs[]{\n            ...,\n            \n  _type == "link" => {\n    "page": page->slug.current,\n    "article": article->{"slug": slug.current, category}\n  }\n\n          }\n        }\n      },\n    },\n  }\n': GetPageQueryResult
-    '\n  *[_type == "page" || _type == "article" && defined(slug.current)] | order(_type asc) {\n    "slug": slug.current,\n    _type,\n    _updatedAt,\n    category,\n  }\n': SitemapDataResult
-    '\n  *[_type == "article" && defined(slug.current)] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt),\n  lastPublishedDate,\n  "author": author->{_id, firstName, lastName, designation, picture, bio},\n  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},\n  category,\n\n  }\n': AllPostsQueryResult
-    '\n  *[_type == "article" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt),\n  lastPublishedDate,\n  "author": author->{_id, firstName, lastName, designation, picture, bio},\n  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},\n  category,\n\n  }\n': MorePostsQueryResult
-    '\n  *[_type == "article" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "article": article->{"slug": slug.current, category}\n  }\n\n    }\n  },\n    \n  _id,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt),\n  lastPublishedDate,\n  "author": author->{_id, firstName, lastName, designation, picture, bio},\n  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},\n  category,\n\n  }\n': PostQueryResult
+    '\n  *[_type == "page" && defined(slug.current)] {\n    "slug": slug.current,\n    _updatedAt,\n  }\n': SitemapPagesQueryResult
+    '\n  *[_type == "article" && category == $category && defined(slug.current)] {\n    "slug": slug.current,\n    "lastmod": coalesce(lastPublishedDate, date, _updatedAt),\n  }\n': SitemapArticlesByCategoryQueryResult
+    '\n  *[_type == "article" && defined(slug.current) && defined(category) && coalesce(date, _createdAt) >= $since] | order(date desc) [0...1000] {\n    "slug": slug.current,\n    category,\n    "title": coalesce(title, "Untitled"),\n    "publicationDate": coalesce(date, _createdAt),\n  }\n': NewsSitemapQueryResult
+    '\n  *[_type == "person" && defined(slug.current) && count(*[_type == "article" && references(^._id)]) > 0] {\n    "slug": slug.current,\n    _updatedAt,\n  }\n': SitemapAuthorsQueryResult
+    '\n  *[_type == "article" && defined(slug.current)] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt),\n  lastPublishedDate,\n  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},\n  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},\n  category,\n\n  }\n': AllPostsQueryResult
+    '\n  *[_type == "article" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt),\n  lastPublishedDate,\n  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},\n  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},\n  category,\n\n  }\n': MorePostsQueryResult
+    '\n  *[_type == "article" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "article": article->{"slug": slug.current, category}\n  }\n\n    }\n  },\n    \n  _id,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt),\n  lastPublishedDate,\n  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},\n  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},\n  category,\n\n  }\n': PostQueryResult
     '\n  *[_type == "article" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
-    '\n  *[_type == "person" && _id == $id][0] {\n    _id,\n    firstName,\n    lastName,\n    designation,\n    bio,\n    picture\n  }\n': AuthorByIdQueryResult
-    '\n  *[_type == "article" && author._ref == $id] | order(date desc) {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{_id, firstName, lastName, designation, picture, bio}\n  }\n': AuthorArticlesQueryResult
+    '\n  *[_type == "person" && slug.current == $slug][0] {\n    _id,\n    firstName,\n    lastName,\n    designation,\n    bio,\n    picture\n  }\n': AuthorBySlugQueryResult
+    '\n  *[_type == "article" && author->slug.current == $slug] | order(date desc) {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{_id, firstName, lastName, designation, picture, bio}\n  }\n': AuthorArticlesQueryResult
     '\n  *[_type == "rssArticle" && topic == $topic] | order(pubDate desc) [0...20] {\n    _id,\n    title,\n    link,\n    description,\n    pubDate,\n    source,\n    topic\n  }\n': RssArticlesByTopicQueryResult
     '\n  *[_type == "rssArticle"] | order(pubDate desc) [0...40] {\n    _id,\n    title,\n    link,\n    description,\n    pubDate,\n    source,\n    topic\n  }\n': AllRssArticlesQueryResult
   }

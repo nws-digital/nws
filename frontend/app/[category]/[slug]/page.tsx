@@ -3,6 +3,7 @@ import {notFound} from 'next/navigation'
 import {type PortableTextBlock} from 'next-sanity'
 import {Suspense} from 'react'
 import Avatar from '@/app/components/Avatar'
+import ArticleAuthors from '@/app/components/ArticleAuthors'
 import CoverImage from '@/app/components/CoverImage'
 import PortableText from '@/app/components/PortableText'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
@@ -244,7 +245,7 @@ export default async function ArticlePage(props: Props) {
                 <div className="flex items-center justify-between gap-4 mt-3">
                   {/* Author - Left Side */}
                   {authorForAvatar?.firstName && authorForAvatar?.lastName && (
-                    <Avatar person={authorForAvatar} coAuthor={coAuthorForAvatar} date={post.date} small />
+                    <Avatar person={authorForAvatar} coAuthor={coAuthorForAvatar} date={post.date} small interactive={false} />
                   )}
                   {/* Share Button - Right Side */}
                   <ShareArticle 
@@ -268,6 +269,8 @@ export default async function ArticlePage(props: Props) {
                   />
                 )}
               </div>
+
+              <ArticleAuthors author={authorForAvatar} coAuthor={coAuthorForAvatar} />
             </div>
 
             <div className="hidden lg:block lg:col-span-1">

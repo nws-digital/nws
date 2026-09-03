@@ -28,14 +28,15 @@ type Props = {
   } | null
   date?: string
   small?: boolean
+  interactive?: boolean
 }
 
-export default function Avatar({person, coAuthor, date, small = false}: Props) {
+export default function Avatar({person, coAuthor, date, small = false, interactive = true}: Props) {
   const {firstName, lastName, designation, picture, bio} = person
   const [showBio, setShowBio] = useState(false)
   const [showCoAuthorBio, setShowCoAuthorBio] = useState(false)
-  const hasBio = bio && Array.isArray(bio) && bio.length > 0
-  const coAuthorHasBio = coAuthor?.bio && Array.isArray(coAuthor.bio) && coAuthor.bio.length > 0
+  const hasBio = interactive && bio && Array.isArray(bio) && bio.length > 0
+  const coAuthorHasBio = interactive && coAuthor?.bio && Array.isArray(coAuthor.bio) && coAuthor.bio.length > 0
 
   return (
     <>

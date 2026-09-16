@@ -1,10 +1,9 @@
-import {Suspense} from 'react'
 import Link from 'next/link'
 import {PortableText} from '@portabletext/react'
 
 import GetStartedCode from '@/app/components/GetStartedCode'
 import SideBySideIcons from '@/app/components/SideBySideIcons'
-import {NewsTicker} from '@/app/components/NewsTicker'
+import {MostReadPanel} from '@/app/components/MostReadPanel'
 import {FeaturedCarousel} from '@/app/components/FeaturedCarousel'
 import {FeaturedPlaceholder} from '@/app/components/FeaturedPlaceholder'
 import {CommentarySection} from '@/app/components/CommentarySection'
@@ -12,6 +11,7 @@ import {LatestArticles} from '@/app/components/LatestArticles'
 import {settingsQuery, featuredArticlesQuery, commentaryArticlesQuery, latestArticlesQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
 import {withDefinedSlug} from '@/sanity/lib/utils'
+import {getMostReadArticles} from '@/app/actions/mostRead'
 
 export default async function Page() {
   const {data: settings} = await sanityFetch({
@@ -36,38 +36,25 @@ export default async function Page() {
     },
   })
 
+  const mostReadArticles = await getMostReadArticles()
+
   return (
     <>
       <div className="w-full pt-20">
-        {/* Featured Carousel Section with News Ticker Overlay */}
-        <div className="relative w-full">
-          {/* Carousel - Full width */}
-          <div className="w-full h-[600px]">
-            {featuredList.length > 0 ? (
-              <FeaturedCarousel articles={featuredList} />
-            ) : (
-              <FeaturedPlaceholder />
-            )}
-          </div>
-
-          {/* News Ticker - Overlaid on featured article right side (desktop only) */}
-          <div className="hidden lg:block absolute inset-0 pointer-events-none">
-            <div className="max-w-[1366px] mx-auto px-4 h-full relative">
-              <div className="absolute top-6 bottom-6 right-4 w-96 pointer-events-auto">
-                <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-[500px] w-full animate-pulse" />}>
-                  <NewsTicker />
-                </Suspense>
-              </div>
+        {/* Hero: Featured Carousel + Most Read panel, side by side on
+            desktop, stacked on mobile */}
+        <div className="max-w-[1366px] mx-auto px-4">
+          <div className="flex flex-col lg:flex-row gap-1">
+            <div className="w-full h-[320px] sm:h-[420px] lg:h-[600px] lg:flex-1">
+              {featuredList.length > 0 ? (
+                <FeaturedCarousel articles={featuredList} />
+              ) : (
+                <FeaturedPlaceholder />
+              )}
             </div>
-          </div>
-        </div>
-
-        {/* News Ticker - Below featured article on mobile */}
-        <div className="lg:hidden max-w-[1366px] mx-auto px-4 mt-8">
-          <div className="h-[500px]">
-            <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-full w-full animate-pulse" />}>
-              <NewsTicker />
-            </Suspense>
+            <div className="w-full h-[500px] lg:h-[600px] lg:w-[410px] lg:shrink-0">
+              <MostReadPanel articles={mostReadArticles} />
+            </div>
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 export function FeaturedPlaceholder() {
   return (
-    <div className="relative overflow-hidden shadow-2xl bg-gradient-to-br from-gray-800 via-gray-900 to-black">
-      <div className="aspect-[16/9] lg:aspect-[21/9] flex items-center justify-center p-12">
+    <div className="relative w-full h-full overflow-hidden shadow-2xl bg-gradient-to-br from-gray-800 via-gray-900 to-black">
+      <div className="w-full h-full flex items-center justify-center p-6 sm:p-12">
         <div className="text-center text-white max-w-2xl">
           <div className="inline-flex items-center gap-2 bg-red-600/20 border border-red-600/40 px-4 py-2 rounded-full text-sm font-semibold mb-6">
             <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">

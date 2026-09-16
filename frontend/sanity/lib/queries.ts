@@ -64,6 +64,32 @@ export const latestArticlesQuery = defineQuery(`
   }
 `)
 
+// Resolves ranked article ids (from the article_views Supabase table) into
+// full Sanity docs for the homepage "Most Read" panel. Deliberately not
+// filtered by category -- a genuinely popular commentary piece should be
+// eligible to appear, same as any news article.
+export const mostReadByIdsQuery = defineQuery(`
+  *[_type == "article" && _id in $ids && defined(slug.current)] {
+    _id,
+    title,
+    slug,
+    category,
+    coverImage
+  }
+`)
+
+// Backfill for the "Most Read" panel when there isn't (yet) enough view
+// data to fill all slots -- e.g. right after launch.
+export const mostReadFallbackQuery = defineQuery(`
+  *[_type == "article" && defined(slug.current)] | order(date desc)[0...20] {
+    _id,
+    title,
+    slug,
+    category,
+    coverImage
+  }
+`)
+
 export const sidebarArticlesQuery = defineQuery(`
   *[_type == "article" && category != "commentary" && (_id != $excludeId)] | order(date desc)[0...12] {
     _id,

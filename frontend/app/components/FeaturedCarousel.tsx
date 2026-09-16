@@ -60,11 +60,11 @@ export function FeaturedCarousel({articles}: FeaturedCarouselProps) {
   if (!articles || articles.length === 0) return null
 
   return (
-    <div className="relative w-full h-[600px] overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden">
       {/* Slides */}
       {articles.map((article, i) => {
         const imageUrl = article.coverImage
-          ? urlForImage(article.coverImage)?.width(1400).height(600).url()
+          ? urlForImage(article.coverImage)?.width(1200).height(800).url()
           : null
 
         return (
@@ -101,24 +101,20 @@ export function FeaturedCarousel({articles}: FeaturedCarouselProps) {
               </div>
 
               {/* Content */}
-              <div className="absolute left-0 right-0 bottom-10 p-4 sm:p-2 text-white">
-                <div className="max-w-[1366px] mx-auto px-4">
-                  <div className="lg:pr-[420px]">
-                    {article.category && (
-                      <div className="inline-flex items-center bg-red-600 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold mb-2 sm:mb-3">
-                        {categoryLabels[article.category] || article.category}
-                      </div>
-                    )}
-                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 leading-tight group-hover:text-red-400 transition-colors drop-shadow-lg">
-                      {article.title}
-                    </h2>
-                    {article.excerpt && (
-                      <p className="hidden sm:block text-sm md:text-base text-gray-200 line-clamp-2 md:line-clamp-3 max-w-3xl drop-shadow-md">
-                        {article.excerpt}
-                      </p>
-                    )}
+              <div className="absolute left-0 right-0 bottom-10 px-4 sm:px-6 text-white">
+                {article.category && (
+                  <div className="inline-flex items-center bg-red-600 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold mb-2 sm:mb-3">
+                    {categoryLabels[article.category] || article.category}
                   </div>
-                </div>
+                )}
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 leading-tight group-hover:text-red-400 transition-colors drop-shadow-lg">
+                  {article.title}
+                </h2>
+                {article.excerpt && (
+                  <p className="hidden sm:block text-sm md:text-base text-gray-200 line-clamp-2 md:line-clamp-3 max-w-3xl drop-shadow-md">
+                    {article.excerpt}
+                  </p>
+                )}
               </div>
             </Link>
           </div>
@@ -127,7 +123,7 @@ export function FeaturedCarousel({articles}: FeaturedCarouselProps) {
 
       {/* Dots */}
       {articles.length > 1 && (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 lg:pr-[384px]">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 flex items-center gap-1.5 z-10">
           {articles.map((_, i) => (
             <button
               key={i}

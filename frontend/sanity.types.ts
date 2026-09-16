@@ -867,6 +867,50 @@ export type LatestArticlesQueryResult = Array<{
     }> | null
   } | null
 }>
+// Variable: mostReadByIdsQuery
+// Query: *[_type == "article" && _id in $ids && defined(slug.current)] {    _id,    title,    slug,    category,    coverImage  }
+export type MostReadByIdsQueryResult = Array<{
+  _id: string
+  title: string
+  slug: Slug | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+}>
+// Variable: mostReadFallbackQuery
+// Query: *[_type == "article" && defined(slug.current)] | order(date desc)[0...20] {    _id,    title,    slug,    category,    coverImage  }
+export type MostReadFallbackQueryResult = Array<{
+  _id: string
+  title: string
+  slug: Slug | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+}>
 // Variable: sidebarArticlesQuery
 // Query: *[_type == "article" && category != "commentary" && (_id != $excludeId)] | order(date desc)[0...12] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    category,    coverImage,    "author": author->{firstName, lastName, designation, picture, bio},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}  }
 export type SidebarArticlesQueryResult = Array<{
@@ -1753,6 +1797,8 @@ declare module '@sanity/client' {
     '\n  *[_type == "article" && featured == true] | order(date desc)[0...6] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    date,\n    lastPublishedDate,\n    category,\n    "author": author->{firstName, lastName},\n    coverImage\n  }\n': FeaturedArticlesQueryResult
     '\n  *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    "author": author->{firstName, lastName, designation, picture, bio, "slug": slug.current},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio, "slug": slug.current}\n  }\n': CommentaryArticlesQueryResult
     '\n  *[_type == "article" && category != "commentary" && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...12] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': LatestArticlesQueryResult
+    '\n  *[_type == "article" && _id in $ids && defined(slug.current)] {\n    _id,\n    title,\n    slug,\n    category,\n    coverImage\n  }\n': MostReadByIdsQueryResult
+    '\n  *[_type == "article" && defined(slug.current)] | order(date desc)[0...20] {\n    _id,\n    title,\n    slug,\n    category,\n    coverImage\n  }\n': MostReadFallbackQueryResult
     '\n  *[_type == "article" && category != "commentary" && (_id != $excludeId)] | order(date desc)[0...12] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': SidebarArticlesQueryResult
     '\n  *[_type == "article" && category == $category] | order(date desc)[$offset...$limit] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': CategoryArticlesQueryResult
     '\n  count(*[_type == "article" && category == $category])\n': CategoryArticlesCountQueryResult

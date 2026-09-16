@@ -34,20 +34,6 @@ export function LatestArticles({articles}: LatestArticlesProps) {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Debug: log category and slug for each article
-  if (typeof window !== 'undefined') {
-    // Only log on client
-    articles.forEach((article, idx) => {
-      // eslint-disable-next-line no-console
-      console.log(`[LatestArticles] Article #${idx}:`, {
-        category: article.category,
-        slug: article.slug?.current,
-        title: article.title,
-        _id: article._id,
-      })
-    })
-  }
-
   // Limit to 6 articles, filtering out those without valid slugs
   const displayArticles = articles.filter(article => article.slug?.current).slice(0, 6)
 

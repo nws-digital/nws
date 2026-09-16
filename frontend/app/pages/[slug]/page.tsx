@@ -31,15 +31,11 @@ export async function generateStaticParams() {
     perspective: 'published',
     stega: false,
   })
-  
-  console.log('[Page Route] Pages found in Sanity:', data)
-  
+
   const params = (data || []).map((page: any) => ({
     slug: page.slug,
   }))
-  
-  console.log('[Page Route] Generated static params:', params)
-  
+
   return params
 }
 
@@ -68,18 +64,13 @@ export async function generateMetadata(props: Props, parent: ResolvingMetadata):
 
 export default async function Page(props: Props) {
   const params = await props.params
-  
-  console.log('[Page Route] Looking for page with slug:', params.slug)
-  
+
   const {data: page} = await sanityFetch({
     query: getPageQuery,
     params: {slug: params.slug},
   })
 
-  console.log('[Page Route] Found page:', page ? 'Yes' : 'No', page)
-
   if (!page) {
-    console.log('[Page Route] Page not found for slug:', params.slug)
     return notFound()
   }
 

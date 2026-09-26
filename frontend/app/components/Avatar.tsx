@@ -38,39 +38,88 @@ export default function Avatar({person, coAuthor, date, small = false, interacti
   const hasBio = interactive && bio && Array.isArray(bio) && bio.length > 0
   const coAuthorHasBio = interactive && coAuthor?.bio && Array.isArray(coAuthor.bio) && coAuthor.bio.length > 0
 
+  const hasCoAuthorPicture = Boolean(coAuthor?.picture?.asset?._ref)
+  const avatarSize = small ? 'h-12 w-12' : 'h-16 w-16'
+  const overlapOffset = small ? 'left-7' : 'left-10'
+  // Stack width = overlap offset + one avatar's width, so the container's own box
+  // actually spans the second (overflowing) avatar instead of just the first one.
+  const stackWidth = small ? 'w-[4.75rem]' : 'w-[6.5rem]'
+
   return (
     <>
       <div className="flex items-center">
-        {picture?.asset?._ref ? (
-          <div className={`${small ? 'h-12 w-12 mr-3' : 'h-16 w-16 mr-4'}`}>
-            <button
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                if (hasBio) setShowBio(true)
-              }}
-              disabled={!hasBio}
-              className={`h-full w-full ${
-                hasBio
-                  ? 'cursor-pointer hover:ring-2 hover:ring-red-500 hover:ring-offset-2 transition-all duration-200 hover:scale-105'
-                  : ''
-              } rounded-full`}
-              aria-label={hasBio ? `View ${firstName} ${lastName}'s bio` : undefined}
-            >
-              <Image
-                alt={picture?.alt || ''}
-                className="h-full w-full rounded-full object-cover"
-                height={small ? 56 : 72}
-                width={small ? 56 : 72}
-                src={
-                  urlForImage(picture)
-                    ?.height(small ? 112 : 144)
-                    .width(small ? 112 : 144)
-                    .fit('crop')
-                    .url() as string
+        {picture?.asset?._ref || hasCoAuthorPicture ? (
+          <div
+            className={`relative flex-shrink-0 ${small ? 'h-12' : 'h-16'} ${
+              hasCoAuthorPicture ? `${stackWidth} ${small ? 'mr-3' : 'mr-4'}` : `${avatarSize} ${small ? 'mr-3' : 'mr-4'}`
+            }`}
+          >
+            {picture?.asset?._ref && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  if (hasBio) setShowBio(true)
+                }}
+                disabled={!hasBio}
+                className={`absolute left-0 top-0 ${avatarSize} rounded-full ring-2 ring-white ${
+                  hasCoAuthorPicture ? 'z-10' : ''
+                } ${
+                  hasBio
+                    ? 'cursor-pointer hover:z-20 hover:ring-red-500 transition-all duration-200 hover:scale-105'
+                    : ''
+                }`}
+                aria-label={hasBio ? `View ${firstName} ${lastName}'s bio` : undefined}
+              >
+                <Image
+                  alt={picture?.alt || ''}
+                  className="h-full w-full rounded-full object-cover"
+                  height={small ? 56 : 72}
+                  width={small ? 56 : 72}
+                  src={
+                    urlForImage(picture)
+                      ?.height(small ? 112 : 144)
+                      .width(small ? 112 : 144)
+                      .fit('crop')
+                      .url() as string
+                  }
+                />
+              </button>
+            )}
+            {hasCoAuthorPicture && coAuthor && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  if (coAuthorHasBio) setShowCoAuthorBio(true)
+                }}
+                disabled={!coAuthorHasBio}
+                className={`absolute top-0 ${overlapOffset} ${avatarSize} z-20 rounded-full ring-2 ring-white ${
+                  coAuthorHasBio
+                    ? 'cursor-pointer hover:z-30 hover:ring-red-500 transition-all duration-200 hover:scale-105'
+                    : ''
+                }`}
+                aria-label={
+                  coAuthorHasBio
+                    ? `View ${coAuthor.firstName} ${coAuthor.lastName}'s bio`
+                    : undefined
                 }
-              />
-            </button>
+              >
+                <Image
+                  alt={coAuthor.picture?.alt || ''}
+                  className="h-full w-full rounded-full object-cover"
+                  height={small ? 56 : 72}
+                  width={small ? 56 : 72}
+                  src={
+                    urlForImage(coAuthor.picture)
+                      ?.height(small ? 112 : 144)
+                      .width(small ? 112 : 144)
+                      .fit('crop')
+                      .url() as string
+                  }
+                />
+              </button>
+            )}
           </div>
         ) : (
           <div className="mr-1"></div>

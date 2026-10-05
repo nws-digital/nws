@@ -1,10 +1,8 @@
-import {Suspense} from 'react'
 import Link from 'next/link'
 import {PortableText} from '@portabletext/react'
 
 import GetStartedCode from '@/app/components/GetStartedCode'
 import SideBySideIcons from '@/app/components/SideBySideIcons'
-import {NewsTicker} from '@/app/components/NewsTicker'
 import {FeaturedCarousel} from '@/app/components/FeaturedCarousel'
 import {FeaturedPlaceholder} from '@/app/components/FeaturedPlaceholder'
 import {CommentarySection} from '@/app/components/CommentarySection'
@@ -39,7 +37,7 @@ export default async function Page() {
   return (
     <>
       <div className="w-full pt-20">
-        {/* Featured Carousel Section with News Ticker Overlay */}
+        {/* Featured Carousel Section */}
         <div className="relative w-full">
           {/* Carousel - Full width */}
           <div className="w-full h-[600px]">
@@ -48,26 +46,6 @@ export default async function Page() {
             ) : (
               <FeaturedPlaceholder />
             )}
-          </div>
-
-          {/* News Ticker - Overlaid on featured article right side (desktop only) */}
-          <div className="hidden lg:block absolute inset-0 pointer-events-none">
-            <div className="max-w-[1366px] mx-auto px-4 h-full relative">
-              <div className="absolute top-6 bottom-6 right-4 w-96 pointer-events-auto">
-                <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-[500px] w-full animate-pulse" />}>
-                  <NewsTicker />
-                </Suspense>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* News Ticker - Below featured article on mobile */}
-        <div className="lg:hidden max-w-[1366px] mx-auto px-4 mt-8">
-          <div className="h-[500px]">
-            <Suspense fallback={<div className="bg-white rounded-lg shadow-lg h-full w-full animate-pulse" />}>
-              <NewsTicker />
-            </Suspense>
           </div>
         </div>
       </div>

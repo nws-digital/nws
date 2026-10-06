@@ -30,8 +30,33 @@
 
   --font-display: 'PT Serif', serif;
   --font-sans: 'PT Serif', serif;
+  /* Literata is used by the redesigned header, home page, drawer and footer */
+  --font-literata: var(--font-literata-loaded), Georgia, serif;
+
+  /* Breakpoints taken from the home page design (min-width, so max-* is "below") */
+  --breakpoint-phone: 521px;
+  --breakpoint-tablet: 781px;
+  --breakpoint-wide: 1101px;
 
   --default-transition-duration: 250ms;
+}
+
+/* Page-width wrapper used by the redesigned header, home page and footer */
+.shell {
+  width: min(1366px, calc(100% - 48px));
+  margin-inline: auto;
+}
+
+@media (max-width: 780px) {
+  .shell {
+    width: min(100% - 32px, 620px);
+  }
+}
+
+@media (max-width: 520px) {
+  .shell {
+    width: calc(100% - 24px);
+  }
 }
 
 /* Auto-scrolling animation */
@@ -81,4 +106,23 @@ article,
   -ms-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
+}
+
+/* Home hero carousel slide transition */
+@keyframes hero-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

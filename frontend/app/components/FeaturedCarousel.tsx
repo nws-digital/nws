@@ -27,117 +27,150 @@ interface FeaturedCarouselProps {
   articles: FeaturedArticle[]
 }
 
-const categoryLabels: Record<string, string> = {
-  'world-exclusive': 'World',
-  'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
-  'commentary': 'Commentary',
-}
-
 const INTERVAL_MS = 6000
+const SWIPE_THRESHOLD_PX = 45
+
+function ArrowButton({direction, label, onClick}: {direction: 'left' | 'right'; label: string; onClick: () => void}) {
+  const isLeft = direction === 'left'
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className={`absolute top-0 z-10 hidden h-[420px] w-8 items-center justify-center bg-black/30 p-1 opacity-0 transition hover:bg-black/50 focus-visible:bg-black/50 focus-visible:outline-none group-hover/hero:opacity-100 group-focus-visible/hero:opacity-100 group-has-[:focus-visible]/hero:opacity-100 tablet:flex ${
+        isLeft ? 'left-0 rounded-l-2xl' : 'right-0 rounded-r-2xl'
+      }`}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/design/icon-chevron-left.svg"
+        alt=""
+        width={24}
+        height={24}
+        className={isLeft ? '' : 'rotate-180'}
+      />
+    </button>
+  )
+}
 
 export function FeaturedCarousel({articles}: FeaturedCarouselProps) {
   const [current, setCurrent] = useState(0)
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [hovered, setHovered] = useState(false)
+  const [keyboardFocused, setKeyboardFocused] = useState(false)
+  const paused = hovered || keyboardFocused
+  const touchStartX = useRef<number | null>(null)
+  const count = articles?.length ?? 0
 
-  const startTimer = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current)
-    timerRef.current = setInterval(() => {
-      setCurrent(prev => (prev + 1) % articles.length)
-    }, INTERVAL_MS)
-  }, [articles.length])
+  const showStory = useCallback(
+    (index: number) => {
+      if (count === 0) return
+      setCurrent(((index % count) + count) % count)
+    },
+    [count],
+  )
 
-  const goTo = useCallback((index: number) => {
-    setCurrent(index)
-    startTimer()
-  }, [startTimer])
-
+  // Auto-advance, paused while the reader hovers or focuses the carousel.
+  // Depending on `current` restarts the countdown after any manual navigation.
   useEffect(() => {
-    startTimer()
-    return () => { if (timerRef.current) clearInterval(timerRef.current) }
-  }, [startTimer])
+    if (count < 2 || paused) return
+    const timer = setTimeout(() => setCurrent((prev) => (prev + 1) % count), INTERVAL_MS)
+    return () => clearTimeout(timer)
+  }, [count, current, paused])
 
-  if (!articles || articles.length === 0) return null
+  if (!articles || count === 0) return null
+
+  const article = articles[current]
+  const imageUrl = article.coverImage
+    ? urlForImage(article.coverImage)?.width(1200).height(800).url()
+    : null
+  const href = `/${categoryToUrlSlug(article.category || '')}/${article.slug.current}`
 
   return (
-    <div className="relative w-full h-full overflow-hidden">
-      {/* Slides */}
-      {articles.map((article, i) => {
-        const imageUrl = article.coverImage
-          ? urlForImage(article.coverImage)?.width(1200).height(800).url()
-          : null
-
-        return (
-          <div
-            key={article._id}
-            className="absolute inset-0 transition-opacity duration-700"
-            style={{opacity: i === current ? 1 : 0, pointerEvents: i === current ? 'auto' : 'none'}}
-          >
-            <Link
-              href={`/${categoryToUrlSlug(article.category || '')}/${article.slug.current}`}
-              className="group block w-full h-full relative overflow-hidden shadow-2xl"
-            >
-              {/* Image */}
-              <div className="absolute inset-0 bg-gray-800">
-                {imageUrl ? (
-                  <>
-                    <Image
-                      src={imageUrl}
-                      alt={article.coverImage?.alt || article.title}
-                      fill
-                      className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
-                      priority={i === 0}
-                      sizes="100vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent sm:from-black/75 sm:via-black/25" />
-                  </>
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg className="w-20 h-20 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                )}
-              </div>
-
-              {/* Content */}
-              <div className="absolute left-0 right-0 bottom-10 px-4 sm:px-6 text-white">
-                {article.category && (
-                  <div className="inline-flex items-center bg-red-600 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold mb-2 sm:mb-3">
-                    {categoryLabels[article.category] || article.category}
-                  </div>
-                )}
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 sm:mb-3 leading-tight group-hover:text-red-400 transition-colors drop-shadow-lg">
-                  {article.title}
-                </h2>
-                {article.excerpt && (
-                  <p className="hidden sm:block text-sm md:text-base text-gray-200 line-clamp-2 md:line-clamp-3 max-w-3xl drop-shadow-md">
-                    {article.excerpt}
-                  </p>
-                )}
-              </div>
-            </Link>
-          </div>
-        )
-      })}
-
-      {/* Dots */}
-      {articles.length > 1 && (
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 flex items-center gap-1.5 z-10">
-          {articles.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i)}
-              aria-label={`Go to slide ${i + 1}`}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                i === current
-                  ? 'bg-white w-6'
-                  : 'bg-white/50 w-2 hover:bg-white/80'
-              }`}
+    <article
+      className="group/hero relative flex min-w-0 touch-pan-y flex-col self-center rounded-2xl outline-none transition-transform duration-200 select-none hover:-translate-y-1 focus-visible:-translate-y-1 has-[:focus-visible]:-translate-y-1"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Featured news"
+      tabIndex={0}
+      onPointerEnter={(e) => {
+        if (e.pointerType === 'mouse') setHovered(true)
+      }}
+      onPointerLeave={() => setHovered(false)}
+      onFocus={(e) => setKeyboardFocused(e.target.matches(':focus-visible'))}
+      onBlur={() => setKeyboardFocused(false)}
+      onTouchStart={(e) => {
+        touchStartX.current = e.touches[0].clientX
+      }}
+      onTouchEnd={(e) => {
+        if (touchStartX.current === null) return
+        const distance = e.changedTouches[0].clientX - touchStartX.current
+        touchStartX.current = null
+        if (Math.abs(distance) >= SWIPE_THRESHOLD_PX) showStory(current + (distance < 0 ? 1 : -1))
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault()
+          showStory(current - 1)
+        }
+        if (e.key === 'ArrowRight') {
+          e.preventDefault()
+          showStory(current + 1)
+        }
+      }}
+    >
+      <Link href={href} draggable={false} className="block" key={article._id}>
+        <div className="relative h-[420px] animate-[hero-slide-in_280ms_cubic-bezier(0.2,0.8,0.2,1)] overflow-hidden rounded-2xl bg-[#eee] transition-shadow duration-200 group-hover/hero:shadow-[0_14px_35px_rgb(0_0_0/8%)] group-focus-visible/hero:shadow-[0_14px_35px_rgb(0_0_0/8%)] group-has-[:focus-visible]/hero:shadow-[0_14px_35px_rgb(0_0_0/8%)] max-tablet:h-[clamp(260px,68vw,420px)] max-phone:h-[56vw] max-phone:min-h-[210px]">
+          {imageUrl && (
+            <Image
+              src={imageUrl}
+              alt={article.coverImage?.alt || article.title}
+              fill
+              priority={current === 0}
+              draggable={false}
+              sizes="(max-width: 1100px) 100vw, 50vw"
+              className="object-cover transition-transform duration-500 group-hover/hero:scale-[1.035] group-focus-visible/hero:scale-[1.035] group-has-[:focus-visible]/hero:scale-[1.035]"
             />
-          ))}
+          )}
         </div>
+        <div className="animate-[hero-slide-in_280ms_cubic-bezier(0.2,0.8,0.2,1)] pt-5 pb-3">
+          <h1 className="mb-2.5 text-[clamp(24px,2vw,32px)] leading-[1.2] font-bold max-tablet:text-[clamp(25px,7vw,32px)] max-phone:text-2xl">
+            {article.title}
+          </h1>
+          {article.excerpt && (
+            <p className="line-clamp-3 text-base leading-[1.45] max-phone:text-[15px]">{article.excerpt}</p>
+          )}
+        </div>
+      </Link>
+
+      {count > 1 && (
+        <>
+          <ArrowButton direction="left" label="Show previous featured story" onClick={() => showStory(current - 1)} />
+          <ArrowButton direction="right" label="Show next featured story" onClick={() => showStory(current + 1)} />
+          <div
+            className="flex min-h-7 items-center justify-center gap-0.5 pt-2.5"
+            aria-label={`Featured story ${current + 1} of ${count}`}
+          >
+            {articles.map((item, i) => (
+              <button
+                key={item._id}
+                type="button"
+                aria-label={`Show featured story ${i + 1}: ${item.title}`}
+                aria-pressed={i === current}
+                onClick={() => showStory(i)}
+                className="group/dot grid size-6 place-items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1a1a1a]"
+              >
+                <span
+                  className={`block rounded-full border border-[#666] transition-all duration-200 ${
+                    i === current
+                      ? 'h-2 w-6 bg-[#666]'
+                      : 'size-2 bg-transparent group-hover/dot:size-3.5 group-focus-visible/dot:size-3.5'
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+        </>
       )}
-    </div>
+    </article>
   )
 }

@@ -1,76 +1,82 @@
-import Link from 'next/link'
-import {PortableText} from '@portabletext/react'
-
-import GetStartedCode from '@/app/components/GetStartedCode'
-import SideBySideIcons from '@/app/components/SideBySideIcons'
 import {MostReadPanel} from '@/app/components/MostReadPanel'
+import {NwsOriginalsColumn} from '@/app/components/NwsOriginalsColumn'
 import {FeaturedCarousel} from '@/app/components/FeaturedCarousel'
 import {FeaturedPlaceholder} from '@/app/components/FeaturedPlaceholder'
 import {CommentarySection} from '@/app/components/CommentarySection'
 import {LatestArticles} from '@/app/components/LatestArticles'
-import {settingsQuery, featuredArticlesQuery, commentaryArticlesQuery, latestArticlesQuery} from '@/sanity/lib/queries'
+import {
+  featuredArticlesQuery,
+  commentaryArticlesQuery,
+  latestByCategoryQuery,
+  originalsArticlesQuery,
+} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
 import {withDefinedSlug} from '@/sanity/lib/utils'
 import {getMostReadArticles} from '@/app/actions/mostRead'
 
 export default async function Page() {
-  const {data: settings} = await sanityFetch({
-    query: settingsQuery,
-  })
-
   const {data: featuredArticles} = await sanityFetch({
     query: featuredArticlesQuery,
-  })
-
-  const {data: commentaryArticles} = await sanityFetch({
-    query: commentaryArticlesQuery,
   })
 
   const featuredList = (featuredArticles as any[]) || []
   const topFeaturedId = featuredList[0]?._id ?? ''
 
-  const {data: latestArticles} = await sanityFetch({
-    query: latestArticlesQuery,
-    params: {
-      excludeId: topFeaturedId,
-    },
-  })
+  const [
+    {data: originalsArticles},
+    {data: commentaryArticles},
+    {data: worldArticles},
+    {data: indiaArticles},
+    mostReadArticles,
+  ] = await Promise.all([
+    sanityFetch({query: originalsArticlesQuery}),
+    sanityFetch({query: commentaryArticlesQuery}),
+    sanityFetch({
+      query: latestByCategoryQuery,
+      params: {category: 'world-exclusive', excludeId: topFeaturedId},
+    }),
+    sanityFetch({
+      query: latestByCategoryQuery,
+      params: {category: 'india-exclusive', excludeId: topFeaturedId},
+    }),
+    getMostReadArticles(),
+  ])
 
-  const mostReadArticles = await getMostReadArticles()
+  const originals = withDefinedSlug(originalsArticles || [])
+  const hasOriginals = originals.length > 0
 
   return (
-    <>
-      <div className="w-full pt-20">
-        {/* Hero: Featured Carousel + Most Read panel, side by side on
-            desktop, stacked on mobile */}
-        <div className="max-w-[1366px] mx-auto px-4">
-          <div className="flex flex-col lg:flex-row gap-1">
-            <div className="w-full h-[320px] sm:h-[420px] lg:h-[600px] lg:flex-1">
-              {featuredList.length > 0 ? (
-                <FeaturedCarousel articles={featuredList} />
-              ) : (
-                <FeaturedPlaceholder />
-              )}
-            </div>
-            <div className="w-full h-[500px] lg:h-[600px] lg:w-[410px] lg:shrink-0">
-              <MostReadPanel articles={mostReadArticles} />
-            </div>
+    <div className="font-literata">
+      {/* Hero: NWS Originals | Featured carousel | Most Read */}
+      <section id="nws-originals" className="border-b border-[#d0d0d0] pt-6 pb-8">
+        <div
+          className={`shell grid gap-6 max-tablet:flex max-tablet:flex-col ${
+            hasOriginals
+              ? 'grid-cols-[minmax(240px,1fr)_minmax(440px,2fr)_minmax(240px,1fr)] max-wide:grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)]'
+              : 'grid-cols-[minmax(440px,2fr)_minmax(240px,1fr)] max-wide:grid-cols-1'
+          }`}
+        >
+          <NwsOriginalsColumn articles={originals} />
+
+          <div className="min-w-0 self-center max-tablet:order-first max-tablet:self-auto">
+            {featuredList.length > 0 ? (
+              <FeaturedCarousel articles={featuredList} />
+            ) : (
+              <FeaturedPlaceholder />
+            )}
           </div>
+
+          <MostReadPanel articles={mostReadArticles} />
         </div>
+      </section>
+
+      <div className="shell flex flex-col gap-6 py-6">
+        <LatestArticles
+          worldArticles={withDefinedSlug(worldArticles || [])}
+          indiaArticles={withDefinedSlug(indiaArticles || [])}
+        />
+        <CommentarySection articles={withDefinedSlug(commentaryArticles || [])} />
       </div>
-
-      {/* Latest Articles Section */}
-      <LatestArticles articles={withDefinedSlug(latestArticles || [])} />
-
-      {/* Separator */}
-      <div className="bg-gray-50 pt-12">
-        <div className="max-w-[1366px] mx-auto px-4">
-          <div className="border-t border-gray-200" />
-        </div>
-      </div>
-
-      {/* Commentary Section */}
-      <CommentarySection articles={withDefinedSlug(commentaryArticles || [])} />
-    </>
+    </div>
   )
 }

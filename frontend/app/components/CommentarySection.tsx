@@ -1,9 +1,16 @@
-'use client'
-
 import Link from 'next/link'
-import {formatDistanceToNow} from 'date-fns'
-import {motion} from 'framer-motion'
 import Avatar from '@/app/components/Avatar'
+import {SectionTitle} from '@/app/components/SectionTitle'
+import {formatTimeAgo} from '@/lib/timeAgo'
+
+interface CommentaryAuthor {
+  slug?: string | null
+  firstName: string
+  lastName: string
+  designation?: string | null
+  picture?: any
+  bio?: any
+}
 
 interface CommentaryArticle {
   _id: string
@@ -12,26 +19,23 @@ interface CommentaryArticle {
   excerpt?: string | null
   contentPreview?: string
   date: string
-  author?: {
-    slug?: string | null
-    firstName: string
-    lastName: string
-    designation?: string | null
-    picture?: any
-    bio?: any
-  }
-  coAuthor?: {
-    slug?: string | null
-    firstName: string
-    lastName: string
-    designation?: string | null
-    picture?: any
-    bio?: any
-  } | null
+  author?: CommentaryAuthor
+  coAuthor?: CommentaryAuthor | null
 }
 
 interface CommentarySectionProps {
   articles: CommentaryArticle[]
+}
+
+function toAvatarPerson(person: CommentaryAuthor) {
+  return {
+    slug: person.slug ?? null,
+    firstName: person.firstName ?? null,
+    lastName: person.lastName ?? null,
+    designation: person.designation ?? null,
+    picture: person.picture,
+    bio: person.bio,
+  }
 }
 
 export function CommentarySection({articles}: CommentarySectionProps) {
@@ -39,117 +43,48 @@ export function CommentarySection({articles}: CommentarySectionProps) {
     return null
   }
 
-  const sectionVariants = {
-    hidden: {opacity: 0},
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: {opacity: 0, y: 20},
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  }
-
   return (
-    <motion.section
-      className="py-8 bg-white"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{once: true, amount: 0.1}}
-      variants={sectionVariants}
-    >
-      <div className="max-w-[1366px] mx-auto px-4 py-4">
-        <motion.div className="mb-8" variants={itemVariants}>
-          <h6 className="text-2xl font-bold text-black whitespace-nowrap mb-2">Commentary</h6>
-          <motion.div
-            className="w-8 h-1.5 bg-red-600"
-            initial={{width: 0}}
-            animate={{width: '2rem'}}
-            transition={{duration: 0.5, delay: 0.2}}
-          />
-        </motion.div>
-
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
-          variants={sectionVariants}
+    <section id="commentary" className="flex scroll-mt-6 flex-col gap-4">
+      <div className="flex items-center justify-between border-t border-[#d0d2d6] pt-6">
+        <SectionTitle headingClassName="text-[#1a1a1a]">Commentary</SectionTitle>
+        <Link
+          href="/commentary"
+          className="mt-2 self-start border-b border-transparent text-base transition-colors hover:border-[#ed1c24] hover:text-[#ed1c24]"
         >
-          {articles.slice(0, 3).map((article) => {
-            const authorForAvatar = article.author
-              ? {
-                  slug: article.author.slug ?? null,
-                  firstName: article.author.firstName ?? null,
-                  lastName: article.author.lastName ?? null,
-                  designation: article.author.designation ?? null,
-                  picture: article.author.picture,
-                  bio: article.author.bio,
-                }
-              : null
-
-            const coAuthorForAvatar = article.coAuthor
-              ? {
-                  slug: article.coAuthor.slug ?? null,
-                  firstName: article.coAuthor.firstName ?? null,
-                  lastName: article.coAuthor.lastName ?? null,
-                  designation: article.coAuthor.designation ?? null,
-                  picture: article.coAuthor.picture,
-                  bio: article.coAuthor.bio,
-                }
-              : null
-
-            const timeAgo = formatDistanceToNow(new Date(article.date), {
-              addSuffix: true,
-            })
-
-            return (
-              <motion.div
-                key={article._id}
-                variants={itemVariants}
-                className="group bg-white border-2 border-gray-200 rounded-lg flex flex-col"
-                whileHover={{
-                  y: -8,
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                }}
-                transition={{type: 'spring', stiffness: 300}}
-              >
-                <Link
-                  href={`/commentary/${article.slug.current}`}
-                  className="flex flex-col h-full p-6"
-                >
-                  {/* Author Info */}
-                  <div className="mb-4">
-                    {authorForAvatar && <Avatar person={authorForAvatar} coAuthor={coAuthorForAvatar} date={article.date} small />}
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-xl font-bold text-black mb-3 group-hover:text-red-600 transition-colors duration-300 line-clamp-2">
-                    {article.title}
-                  </h3>
-
-                  {/* Excerpt */}
-                  <p className="text-gray-600 text-sm line-clamp-4 mb-4 flex-1">
-                    {article.excerpt || article.contentPreview || 'No preview available...'}
-                    {((article.excerpt || article.contentPreview) as any) && '...'}
-                  </p>
-
-                  {/* Time ago at bottom */}
-                  <p className="text-xs text-gray-400 mt-auto pt-4">{timeAgo}</p>
-                </Link>
-              </motion.div>
-            )
-          })}
-        </motion.div>
+          View All
+        </Link>
       </div>
-    </motion.section>
+
+      <div className="grid grid-cols-3 gap-4 max-tablet:grid-cols-1">
+        {articles.slice(0, 3).map((article) => (
+          <article
+            key={article._id}
+            className="group rounded-2xl border border-[#dfe1e4] bg-white transition duration-200 hover:-translate-y-1 hover:border-[#c6c8cb] hover:shadow-[0_14px_35px_rgb(0_0_0/8%)] focus-within:-translate-y-1 focus-within:border-[#c6c8cb] focus-within:shadow-[0_14px_35px_rgb(0_0_0/8%)]"
+          >
+            <Link
+              href={`/commentary/${article.slug.current}`}
+              className="flex min-h-[275px] flex-col gap-4 p-4"
+            >
+              {article.author && (
+                <Avatar
+                  person={toAvatarPerson(article.author)}
+                  coAuthor={article.coAuthor ? toAvatarPerson(article.coAuthor) : null}
+                  showDesignation
+                />
+              )}
+
+              <div className="flex flex-1 flex-col gap-2 text-base">
+                <h3 className="line-clamp-3 text-base leading-normal font-bold">{article.title}</h3>
+                <p className="line-clamp-4 leading-normal">
+                  {article.excerpt || article.contentPreview}
+                </p>
+              </div>
+
+              <p className="text-sm text-[#666]">{formatTimeAgo(article.date, {long: true})}</p>
+            </Link>
+          </article>
+        ))}
+      </div>
+    </section>
   )
 }
-

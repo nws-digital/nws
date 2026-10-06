@@ -64,6 +64,32 @@ export const latestArticlesQuery = defineQuery(`
   }
 `)
 
+// "NWS Originals" column in the home hero (stored category value is still osint-exclusive)
+export const originalsArticlesQuery = defineQuery(`
+  *[_type == "article" && category == "osint-exclusive" && defined(slug.current)] | order(date desc)[0...2] {
+    _id,
+    title,
+    slug,
+    date,
+    category,
+    coverImage
+  }
+`)
+
+// Latest stories of a single category for the home page "Latest" sections
+export const latestByCategoryQuery = defineQuery(`
+  *[_type == "article" && category == $category && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...3] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
+    date,
+    category,
+    coverImage
+  }
+`)
+
 // Resolves ranked article ids (from the article_views Supabase table) into
 // full Sanity docs for the homepage "Most Read" panel. Deliberately not
 // filtered by category -- a genuinely popular commentary piece should be
@@ -73,6 +99,7 @@ export const mostReadByIdsQuery = defineQuery(`
     _id,
     title,
     slug,
+    date,
     category,
     coverImage
   }
@@ -85,6 +112,7 @@ export const mostReadFallbackQuery = defineQuery(`
     _id,
     title,
     slug,
+    date,
     category,
     coverImage
   }

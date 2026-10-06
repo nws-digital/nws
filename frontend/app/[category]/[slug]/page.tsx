@@ -55,7 +55,7 @@ const validCategories = ['world', 'india', 'osint', 'commentary']
 const categoryLabels: Record<string, string> = {
   world: 'World',
   india: 'India',
-  osint: 'OSINT',
+  osint: 'NWS Originals',
   commentary: 'Commentary',
 }
 
@@ -207,7 +207,7 @@ export default async function ArticlePage(props: Props) {
   return (
     <>
       <RecordArticleView articleId={post._id} />
-      <div className="pt-20">
+      <div>
         <div className="max-w-[1366px] mx-auto px-4 py-8">
           {/* Breadcrumb Navigation */}
           <Breadcrumb
@@ -268,7 +268,7 @@ export default async function ArticlePage(props: Props) {
             </div>
 
             <div className="hidden lg:block lg:col-span-1">
-              <div className="sticky top-24">
+              <div className="sticky top-6">
                 <p className="text-xl font-bold">Latest on NWS</p>
                 <div className="w-7 h-1 bg-red-500 mb-6" />
                 <LatestArticlesSidebar currentArticleId={post._id} />

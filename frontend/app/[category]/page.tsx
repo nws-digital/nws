@@ -46,7 +46,7 @@ export default async function CategoryPage({params}: CategoryPageProps) {
     })
 
     return (
-      <div className="pt-20 min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50">
         <CommentaryArticlesList
           initialArticles={withDefinedSlug(articles || [])}
           totalCount={totalCount || 0}
@@ -71,7 +71,7 @@ export default async function CategoryPage({params}: CategoryPageProps) {
   })
 
   return (
-    <div className="pt-20 min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <CategoryArticlesList
         initialArticles={withDefinedSlug(articles || [])}
         category={category}

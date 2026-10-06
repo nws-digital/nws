@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import {useState} from 'react'
 import {usePathname} from 'next/navigation'
 import SearchModal from '@/app/components/SearchModal'
@@ -20,100 +19,93 @@ interface HeaderClientProps {
   latestArticles: Article[]
 }
 
+const navLinks = [
+  {href: '/world', label: 'World'},
+  {href: '/india', label: 'India'},
+  {href: '/osint', label: 'NWS Originals'},
+  {href: '/commentary', label: 'Commentary'},
+]
+
+/* eslint-disable @next/next/no-img-element */
 export default function HeaderClient({latestArticles}: HeaderClientProps) {
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [searchModalOpen, setSearchModalOpen] = useState(false)
   const pathname = usePathname()
 
-  const navLinks = [
-    {href: '/world', label: 'World'},
-    {href: '/india', label: 'India'},
-    {href: '/osint', label: 'OSINT'},
-    {href: '/commentary', label: 'Commentary'},
-  ]
-
   return (
     <>
-      <header className="fixed z-50 h-20 inset-0 bg-white/95 border-b border-gray-200 flex items-center backdrop-blur-lg">
-        <div className="max-w-[1366px] container mx-auto px-4 md:px-6">
-          <div className="flex items-center justify-between">
-            {/* Logo/Title */}
-            <Link className="flex items-center" href="/" onClick={() => setSideMenuOpen(false)}>
-              <Image
-                src="/images/Logo_Dark.svg"
-                alt="NWS"
-                width={367}
-                height={200}
-                className="h-12 md:h-14 w-auto"
-                priority
-              />
-            </Link>
+      <header className="relative z-50 bg-white font-literata">
+        {/* Masthead: centred logo on desktop; menu / logo / search on mobile */}
+        <div className="shell relative flex min-h-[104px] items-center justify-center py-4 max-tablet:min-h-20 max-tablet:justify-between max-tablet:py-2.5">
+          <button
+            type="button"
+            className="hidden size-[42px] place-items-center rounded-full transition-colors hover:bg-[#f3f3f3] max-tablet:grid"
+            aria-label={sideMenuOpen ? 'Close navigation' : 'Open navigation'}
+            aria-expanded={sideMenuOpen}
+            onClick={() => setSideMenuOpen(!sideMenuOpen)}
+          >
+            <img src="/images/design/icon-menu-lg.svg" alt="" className="size-8" />
+          </button>
+          <Link href="/" aria-label="NWS home" onClick={() => setSideMenuOpen(false)}>
+            <img
+              src="/images/design/logo-dark.svg"
+              alt="NWS"
+              width={175}
+              height={72}
+              className="block h-[72px] w-[175px] max-tablet:h-12 max-tablet:w-[117px]"
+            />
+          </Link>
+          <button
+            type="button"
+            className="hidden size-[42px] place-items-center rounded-full transition-colors hover:bg-[#f3f3f3] max-tablet:grid"
+            aria-label="Search"
+            onClick={() => setSearchModalOpen(true)}
+          >
+            <img src="/images/design/icon-search-lg.svg" alt="" className="size-8" />
+          </button>
+        </div>
 
-            {/* Navigation - Hidden on mobile, shown on desktop */}
-            <nav className="hidden md:flex flex-1 justify-center">
-              <ul className="flex items-center gap-6 lg:gap-8 text-xs lg:text-sm font-bold uppercase tracking-wide text-black">
-                {navLinks.map(({href, label}) => {
-                  const isActive = pathname === href
-                  return (
-                    <li key={href}>
-                      <Link
-                        href={href}
-                        className="relative pb-1 transition-colors hover:text-red-600"
-                      >
-                        {label}
-                        {isActive && (
-                          <span className="absolute bottom-0 left-0 w-full h-0.25 bg-gray-300 rounded-full" />
-                        )}
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ul>
+        {/* Category nav (desktop) */}
+        <div className="border-y border-[#d0d0d0] max-tablet:border-t-0">
+          <div className="shell relative flex min-h-[57px] items-center justify-end max-tablet:min-h-0">
+            <nav
+              aria-label="Sections"
+              className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-5 text-sm font-medium whitespace-nowrap uppercase tablet:flex wide:gap-8 wide:text-base"
+            >
+              {navLinks.map(({href, label}) => {
+                const isActive = pathname === href
+                return (
+                  <Link key={href} href={href} className="group relative transition-colors">
+                    {label}
+                    <span
+                      className={`absolute right-0 -bottom-[5px] left-0 h-0.5 bg-[#ed1c24] transition-transform duration-200 ${
+                        isActive
+                          ? 'origin-left scale-x-100'
+                          : 'origin-right scale-x-0 group-hover:origin-left group-hover:scale-x-100 group-focus-visible:origin-left group-focus-visible:scale-x-100'
+                      }`}
+                    />
+                  </Link>
+                )
+              })}
             </nav>
-                
-                          {/* Right side buttons */}
-                          <div className="flex items-center gap-2">
-                            {/* Search Icon */}
-                            <button 
-                              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                              aria-label="Search"
-                              onClick={() => setSearchModalOpen(true)}
-                            >
-                              <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-5 h-5"
-                >
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.35-4.35"></path>
-                </svg>
-              </button>
 
-              {/* Menu Button - Always Visible */}
-              <button 
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                aria-label="Menu"
+            <div className="flex items-center gap-2 max-tablet:hidden">
+              <button
+                type="button"
+                className="grid size-9 place-items-center rounded-full transition hover:scale-105 hover:bg-[#f3f3f3]"
+                aria-label="Search"
+                onClick={() => setSearchModalOpen(true)}
+              >
+                <img src="/images/design/icon-search.svg" alt="" className="size-6" />
+              </button>
+              <button
+                type="button"
+                className="grid size-9 place-items-center rounded-full transition hover:scale-105 hover:bg-[#f3f3f3]"
+                aria-label={sideMenuOpen ? 'Close navigation' : 'Open navigation'}
+                aria-expanded={sideMenuOpen}
                 onClick={() => setSideMenuOpen(!sideMenuOpen)}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-5 h-5"
-                >
-                  <line x1="3" y1="12" x2="21" y2="12"></line>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
+                <img src="/images/design/icon-menu.svg" alt="" className="size-6" />
               </button>
             </div>
           </div>
@@ -122,10 +114,10 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
 
       {/* Search Modal - Outside header */}
       <SearchModal isOpen={searchModalOpen} onClose={() => setSearchModalOpen(false)} />
-      
+
       {/* Side Menu - Outside header */}
-      <SideMenu 
-        isOpen={sideMenuOpen} 
+      <SideMenu
+        isOpen={sideMenuOpen}
         onClose={() => setSideMenuOpen(false)}
         latestArticles={latestArticles}
       />

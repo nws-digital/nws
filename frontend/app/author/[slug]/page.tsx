@@ -20,7 +20,7 @@ export const dynamicParams = true
 const categoryLabels: Record<string, string> = {
   world: 'World',
   india: 'India',
-  osint: 'NWS Originals',
+  'nws-originals': 'NWS Originals',
   commentary: 'Commentary',
 }
 

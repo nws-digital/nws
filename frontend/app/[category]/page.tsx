@@ -7,7 +7,7 @@ import {urlSlugToCategory} from '@/sanity/lib/cleanCategorySlug'
 import {withDefinedSlug} from '@/sanity/lib/utils'
 
 // URL segment values (short form) -- the underlying Sanity `category` field is unchanged.
-const validCategorySlugs = ['world', 'india', 'osint', 'commentary']
+const validCategorySlugs = ['world', 'india', 'nws-originals', 'commentary']
 
 interface CategoryPageProps {
   params: Promise<{

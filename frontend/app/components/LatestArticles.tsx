@@ -55,7 +55,7 @@ function StoryCard({article}: {article: LatestArticle}) {
             <span>{formatTimeAgo(article.date)}</span>
             {categoryLabel && (
               <>
-                <span className="text-[#d0d2d6]">|</span>
+                <span className="text-[#a7a7a7]">|</span>
                 <span>{categoryLabel}</span>
               </>
             )}

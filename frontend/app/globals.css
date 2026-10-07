@@ -108,6 +108,20 @@ article,
   -webkit-touch-callout: none;
 }
 
+/* Dialog entrance animations (Most Read modal) */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.98);
+  }
+}
+
 /* Home hero carousel slide transition */
 @keyframes hero-slide-in {
   from {

@@ -100,6 +100,7 @@ export const mostReadByIdsQuery = defineQuery(`
     title,
     slug,
     date,
+    excerpt,
     category,
     coverImage
   }
@@ -113,6 +114,7 @@ export const mostReadFallbackQuery = defineQuery(`
     title,
     slug,
     date,
+    excerpt,
     category,
     coverImage
   }

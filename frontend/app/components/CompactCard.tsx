@@ -42,7 +42,7 @@ export function CompactCard({article}: {article: CompactCardArticle}) {
           <h3 className="text-base font-bold leading-normal max-phone:text-sm">{article.title}</h3>
           <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 whitespace-nowrap text-xs text-[#666] max-phone:gap-x-[5px]">
             {article.date && <span>{formatTimeAgo(article.date)}</span>}
-            {article.date && categoryLabel && <span className="text-[#d0d2d6]">|</span>}
+            {article.date && categoryLabel && <span className="text-[#a7a7a7]">|</span>}
             {categoryLabel && <span>{categoryLabel}</span>}
           </div>
         </div>

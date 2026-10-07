@@ -1,5 +1,5 @@
 import type {Metadata} from 'next'
-import {notFound} from 'next/navigation'
+import {notFound, permanentRedirect} from 'next/navigation'
 import {type PortableTextBlock} from 'next-sanity'
 import {Suspense} from 'react'
 import Avatar from '@/app/components/Avatar'
@@ -50,12 +50,12 @@ type ArticlePost = {
 }
 
 // URL segment values (short form) -- the underlying Sanity `category` field is unchanged.
-const validCategories = ['world', 'india', 'osint', 'commentary']
+const validCategories = ['world', 'india', 'nws-originals', 'commentary']
 
 const categoryLabels: Record<string, string> = {
   world: 'World',
   india: 'India',
-  osint: 'NWS Originals',
+  'nws-originals': 'NWS Originals',
   commentary: 'Commentary',
 }
 
@@ -170,7 +170,12 @@ export default async function ArticlePage(props: Props) {
   const normalizedPostCategory = post.category?.trim().replace(/[\u200B-\u200D\uFEFF]/g, '')
   const normalizedParamsCategory = urlSlugToCategory(params.category)
 
+  // The article exists but under a different category (e.g. it was moved to NWS
+  // Originals) -- send old links to its current URL instead of a 404.
   if (normalizedPostCategory !== normalizedParamsCategory) {
+    if (normalizedPostCategory) {
+      permanentRedirect(`/${categoryToUrlSlug(normalizedPostCategory)}/${params.slug}`)
+    }
     notFound()
   }
 
@@ -268,7 +273,7 @@ export default async function ArticlePage(props: Props) {
             </div>
 
             <div className="hidden lg:block lg:col-span-1">
-              <div className="sticky top-6">
+              <div className="sticky top-36">
                 <p className="text-xl font-bold">Latest on NWS</p>
                 <div className="w-7 h-1 bg-red-500 mb-6" />
                 <LatestArticlesSidebar currentArticleId={post._id} />

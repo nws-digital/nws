@@ -28,10 +28,17 @@ function isLikelyBot(userAgent: string) {
   return BOT_UA_SUBSTRINGS.some((substring) => lower.includes(substring))
 }
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+// Sanity document ids: letters, digits, dots, dashes and underscores. Draft ids are rejected.
+const ARTICLE_ID_RE = /^(?!drafts\.)[\w.-]{1,200}$/
 
 export async function POST(req: NextRequest) {
   try {
+    // Only the live production site records views. Staging/preview deployments
+    // and local dev may share this database, so they must never write to it.
+    if (process.env.VERCEL_ENV !== 'production') {
+      return new Response(null, {status: 204})
+    }
+
     const userAgent = req.headers.get('user-agent') || ''
     if (isLikelyBot(userAgent)) {
       return new Response(null, {status: 204})
@@ -39,15 +46,13 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json().catch(() => null)
     const articleId = typeof body?.articleId === 'string' ? body.articleId : ''
-    const visitorId = typeof body?.visitorId === 'string' ? body.visitorId : ''
 
-    if (!articleId || articleId.length > 200 || !UUID_RE.test(visitorId)) {
+    if (!ARTICLE_ID_RE.test(articleId)) {
       return new Response('Bad Request', {status: 400})
     }
 
     const {error} = await supabase.rpc('record_article_view', {
       p_article_id: articleId,
-      p_visitor_id: visitorId,
     })
 
     if (error) {

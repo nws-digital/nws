@@ -28,14 +28,14 @@ interface SideMenuProps {
 const sectionLinks = [
   {href: '/world', label: 'World'},
   {href: '/india', label: 'India'},
-  {href: '/osint', label: 'NWS Originals'},
+  {href: '/nws-originals', label: 'NWS Originals'},
   {href: '/commentary', label: 'Commentary'},
 ]
 
 const utilityLinks = [
   {href: '/pages/about', label: 'About Us'},
   {href: '/pages/contact', label: 'Contact'},
-  {href: '/pages/careers', label: 'Careers'},
+  {href: '/pages/terms', label: 'Terms and Conditions'},
   {href: '/pages/privacy', label: 'Privacy Policy'},
 ]
 
@@ -200,7 +200,7 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
                         <h3 className="text-sm leading-normal font-bold">{article.title}</h3>
                         <div className="flex items-center gap-2 text-xs whitespace-nowrap text-[#666]">
                           <span>{formatTimeAgo(article.date)}</span>
-                          <span className="text-[#d0d2d6]">|</span>
+                          <span className="text-[#a7a7a7]">|</span>
                           <span>{categoryLabel}</span>
                         </div>
                       </div>

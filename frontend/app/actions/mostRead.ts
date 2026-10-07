@@ -20,6 +20,7 @@ export type MostReadArticle = {
   title: string
   slug: {current: string}
   category?: string
+  excerpt?: string | null
   date?: string
   coverImage?: any
 }

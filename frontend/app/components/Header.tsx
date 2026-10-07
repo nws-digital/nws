@@ -53,7 +53,7 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
                 </Link>
               </li>
               <li>
-                <Link href="/osint-exclusive" className="hover:text-red-600 transition-colors">
+                <Link href="/nws-originals" className="hover:text-red-600 transition-colors">
                   NWS Originals
                 </Link>
               </li>

@@ -2,20 +2,16 @@
 
 import {useEffect} from 'react'
 
-const VISITOR_COOKIE = 'nws_vid'
-const VISITOR_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 // 1 year
+const STORAGE_PREFIX = 'nws_viewed:'
 
-function getOrCreateVisitorId() {
-  const match = document.cookie.match(new RegExp(`(?:^|; )${VISITOR_COOKIE}=([^;]*)`))
-  if (match) return decodeURIComponent(match[1])
-
-  const id = crypto.randomUUID()
-  document.cookie = `${VISITOR_COOKIE}=${id}; path=/; max-age=${VISITOR_COOKIE_MAX_AGE}; samesite=lax`
-  return id
+function todayUtc() {
+  return new Date().toISOString().slice(0, 10)
 }
 
 /**
- * Fires a fire-and-forget "view recorded" beacon for the Most Read panel.
+ * Fires a fire-and-forget "view recorded" beacon for the Most Read panel,
+ * at most once per article per browser per day (so refreshes don't inflate
+ * the count).
  * Deliberately a client component mounted inside the (statically
  * generated, ISR) article page -- recording this during server render
  * would fire on prerender/revalidation, not real visits.
@@ -27,15 +23,22 @@ export function RecordArticleView({articleId}: {articleId: string}) {
     // Small delay so a bounce (closed tab immediately) doesn't count as a read.
     const timer = setTimeout(() => {
       try {
-        const visitorId = getOrCreateVisitorId()
+        const key = `${STORAGE_PREFIX}${articleId}`
+        const today = todayUtc()
+        if (localStorage.getItem(key) === today) return
+
         fetch('/api/views', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({articleId, visitorId}),
+          body: JSON.stringify({articleId}),
           keepalive: true,
-        }).catch(() => {})
+        })
+          .then((res) => {
+            if (res.ok) localStorage.setItem(key, today)
+          })
+          .catch(() => {})
       } catch {
-        // Tracking failures should never be visible to the reader.
+        // Tracking failures (or blocked storage) should never be visible to the reader.
       }
     }, 2000)
 

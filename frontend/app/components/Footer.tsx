@@ -5,14 +5,14 @@ import {SectionTitle} from '@/app/components/SectionTitle'
 const sectionLinks = [
   {href: '/world', label: 'World'},
   {href: '/india', label: 'India'},
-  {href: '/osint', label: 'NWS Originals'},
+  {href: '/nws-originals', label: 'NWS Originals'},
   {href: '/commentary', label: 'Commentary'},
 ]
 
 const pageLinks = [
   {href: '/pages/about', label: 'About Us'},
   {href: '/pages/contact', label: 'Contact'},
-  {href: '/pages/careers', label: 'Careers'},
+  {href: '/pages/terms', label: 'Terms and Conditions'},
   {href: '/pages/privacy', label: 'Privacy Policy'},
 ]
 
@@ -25,7 +25,7 @@ const underlineClass =
 /* eslint-disable @next/next/no-img-element */
 export default function Footer() {
   return (
-    <footer className="flex flex-col gap-6 bg-black py-6 font-literata text-white">
+    <footer className="flex flex-col gap-6 bg-black py-6 font-literata text-[#d0d2d6]">
       <div className="shell grid grid-cols-4 gap-6 max-tablet:grid-cols-2 max-phone:gap-2">
         {/* Logo and description */}
         <div className="flex flex-col gap-6 p-2.5 max-phone:col-span-full">
@@ -38,7 +38,7 @@ export default function Footer() {
 
         {/* Sections */}
         <div className="flex flex-col gap-6 p-2.5 max-phone:col-span-full">
-          <SectionTitle>Sections</SectionTitle>
+          <SectionTitle headingClassName="text-white">Sections</SectionTitle>
           <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
             {sectionLinks.map(({href, label}) => (
               <li key={href}>
@@ -53,7 +53,7 @@ export default function Footer() {
 
         {/* Links */}
         <div className="flex flex-col gap-6 p-2.5">
-          <SectionTitle>Links</SectionTitle>
+          <SectionTitle headingClassName="text-white">Links</SectionTitle>
           <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
             {pageLinks.map(({href, label}) => (
               <li key={href}>
@@ -68,7 +68,7 @@ export default function Footer() {
 
         {/* Social */}
         <div className="flex flex-col gap-6 p-2.5">
-          <SectionTitle>Social</SectionTitle>
+          <SectionTitle headingClassName="text-white">Social</SectionTitle>
           <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
             {SOCIAL_LINKS.map((social) => (
               <li key={social.name}>
@@ -83,7 +83,7 @@ export default function Footer() {
       </div>
 
       <p className="m-0 px-6 text-center text-base max-phone:text-[13px]">
-        © 2026 NWS. All rights reserved.
+        © 2026 NWS™. All rights reserved.
         <br />
         NWS™ and NWS Facts™ are trademarks of F3 Media Inc.
       </p>

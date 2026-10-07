@@ -14,7 +14,7 @@ export function cleanCategorySlug(slug: string): string {
 export const CATEGORY_TO_URL_SLUG: Record<string, string> = {
   'world-exclusive': 'world',
   'india-exclusive': 'india',
-  'osint-exclusive': 'osint',
+  'osint-exclusive': 'nws-originals',
   'commentary': 'commentary',
 }
 

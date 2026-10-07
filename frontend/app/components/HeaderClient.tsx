@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {usePathname} from 'next/navigation'
 import SearchModal from '@/app/components/SearchModal'
 import SideMenu from '@/app/components/SideMenu'
@@ -22,7 +22,7 @@ interface HeaderClientProps {
 const navLinks = [
   {href: '/world', label: 'World'},
   {href: '/india', label: 'India'},
-  {href: '/osint', label: 'NWS Originals'},
+  {href: '/nws-originals', label: 'NWS Originals'},
   {href: '/commentary', label: 'Commentary'},
 ]
 
@@ -30,13 +30,32 @@ const navLinks = [
 export default function HeaderClient({latestArticles}: HeaderClientProps) {
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [searchModalOpen, setSearchModalOpen] = useState(false)
+  const [compact, setCompact] = useState(false)
   const pathname = usePathname()
+
+  // Shrink the masthead once the page has scrolled a little
+  useEffect(() => {
+    const update = () => setCompact(window.scrollY > 32)
+    update()
+    window.addEventListener('scroll', update, {passive: true})
+    return () => window.removeEventListener('scroll', update)
+  }, [])
 
   return (
     <>
-      <header className="relative z-50 bg-white font-literata">
+      <header
+        className={`fixed inset-x-0 top-0 z-50 w-full bg-white/[0.97] font-literata backdrop-blur-md transition-shadow duration-300 ${
+          compact ? 'shadow-[0_8px_28px_rgb(0_0_0/8%)]' : ''
+        }`}
+      >
         {/* Masthead: centred logo on desktop; menu / logo / search on mobile */}
-        <div className="shell relative flex min-h-[104px] items-center justify-center py-4 max-tablet:min-h-20 max-tablet:justify-between max-tablet:py-2.5">
+        <div
+          className={`shell relative flex items-center justify-center transition-[min-height,padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] max-tablet:justify-between ${
+            compact
+              ? 'min-h-[72px] py-2 max-tablet:min-h-16 max-tablet:py-1.5'
+              : 'min-h-[104px] py-4 max-tablet:min-h-20 max-tablet:py-2.5'
+          }`}
+        >
           <button
             type="button"
             className="hidden size-[42px] place-items-center rounded-full transition-colors hover:bg-[#f3f3f3] max-tablet:grid"
@@ -52,7 +71,11 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
               alt="NWS"
               width={175}
               height={72}
-              className="block h-[72px] w-[175px] max-tablet:h-12 max-tablet:w-[117px]"
+              className={`block transition-[width,height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                compact
+                  ? 'h-12 w-[117px] max-tablet:h-10 max-tablet:w-[98px]'
+                  : 'h-[72px] w-[175px] max-tablet:h-12 max-tablet:w-[117px]'
+              }`}
             />
           </Link>
           <button
@@ -111,6 +134,14 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
           </div>
         </div>
       </header>
+
+      {/* Reserves the space the fixed header takes up so page content starts below it */}
+      <div
+        aria-hidden="true"
+        className={`transition-[height] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          compact ? 'h-[131px] max-tablet:h-[65px]' : 'h-[163px] max-tablet:h-[81px]'
+        }`}
+      />
 
       {/* Search Modal - Outside header */}
       <SearchModal isOpen={searchModalOpen} onClose={() => setSearchModalOpen(false)} />

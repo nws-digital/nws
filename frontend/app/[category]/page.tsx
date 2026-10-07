@@ -7,7 +7,7 @@ import {urlSlugToCategory} from '@/sanity/lib/cleanCategorySlug'
 import {withDefinedSlug} from '@/sanity/lib/utils'
 
 // URL segment values (short form) -- the underlying Sanity `category` field is unchanged.
-const validCategorySlugs = ['world', 'india', 'osint', 'commentary']
+const validCategorySlugs = ['world', 'india', 'nws-originals', 'commentary']
 
 interface CategoryPageProps {
   params: Promise<{
@@ -46,7 +46,7 @@ export default async function CategoryPage({params}: CategoryPageProps) {
     })
 
     return (
-      <div className="pt-20 min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50">
         <CommentaryArticlesList
           initialArticles={withDefinedSlug(articles || [])}
           totalCount={totalCount || 0}
@@ -71,7 +71,7 @@ export default async function CategoryPage({params}: CategoryPageProps) {
   })
 
   return (
-    <div className="pt-20 min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <CategoryArticlesList
         initialArticles={withDefinedSlug(articles || [])}
         category={category}

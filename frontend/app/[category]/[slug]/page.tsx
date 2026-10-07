@@ -1,5 +1,5 @@
 import type {Metadata} from 'next'
-import {notFound} from 'next/navigation'
+import {notFound, permanentRedirect} from 'next/navigation'
 import {type PortableTextBlock} from 'next-sanity'
 import {Suspense} from 'react'
 import Avatar from '@/app/components/Avatar'
@@ -10,6 +10,7 @@ import {Breadcrumb} from '@/app/components/Breadcrumb'
 import {LatestArticlesSidebar} from '@/app/components/LatestArticlesSidebar'
 import {ArticleDates} from '@/app/components/ArticleDates'
 import {ShareArticle} from '@/app/components/ShareArticle'
+import {RecordArticleView} from '@/app/components/RecordArticleView'
 import {sanityFetch} from '@/sanity/lib/live'
 import {postQuery, allPostsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
@@ -49,12 +50,12 @@ type ArticlePost = {
 }
 
 // URL segment values (short form) -- the underlying Sanity `category` field is unchanged.
-const validCategories = ['world', 'india', 'osint', 'commentary']
+const validCategories = ['world', 'india', 'nws-originals', 'commentary']
 
 const categoryLabels: Record<string, string> = {
   world: 'World',
   india: 'India',
-  osint: 'OSINT',
+  'nws-originals': 'NWS Originals',
   commentary: 'Commentary',
 }
 
@@ -160,7 +161,6 @@ export default async function ArticlePage(props: Props) {
   const post = postResponse as ArticlePost | null
 
   if (!post?._id) {
-    console.log('Article not found for slug:', params.slug)
     return notFound()
   }
 
@@ -170,14 +170,12 @@ export default async function ArticlePage(props: Props) {
   const normalizedPostCategory = post.category?.trim().replace(/[\u200B-\u200D\uFEFF]/g, '')
   const normalizedParamsCategory = urlSlugToCategory(params.category)
 
+  // The article exists but under a different category (e.g. it was moved to NWS
+  // Originals) -- send old links to its current URL instead of a 404.
   if (normalizedPostCategory !== normalizedParamsCategory) {
-    console.log('Category mismatch:', {
-      urlCategory: params.category,
-      resolvedCategory: normalizedParamsCategory,
-      articleCategory: post.category,
-      normalizedArticleCategory: normalizedPostCategory,
-      slug: params.slug
-    })
+    if (normalizedPostCategory) {
+      permanentRedirect(`/${categoryToUrlSlug(normalizedPostCategory)}/${params.slug}`)
+    }
     notFound()
   }
 
@@ -213,7 +211,8 @@ export default async function ArticlePage(props: Props) {
 
   return (
     <>
-      <div className="pt-20">
+      <RecordArticleView articleId={post._id} />
+      <div>
         <div className="max-w-[1366px] mx-auto px-4 py-8">
           {/* Breadcrumb Navigation */}
           <Breadcrumb
@@ -274,7 +273,7 @@ export default async function ArticlePage(props: Props) {
             </div>
 
             <div className="hidden lg:block lg:col-span-1">
-              <div className="sticky top-24">
+              <div className="sticky top-36">
                 <p className="text-xl font-bold">Latest on NWS</p>
                 <div className="w-7 h-1 bg-red-500 mb-6" />
                 <LatestArticlesSidebar currentArticleId={post._id} />

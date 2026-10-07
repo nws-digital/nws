@@ -15,6 +15,7 @@
     "deploy:staging": "sanity deploy --config sanity.config.staging.ts",
     "dev": "sanity dev",
     "backfill-author-slugs": "sanity exec scripts/backfillAuthorSlugs.ts --with-user-token",
+    "move-to-nws-originals": "node scripts/moveToNwsOriginals.mjs",
     "dev:production": "sanity dev --config sanity.config.production.ts",
     "dev:staging": "sanity dev --config sanity.config.staging.ts",
     "extract-types": "sanity schema extract --enforce-required-fields",

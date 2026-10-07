@@ -6,7 +6,7 @@ const CHILD_SITEMAPS = [
   'static-sitemap.xml',
   'world-news-sitemap.xml',
   'india-news-sitemap.xml',
-  'osint-news-sitemap.xml',
+  'nws-originals-news-sitemap.xml',
   'commentary-sitemap.xml',
   'author-sitemap.xml',
   'news-sitemap.xml',

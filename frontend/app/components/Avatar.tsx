@@ -29,9 +29,17 @@ type Props = {
   date?: string
   small?: boolean
   interactive?: boolean
+  showDesignation?: boolean
 }
 
-export default function Avatar({person, coAuthor, date, small = false, interactive = true}: Props) {
+export default function Avatar({
+  person,
+  coAuthor,
+  date,
+  small = false,
+  interactive = true,
+  showDesignation = false,
+}: Props) {
   const {firstName, lastName, designation, picture, bio} = person
   const [showBio, setShowBio] = useState(false)
   const [showCoAuthorBio, setShowCoAuthorBio] = useState(false)
@@ -168,6 +176,9 @@ export default function Avatar({person, coAuthor, date, small = false, interacti
                 </>
               )}
             </div>
+          )}
+          {showDesignation && designation && (
+            <div className={`text-gray-500 ${small ? 'text-xs' : 'text-sm'}`}>{designation}</div>
           )}
           {date && (
             <div className={`text-gray-500 ${small ? 'text-xs' : 'text-sm'}`}>

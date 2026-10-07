@@ -20,7 +20,7 @@ export const dynamicParams = true
 const categoryLabels: Record<string, string> = {
   world: 'World',
   india: 'India',
-  osint: 'OSINT',
+  'nws-originals': 'NWS Originals',
   commentary: 'Commentary',
 }
 
@@ -54,7 +54,7 @@ export default async function AuthorPage(props: Props) {
   const hasBio = !!(author.bio as any)?.length
 
   return (
-    <div className="pt-20 min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-[1366px] mx-auto px-4 py-12">
 
         {/* Author profile header */}

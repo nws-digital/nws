@@ -1,125 +1,92 @@
-import Image from 'next/image'
 import Link from 'next/link'
-import {SOCIAL_LINKS, SOCIAL_ICONS} from '@/lib/constants'
+import {SOCIAL_LINKS} from '@/lib/constants'
+import {SectionTitle} from '@/app/components/SectionTitle'
 
+const sectionLinks = [
+  {href: '/world', label: 'World'},
+  {href: '/india', label: 'India'},
+  {href: '/nws-originals', label: 'NWS Originals'},
+  {href: '/commentary', label: 'Commentary'},
+]
+
+const pageLinks = [
+  {href: '/pages/about', label: 'About Us'},
+  {href: '/pages/contact', label: 'Contact'},
+  {href: '/pages/terms', label: 'Terms and Conditions'},
+  {href: '/pages/privacy', label: 'Privacy Policy'},
+]
+
+// Underline-on-hover treatment shared by all footer links
+const linkClass =
+  'group relative inline-block text-base'
+const underlineClass =
+  'absolute right-0 -bottom-[5px] left-0 h-0.5 origin-right scale-x-0 bg-[#ed1c24] transition-transform duration-200 group-hover:origin-left group-hover:scale-x-100 group-focus-visible:origin-left group-focus-visible:scale-x-100'
+
+/* eslint-disable @next/next/no-img-element */
 export default function Footer() {
   return (
-    <footer className="bg-black text-white">
-      <div className="max-w-[1366px] mx-auto px-6 py-12">
-        {/* Four column layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-          {/* Logo and Description Column */}
-          <div>
-            <Image 
-              src="/images/Logo_White.svg" 
-              alt="NWS" 
-              width={136}
-              height={56}
-              className="h-10 w-auto mb-4"
-            />
-            <p className="text-gray-400 text-sm leading-relaxed">
-              NWS is an independent platform for cross-border and investigative journalism. We report overlooked stories from around the world.
-            </p>
-          </div>
-
-          {/* Sections Column */}
-          <div>
-            <div className="mb-8">
-              <h6 className="text-lg font-bold whitespace-nowrap mb-2">Sections</h6>
-              <div className="w-4 h-1 bg-red-600"></div>
-            </div>
-            <ul className="space-y-2 text-gray-400 text-sm leading-relaxed">
-              <li>
-                <Link href="/world" className="hover:text-red-500 transition-colors">
-                  World
-                </Link>
-              </li>
-              <li>
-                <Link href="/india" className="hover:text-red-500 transition-colors">
-                  India
-                </Link>
-              </li>
-              <li>
-                <Link href="/osint" className="hover:text-red-500 transition-colors">
-                  OSINT
-                </Link>
-              </li>
-              <li>
-                <Link href="/commentary" className="hover:text-red-500 transition-colors">
-                  Commentary
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* About Column */}
-          <div>
-            <div className="mb-8">
-              <h6 className="text-lg font-bold whitespace-nowrap mb-2">Links</h6>
-              <div className="w-4 h-1 bg-red-600"></div>
-            </div>
-            <ul className="space-y-2 text-gray-400 text-sm leading-relaxed">
-              <li>
-                <Link href="/pages/about" className="hover:text-red-500 transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/pages/contact" className="hover:text-red-500 transition-colors">
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link href="/pages/terms" className="hover:text-red-500 transition-colors">
-                  Terms and Conditions
-                </Link>
-              </li>
-              <li>
-                <Link href="/pages/privacy" className="hover:text-red-500 transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Follow Us Column */}
-          <div>
-            <div className="mb-8">
-              <h6 className="text-lg font-bold whitespace-nowrap mb-2">Social</h6>
-              <div className="w-4 h-1 bg-red-600"></div>
-            </div>
-            <ul className="space-y-2 text-gray-400 text-sm leading-relaxed">
-              {SOCIAL_LINKS.map((social) => {
-                const icon = SOCIAL_ICONS[social.name]
-                return (
-                  <li key={social.name}>
-                    <a 
-                      href={social.url}
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="hover:text-red-500 transition-colors flex items-center gap-2"
-                    >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox={icon.viewBox}>
-                        <path d={icon.path} />
-                      </svg>
-                      {social.name}
-                    </a>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
+    <footer className="flex flex-col gap-6 bg-black py-6 font-literata text-[#d0d2d6]">
+      <div className="shell grid grid-cols-4 gap-6 max-tablet:grid-cols-2 max-phone:gap-2">
+        {/* Logo and description */}
+        <div className="flex flex-col gap-6 p-2.5 max-phone:col-span-full">
+          <img src="/images/design/logo-white.svg" alt="NWS" width={136} height={56} className="h-14 w-[136px]" />
+          <p className="m-0 text-base">
+            NWS is an independent platform for cross-border and investigative journalism. We report
+            overlooked stories from around the world.
+          </p>
         </div>
 
-        {/* Divider line */}
-        <div className="border-t border-gray-700 mb-6"></div>
+        {/* Sections */}
+        <div className="flex flex-col gap-6 p-2.5 max-phone:col-span-full">
+          <SectionTitle headingClassName="text-white">Sections</SectionTitle>
+          <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+            {sectionLinks.map(({href, label}) => (
+              <li key={href}>
+                <Link href={href} className={linkClass}>
+                  {label}
+                  <span className={underlineClass} />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        {/* Copyright */}
-        <div className="text-center text-gray-400">
-          <p>© 2026 NWS™. All rights reserved.</p>
-          <p>NWS™ and NWS Facts™ are trademarks of F3 Media Inc.</p>
+        {/* Links */}
+        <div className="flex flex-col gap-6 p-2.5">
+          <SectionTitle headingClassName="text-white">Links</SectionTitle>
+          <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+            {pageLinks.map(({href, label}) => (
+              <li key={href}>
+                <Link href={href} className={linkClass}>
+                  {label}
+                  <span className={underlineClass} />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Social */}
+        <div className="flex flex-col gap-6 p-2.5">
+          <SectionTitle headingClassName="text-white">Social</SectionTitle>
+          <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+            {SOCIAL_LINKS.map((social) => (
+              <li key={social.name}>
+                <a href={social.url} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                  {social.name}
+                  <span className={underlineClass} />
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
+
+      <p className="m-0 px-6 text-center text-base max-phone:text-[13px]">
+        © 2026 NWS™. All rights reserved.
+        <br />
+        NWS™ and NWS Facts™ are trademarks of F3 Media Inc.
+      </p>
     </footer>
   )
 }

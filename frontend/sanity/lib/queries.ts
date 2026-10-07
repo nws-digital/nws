@@ -64,6 +64,62 @@ export const latestArticlesQuery = defineQuery(`
   }
 `)
 
+// "NWS Originals" column in the home hero (stored category value is still osint-exclusive)
+export const originalsArticlesQuery = defineQuery(`
+  *[_type == "article" && category == "osint-exclusive" && defined(slug.current)] | order(date desc)[0...2] {
+    _id,
+    title,
+    slug,
+    date,
+    category,
+    coverImage
+  }
+`)
+
+// Latest stories of a single category for the home page "Latest" sections
+export const latestByCategoryQuery = defineQuery(`
+  *[_type == "article" && category == $category && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...3] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
+    date,
+    category,
+    coverImage
+  }
+`)
+
+// Resolves ranked article ids (from the article_views Supabase table) into
+// full Sanity docs for the homepage "Most Read" panel. Deliberately not
+// filtered by category -- a genuinely popular commentary piece should be
+// eligible to appear, same as any news article.
+export const mostReadByIdsQuery = defineQuery(`
+  *[_type == "article" && _id in $ids && defined(slug.current)] {
+    _id,
+    title,
+    slug,
+    date,
+    excerpt,
+    category,
+    coverImage
+  }
+`)
+
+// Backfill for the "Most Read" panel when there isn't (yet) enough view
+// data to fill all slots -- e.g. right after launch.
+export const mostReadFallbackQuery = defineQuery(`
+  *[_type == "article" && defined(slug.current)] | order(date desc)[0...20] {
+    _id,
+    title,
+    slug,
+    date,
+    excerpt,
+    category,
+    coverImage
+  }
+`)
+
 export const sidebarArticlesQuery = defineQuery(`
   *[_type == "article" && category != "commentary" && (_id != $excludeId)] | order(date desc)[0...12] {
     _id,

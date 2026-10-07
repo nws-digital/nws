@@ -29,7 +29,7 @@ interface SearchResult {
 const categoryLabels: Record<string, string> = {
   'world-exclusive': 'World',
   'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
+  'osint-exclusive': 'NWS Originals',
   'commentary': 'Commentary',
 }
 
@@ -166,98 +166,75 @@ export default function SearchModal({isOpen, onClose}: SearchModalProps) {
             animate={{opacity: 1}}
             exit={{opacity: 0}}
             transition={{duration: 0.3}}
-            className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-2xl"
-            style={{backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)'}}
+            className="fixed inset-0 z-[60] bg-black/[0.52] backdrop-blur-[5px]"
             onClick={onClose}
           />
 
           {/* Modal */}
-          <div className="fixed inset-0 z-[70] flex items-start justify-center pt-20 px-4">
+          <div className="fixed inset-0 z-[70] flex items-start justify-center px-6 pt-[min(18vh,160px)] max-phone:px-3 max-phone:pt-20">
             <motion.div
               initial={{opacity: 0, scale: 0.95, y: 20}}
               animate={{opacity: 1, scale: 1, y: 0}}
               exit={{opacity: 0, scale: 0.95, y: 20}}
               transition={{type: 'spring', duration: 0.3, bounce: 0.2}}
-              className="bg-white rounded-lg shadow-2xl w-full max-w-[800px] max-h-[90vh] overflow-hidden"
+              className="bg-white rounded-2xl shadow-[0_30px_90px_rgb(0_0_0/25%)] w-full max-w-[720px] max-h-[90vh] overflow-hidden font-literata"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header */}
-              <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-900">Search the Site</h2>
-                <motion.button
-                  whileHover={{scale: 1.1, rotate: 90}}
-                  whileTap={{scale: 0.9}}
-                  onClick={onClose}
-                  className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                  aria-label="Close search"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-6 h-6"
+              {/* Header + search field */}
+              <div className="p-7 max-phone:p-5">
+                <div className="mb-6 flex items-center justify-between">
+                  <h2 className="text-[28px] font-bold text-[#1a1a1a]">Search NWS</h2>
+                  <motion.button
+                    whileHover={{rotate: 90}}
+                    whileTap={{scale: 0.9}}
+                    onClick={onClose}
+                    className="grid size-9 place-items-center rounded-full p-1.5 transition-colors hover:bg-[#f2f2f2]"
+                    aria-label="Close search"
                   >
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </motion.button>
-              </div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/images/design/icon-close.svg" alt="" className="size-6" />
+                  </motion.button>
+                </div>
 
-              {/* Search Input */}
-              <div className="p-6 border-b border-gray-200">
-                <motion.div
-                  initial={{opacity: 0, y: -10}}
-                  animate={{opacity: 1, y: 0}}
-                  transition={{delay: 0.15}}
-                  className="relative"
-                >
+                <label htmlFor="site-search" className="mb-2 block text-sm text-[#666]">
+                  Stories, topics and authors
+                </label>
+                <div className="flex items-center rounded-[10px] border border-[#b9b9b9] transition focus-within:border-[#1a1a1a] focus-within:shadow-[0_0_0_3px_rgb(0_0_0/8%)]">
                   <input
+                    id="site-search"
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Search ..."
-                    className="w-full bg-[#f0f2f5] rounded px-3 py-3 pr-12 text-sm text-black placeholder:text-[#666] focus:outline-none focus:ring-2 focus:ring-gray-300 focus:bg-white transition-all"
+                    placeholder="What are you looking for?"
+                    className="min-w-0 flex-1 bg-transparent px-[18px] py-[15px] text-black outline-none placeholder:text-[#666]"
                     autoFocus
                   />
-                  <motion.div
-                    whileHover={{scale: 1.1}}
-                    whileTap={{scale: 0.9}}
+                  <button
+                    type="button"
                     onClick={handleSearch}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                    aria-label="Submit search"
+                    className="grid size-[52px] place-items-center"
                   >
                     {loading ? (
                       <div className="animate-spin h-6 w-6 border-2 border-gray-600 border-t-transparent rounded-full" />
                     ) : (
-                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24">
-                        <circle cx="11" cy="11" r="8" stroke="#1F1F1F" strokeWidth="2" />
-                        <path d="m21 21-4.35-4.35" stroke="#1F1F1F" strokeWidth="2" strokeLinecap="round" />
-                      </svg>
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src="/images/design/icon-search-lg.svg" alt="" className="size-7" />
                     )}
-                  </motion.div>
+                  </button>
+                </div>
 
-                  {/* Search Query Indicator */}
-                  <AnimatePresence>
-                    {trimmedQuery.length >= 2 && (
-                      <motion.div
-                        initial={{opacity: 0, y: -5}}
-                        animate={{opacity: 1, y: 0}}
-                        exit={{opacity: 0, y: -5}}
-                        className="absolute -bottom-6 left-0 text-xs text-[#666]"
-                      >
-                        {results.length} result{results.length !== 1 ? 's' : ''} found
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
+                {/* Search Query Indicator */}
+                {trimmedQuery.length >= 2 && (
+                  <div className="mt-2 text-xs text-[#666]">
+                    {results.length} result{results.length !== 1 ? 's' : ''} found
+                  </div>
+                )}
               </div>
 
               {/* Results */}
-              <div className="overflow-y-auto max-h-[calc(90vh-240px)] p-6">
+              <div className="overflow-y-auto max-h-[calc(90vh-280px)] border-t border-gray-200 p-6 empty:hidden">
             {/* Show "No results" only when there's a search query and no results */}
             {results.length === 0 && !loading && trimmedQuery.length >= 2 && (
               <div className="text-center py-8 text-gray-500">

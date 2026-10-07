@@ -1,12 +1,14 @@
 'use client'
 
+import {useEffect, useRef} from 'react'
 import Link from 'next/link'
-import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 import Image from 'next/image'
-import {formatDistanceToNow} from 'date-fns'
-import {urlForImage} from '@/sanity/lib/utils'
 import {motion, AnimatePresence} from 'framer-motion'
-import {SOCIAL_LINKS} from '@/lib/constants'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
+import {urlForImage} from '@/sanity/lib/utils'
+import {CATEGORY_LABELS, SOCIAL_LINKS, SOCIAL_ICONS} from '@/lib/constants'
+import {formatTimeAgo} from '@/lib/timeAgo'
+import {SectionTitle} from '@/app/components/SectionTitle'
 
 interface Article {
   _id: string
@@ -23,7 +25,47 @@ interface SideMenuProps {
   latestArticles: Article[]
 }
 
+const sectionLinks = [
+  {href: '/world', label: 'World'},
+  {href: '/india', label: 'India'},
+  {href: '/nws-originals', label: 'NWS Originals'},
+  {href: '/commentary', label: 'Commentary'},
+]
+
+const utilityLinks = [
+  {href: '/pages/about', label: 'About Us'},
+  {href: '/pages/contact', label: 'Contact'},
+  {href: '/pages/terms', label: 'Terms and Conditions'},
+  {href: '/pages/privacy', label: 'Privacy Policy'},
+]
+
+const linkClass =
+  'block transition duration-200 hover:translate-x-1 hover:text-[#ed1c24] focus-visible:translate-x-1 focus-visible:text-[#ed1c24] focus-visible:outline-none'
+
+function Divider() {
+  return <div className="h-px w-full shrink-0 bg-[#d0d2d6]" />
+}
+
+/* eslint-disable @next/next/no-img-element */
 export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProps) {
+  const closeButton = useRef<HTMLButtonElement>(null)
+
+  // Lock page scroll, close on Escape and move focus into the drawer while it is open
+  useEffect(() => {
+    if (!isOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    closeButton.current?.focus()
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isOpen, onClose])
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -33,215 +75,142 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
             initial={{opacity: 0}}
             animate={{opacity: 1}}
             exit={{opacity: 0}}
-            transition={{duration: 0.2}}
-            className="fixed inset-0 bg-black/50 z-[100]"
+            transition={{duration: 0.3}}
+            className="fixed inset-0 z-[100] bg-black/60"
             onClick={onClose}
           />
 
           {/* Slide-in Menu */}
-          <motion.div
-            initial={{opacity: 0, x: 50}}
-            animate={{opacity: 1, x: 0}}
-            exit={{opacity: 0, x: 50}}
-            transition={{duration: 0.3, ease: 'easeOut'}}
-            className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white z-[101] shadow-2xl overflow-y-auto"
+          <motion.aside
+            aria-label="Site menu"
+            initial={{x: '100%'}}
+            animate={{x: 0}}
+            exit={{x: '100%'}}
+            transition={{duration: 0.36, ease: [0.22, 1, 0.36, 1]}}
+            className="fixed top-0 right-0 z-[101] flex h-dvh w-full flex-col items-start gap-6 overflow-x-hidden overflow-y-auto overscroll-contain bg-white p-6 font-literata text-black shadow-[-24px_0_60px_rgb(0_0_0/12%)] sm:w-[518px]"
           >
-        {/* Header with Close Button */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between z-10">
-          <Link href="/" onClick={onClose}>
-            <Image
-              src="/images/Logo_Dark.svg"
-              alt="NWS"
-              width={367}
-              height={200}
-              className="h-14 w-auto"
-            />
-          </Link>
-          <button 
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            aria-label="Close menu"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="w-6 h-6"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-
-        <div className="p-6 space-y-8">
-          {/* Mobile Navigation (only on small screens) */}
-          <motion.div
-            initial={{opacity: 0, y: 20}}
-            animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.1, duration: 0.3}}
-            className="md:hidden space-y-2"
-          >
-            <Link
-              href="/world"
-              className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
-              onClick={onClose}
-            >
-              World
-            </Link>
-            <Link
-              href="/india"
-              className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
-              onClick={onClose}
-            >
-              India
-            </Link>
-            <Link
-              href="/osint"
-              className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
-              onClick={onClose}
-            >
-              OSINT
-            </Link>
-            <Link 
-              href="/commentary" 
-              className="block py-2 text-sm font-medium hover:text-red-600 transition-colors"
-              onClick={onClose}
-            >
-              Commentary
-            </Link>
-            <div className="border-t border-gray-200 my-4"></div>
-          </motion.div>
-
-          {/* Latest News */}
-          <motion.div
-            initial={{opacity: 0, y: 20}}
-            animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.2, duration: 0.3}}
-          >
-            <h3 className="text-lg font-bold mb-4">
-              <span className="relative inline-block">
-                <span className="relative">L</span>
-                <span className="relative">
-                  a
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-red-600"></span>
-                </span>
-                test News
-              </span>
-            </h3>
-            <div className="space-y-4">
-              {latestArticles.map((article) => {
-                const coverImageUrl = article.coverImage 
-                  ? urlForImage(article.coverImage)?.width(80).height(80).fit('crop').url()
-                  : null
-                const timeAgo = formatDistanceToNow(new Date(article.date), {addSuffix: true})
-
-                return (
-                  <Link
-                    key={article._id}
-                    href={`/${categoryToUrlSlug(article.category)}/${article.slug.current}`}
-                    className="flex gap-3 group"
-                    onClick={onClose}
-                  >
-                    {coverImageUrl && (
-                      <div className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden">
-                        <Image
-                          src={coverImageUrl}
-                          alt={article.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-1">
-                        {article.title}
-                      </h4>
-                      <p className="text-xs text-gray-500">{timeAgo}</p>
-                    </div>
-                  </Link>
-                )
-              })}
+            {/* Logo + close */}
+            <div className="flex w-full items-start justify-between">
+              <Link href="/" onClick={onClose}>
+                <img
+                  src="/images/design/logo-dark-sm.svg"
+                  alt="NWS"
+                  width={136}
+                  height={56}
+                  className="block h-14 w-[136px]"
+                />
+              </Link>
+              <button
+                ref={closeButton}
+                type="button"
+                onClick={onClose}
+                aria-label="Close menu"
+                className="-mt-1 -mr-1 grid size-8 place-items-center rounded-full p-1 transition duration-200 hover:rotate-90 hover:bg-[#f2f2f2] focus-visible:rotate-90 focus-visible:bg-[#f2f2f2] focus-visible:outline-none"
+              >
+                <img src="/images/design/icon-close.svg" alt="" className="size-6" />
+              </button>
             </div>
-          </motion.div>
 
-          {/* About, Contact, etc. */}
-          <motion.div
-            initial={{opacity: 0, y: 20}}
-            animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.3, duration: 0.3}}
-            className="space-y-3"
-          >
-            <Link 
-              href="/pages/about" 
-              className="block text-sm font-medium hover:text-red-600 transition-colors"
-              onClick={onClose}
-            >
-              ABOUT US
-            </Link>
-            <Link 
-              href="/pages/contact" 
-              className="block text-sm font-medium hover:text-red-600 transition-colors"
-              onClick={onClose}
-            >
-              CONTACT
-            </Link>
-            <Link 
-              href="/pages/terms" 
-              className="block text-sm font-medium hover:text-red-600 transition-colors"
-              onClick={onClose}
-            >
-              TERMS AND CONDITIONS
-            </Link>
-            <Link 
-              href="/pages/privacy" 
-              className="block text-sm font-medium hover:text-red-600 transition-colors"
-              onClick={onClose}
-            >
-              PRIVACY POLICY
-            </Link>
-          </motion.div>
+            <Divider />
 
-          {/* Social */}
-          <motion.div
-            initial={{opacity: 0, y: 20}}
-            animate={{opacity: 1, y: 0}}
-            transition={{delay: 0.4, duration: 0.3}}
-          >
-            <h3 className="text-lg font-bold mb-4">
-              <span className="relative inline-block">
-                <span className="relative">
-                  S
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-red-600"></span>
-                </span>
-                <span className="relative">
-                  o
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-red-600"></span>
-                </span>
-                cial
-              </span>
-            </h3>
-            <div className="space-y-3">
-              {SOCIAL_LINKS.map((social) => (
-                <a 
-                  key={social.name}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-sm font-medium hover:text-red-600 transition-colors"
-                >
-                  {social.name.toUpperCase()}
-                </a>
+            {/* Sections (mobile only -- on desktop they live in the header nav) */}
+            <nav
+              aria-label="Sections"
+              className="flex flex-col gap-6 text-base font-medium uppercase tablet:hidden"
+            >
+              {sectionLinks.map(({href, label}) => (
+                <Link key={href} href={href} className={linkClass} onClick={onClose}>
+                  {label}
+                </Link>
               ))}
+            </nav>
+            <div className="w-full tablet:hidden">
+              <Divider />
             </div>
-          </motion.div>
-        </div>
-        </motion.div>
-      </>
+
+            {/* Utility links */}
+            <nav aria-label="Utility navigation" className="flex flex-col gap-6 text-base font-medium uppercase">
+              {utilityLinks.map(({href, label}) => (
+                <Link key={href} href={href} className={linkClass} onClick={onClose}>
+                  {label}
+                </Link>
+              ))}
+            </nav>
+
+            <Divider />
+
+            {/* Social */}
+            <section className="flex w-full flex-col items-start gap-6">
+              <SectionTitle headingClassName="text-2xl font-semibold">Social</SectionTitle>
+              <div className="flex flex-col gap-3">
+                {SOCIAL_LINKS.map((social) => {
+                  const icon = SOCIAL_ICONS[social.name]
+                  return (
+                    <a
+                      key={social.name}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`${linkClass} flex items-center gap-3 text-base`}
+                    >
+                      <svg className="size-4" fill="currentColor" viewBox={icon.viewBox} aria-hidden="true">
+                        <path d={icon.path} />
+                      </svg>
+                      <span>{social.name}</span>
+                    </a>
+                  )
+                })}
+              </div>
+            </section>
+
+            <Divider />
+
+            {/* Latest */}
+            <section className="flex w-full flex-col items-start gap-6">
+              <div className="flex w-full items-center justify-between">
+                <SectionTitle headingClassName="text-2xl font-semibold">Latest</SectionTitle>
+                <Link
+                  href="/#latest"
+                  onClick={onClose}
+                  className="text-base font-medium transition-colors hover:text-[#ed1c24]"
+                >
+                  View All
+                </Link>
+              </div>
+              <div className="flex w-full flex-col gap-4">
+                {latestArticles.map((article) => {
+                  const coverImageUrl = article.coverImage
+                    ? urlForImage(article.coverImage)?.width(160).height(160).fit('crop').url()
+                    : null
+                  const categoryLabel = CATEGORY_LABELS[article.category] || article.category
+
+                  return (
+                    <Link
+                      key={article._id}
+                      href={`/${categoryToUrlSlug(article.category)}/${article.slug.current}`}
+                      onClick={onClose}
+                      className="flex w-full items-start gap-2.5 rounded-lg transition duration-200 hover:translate-x-[3px] hover:bg-[#f6f6f6] focus-visible:translate-x-[3px] focus-visible:bg-[#f6f6f6] focus-visible:outline-none"
+                    >
+                      <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-[#eee]">
+                        {coverImageUrl && (
+                          <Image src={coverImageUrl} alt={article.title} fill className="object-cover" />
+                        )}
+                      </div>
+                      <div className="flex min-w-0 flex-col gap-1">
+                        <h3 className="text-sm leading-normal font-bold">{article.title}</h3>
+                        <div className="flex items-center gap-2 text-xs whitespace-nowrap text-[#666]">
+                          <span>{formatTimeAgo(article.date)}</span>
+                          <span className="text-[#a7a7a7]">|</span>
+                          <span>{categoryLabel}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+            </section>
+          </motion.aside>
+        </>
       )}
     </AnimatePresence>
   )

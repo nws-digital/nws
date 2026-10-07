@@ -19,7 +19,9 @@ const nextConfig: NextConfig = {
     const renamedCategories: Array<[string, string]> = [
       ['world-exclusive', 'world'],
       ['india-exclusive', 'india'],
-      ['osint-exclusive', 'osint'],
+      ['osint-exclusive', 'nws-originals'],
+      // Interim short URL used before the NWS Originals rename
+      ['osint', 'nws-originals'],
     ]
 
     const categoryRedirects = renamedCategories.flatMap(([from, to]) => [
@@ -46,6 +48,11 @@ const nextConfig: NextConfig = {
     return [
       ...categoryRedirects,
       ...staticPageRedirects,
+      {
+        source: '/osint-news-sitemap.xml',
+        destination: '/nws-originals-news-sitemap.xml',
+        permanent: true,
+      },
       // The sitemap is now a sitemap-index at /index-sitemap.xml; keep the
       // old /sitemap.xml URL working during the crawler/Search Console migration.
       {

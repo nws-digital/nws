@@ -14,6 +14,10 @@ import {sanityFetch} from '@/sanity/lib/live'
 import {withDefinedSlug} from '@/sanity/lib/utils'
 import {getMostReadArticles} from '@/app/actions/mostRead'
 
+// The home page is statically generated; refresh it periodically so the Most Read
+// ranking (read from Supabase at render time) doesn't stay frozen between deploys.
+export const revalidate = 300
+
 export default async function Page() {
   const {data: featuredArticles} = await sanityFetch({
     query: featuredArticlesQuery,

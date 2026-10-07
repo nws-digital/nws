@@ -4,7 +4,7 @@ import {MostReadModal} from '@/app/components/MostReadModal'
 import type {MostReadArticle} from '@/app/actions/mostRead'
 
 const VISIBLE_COUNT = 2
-const MODAL_COUNT = 10
+const MODAL_COUNT = 12
 
 export function MostReadPanel({articles}: {articles: MostReadArticle[]}) {
   if (!articles || articles.length === 0) return null

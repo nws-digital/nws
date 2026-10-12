@@ -4,16 +4,12 @@ import {useEffect} from 'react'
 
 /**
  * Content Protection Component
- * Implements JavaScript-based content protection to prevent copying, right-click, and keyboard shortcuts
+ * Implements JavaScript-based content protection to prevent copying and keyboard shortcuts.
+ * Right-click is intentionally allowed (e.g. "Open link in new tab"); its Copy item is still
+ * blocked by the copy handler and the user-select: none rules in globals.css.
  */
 export function ContentProtection() {
   useEffect(() => {
-    // Prevent right-click context menu
-    const handleContextMenu = (e: MouseEvent) => {
-      e.preventDefault()
-      return false
-    }
-
     // Prevent copy
     const handleCopy = (e: ClipboardEvent) => {
       e.preventDefault()
@@ -62,7 +58,6 @@ export function ContentProtection() {
     }
 
     // Add event listeners
-    document.addEventListener('contextmenu', handleContextMenu)
     document.addEventListener('copy', handleCopy)
     document.addEventListener('cut', handleCut)
     document.addEventListener('keydown', handleKeyDown)
@@ -70,7 +65,6 @@ export function ContentProtection() {
 
     // Cleanup on unmount
     return () => {
-      document.removeEventListener('contextmenu', handleContextMenu)
       document.removeEventListener('copy', handleCopy)
       document.removeEventListener('cut', handleCut)
       document.removeEventListener('keydown', handleKeyDown)

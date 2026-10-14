@@ -25,6 +25,7 @@ export default async function Page() {
 
   const featuredList = (featuredArticles as any[]) || []
   const topFeaturedId = featuredList[0]?._id ?? ''
+  const featuredIds = featuredList.map((a) => a._id)
 
   const [
     {data: originalsArticles},
@@ -33,7 +34,8 @@ export default async function Page() {
     {data: indiaArticles},
     mostReadArticles,
   ] = await Promise.all([
-    sanityFetch({query: originalsArticlesQuery}),
+    // Skip Originals already shown in the featured carousel
+    sanityFetch({query: originalsArticlesQuery, params: {excludeIds: featuredIds}}),
     sanityFetch({query: commentaryArticlesQuery}),
     sanityFetch({
       query: latestByCategoryQuery,

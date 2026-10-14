@@ -66,7 +66,7 @@ export const latestArticlesQuery = defineQuery(`
 
 // "NWS Originals" column in the home hero (stored category value is still osint-exclusive)
 export const originalsArticlesQuery = defineQuery(`
-  *[_type == "article" && category == "osint-exclusive" && defined(slug.current)] | order(date desc)[0...2] {
+  *[_type == "article" && category == "osint-exclusive" && defined(slug.current) && !(_id in $excludeIds)] | order(date desc)[0...2] {
     _id,
     title,
     slug,

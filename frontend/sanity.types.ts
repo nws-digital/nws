@@ -868,7 +868,7 @@ export type LatestArticlesQueryResult = Array<{
   } | null
 }>
 // Variable: originalsArticlesQuery
-// Query: *[_type == "article" && category == "osint-exclusive" && defined(slug.current)] | order(date desc)[0...2] {    _id,    title,    slug,    date,    category,    coverImage  }
+// Query: *[_type == "article" && category == "osint-exclusive" && defined(slug.current) && !(_id in $excludeIds)] | order(date desc)[0...2] {    _id,    title,    slug,    date,    category,    coverImage  }
 export type OriginalsArticlesQueryResult = Array<{
   _id: string
   title: string
@@ -1847,7 +1847,7 @@ declare module '@sanity/client' {
     '\n  *[_type == "article" && featured == true] | order(date desc)[0...6] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    date,\n    lastPublishedDate,\n    category,\n    "author": author->{firstName, lastName},\n    coverImage\n  }\n': FeaturedArticlesQueryResult
     '\n  *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    "author": author->{firstName, lastName, designation, picture, bio, "slug": slug.current},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio, "slug": slug.current}\n  }\n': CommentaryArticlesQueryResult
     '\n  *[_type == "article" && category != "commentary" && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...12] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': LatestArticlesQueryResult
-    '\n  *[_type == "article" && category == "osint-exclusive" && defined(slug.current)] | order(date desc)[0...2] {\n    _id,\n    title,\n    slug,\n    date,\n    category,\n    coverImage\n  }\n': OriginalsArticlesQueryResult
+    '\n  *[_type == "article" && category == "osint-exclusive" && defined(slug.current) && !(_id in $excludeIds)] | order(date desc)[0...2] {\n    _id,\n    title,\n    slug,\n    date,\n    category,\n    coverImage\n  }\n': OriginalsArticlesQueryResult
     '\n  *[_type == "article" && category == $category && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...3] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    category,\n    coverImage\n  }\n': LatestByCategoryQueryResult
     '\n  *[_type == "article" && _id in $ids && defined(slug.current)] {\n    _id,\n    title,\n    slug,\n    date,\n    category,\n    coverImage\n  }\n': MostReadByIdsQueryResult
     '\n  *[_type == "article" && defined(slug.current)] | order(date desc)[0...20] {\n    _id,\n    title,\n    slug,\n    date,\n    category,\n    coverImage\n  }\n': MostReadFallbackQueryResult

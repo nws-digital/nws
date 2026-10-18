@@ -72,14 +72,14 @@ $$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public;
 REVOKE ALL ON FUNCTION get_most_read_article_ids(INT, INT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION get_most_read_article_ids(INT, INT) TO anon;
 
--- Keep the table small: the ranking only reads the last 7 days, so keep 8.
+-- Keep the table small: the ranking only reads the last 30 days, so keep 31.
 -- (Dropped first: an older version with a different return type may exist.)
 DROP FUNCTION IF EXISTS delete_old_article_views();
 
 CREATE OR REPLACE FUNCTION delete_old_article_views()
 RETURNS void AS $$
   DELETE FROM article_daily_views
-  WHERE viewed_on < (timezone('utc', now()))::date - 8;
+  WHERE viewed_on < (timezone('utc', now()))::date - 31;
 $$ LANGUAGE sql SECURITY DEFINER SET search_path = public;
 
 REVOKE ALL ON FUNCTION delete_old_article_views() FROM PUBLIC;

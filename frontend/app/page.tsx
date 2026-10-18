@@ -50,6 +50,8 @@ export default async function Page() {
 
   const originals = withDefinedSlug(originalsArticles || [])
   const hasOriginals = originals.length > 0
+  // Articles already shown in the carousel or Originals column, so Most Read doesn't repeat them
+  const heroIds = [...featuredIds, ...originals.map((a) => a._id)]
 
   return (
     <div className="font-literata">
@@ -72,7 +74,7 @@ export default async function Page() {
             )}
           </div>
 
-          <MostReadPanel articles={mostReadArticles} />
+          <MostReadPanel articles={mostReadArticles} excludeIds={heroIds} />
         </div>
       </section>
 

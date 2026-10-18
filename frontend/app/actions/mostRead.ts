@@ -4,12 +4,13 @@ import {sanityFetch} from '@/sanity/lib/live'
 import {mostReadByIdsQuery, mostReadFallbackQuery} from '@/sanity/lib/queries'
 import {supabase} from '@/lib/supabase'
 
-// Trailing window for the ranking. 7 days rather than the more common
-// "last 24 hours" convention -- a stricter 24h window risks a sparse or
-// near-empty panel on quieter days/hours, which matters more for a site
+// Trailing window for the ranking. 30 days rather than the more common
+// "last 24 hours" convention -- a shorter window risks a sparse or
+// near-empty panel on quieter days, which matters more for a site
 // still building up traffic than the freshness a shorter window buys.
-// Tunable here without any DB migration (p_days is an RPC argument).
-const MOST_READ_WINDOW_DAYS = 7
+// p_days is an RPC argument, but delete_old_article_views() in
+// supabase-article-views-setup.sql must keep at least this many days.
+const MOST_READ_WINDOW_DAYS = 30
 const PANEL_SIZE = 15
 // Ask Supabase for more ranked ids than we need in case some no longer
 // resolve in Sanity (unpublished/deleted since they were viewed).

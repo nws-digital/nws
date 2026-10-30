@@ -915,52 +915,15 @@ export type LatestByCategoryQueryResult = Array<{
     _type: 'image'
   } | null
 }>
-// Variable: mostReadByIdsQuery
-// Query: *[_type == "article" && _id in $ids && defined(slug.current)] {    _id,    title,    slug,    date,    category,    coverImage  }
-export type MostReadByIdsQueryResult = Array<{
-  _id: string
-  title: string
-  slug: Slug | null
-  date: string | null
-  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
-  coverImage: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    caption?: string
-    _type: 'image'
-  } | null
-}>
-// Variable: mostReadFallbackQuery
-// Query: *[_type == "article" && defined(slug.current)] | order(date desc)[0...20] {    _id,    title,    slug,    date,    category,    coverImage  }
-export type MostReadFallbackQueryResult = Array<{
-  _id: string
-  title: string
-  slug: Slug | null
-  date: string | null
-  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
-  coverImage: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    caption?: string
-    _type: 'image'
-  } | null
-}>
+// Variable: handpickedArticlesQuery
+// Query: *[_type == "article" && handpicked == true && defined(slug.current)] | order(date desc)[0...20] {    _id,    title,    slug,    date,    excerpt,    category,    coverImage  }
+export type HandpickedArticlesQueryResult = Array<never>
+// Variable: handpickedArticlesPageQuery
+// Query: *[_type == "article" && handpicked == true && defined(slug.current)] | order(date desc)[$offset...$limit] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    category,    coverImage  }
+export type HandpickedArticlesPageQueryResult = Array<never>
+// Variable: handpickedArticlesCountQuery
+// Query: count(*[_type == "article" && handpicked == true && defined(slug.current)])
+export type HandpickedArticlesCountQueryResult = number
 // Variable: sidebarArticlesQuery
 // Query: *[_type == "article" && category != "commentary" && (_id != $excludeId)] | order(date desc)[0...12] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    category,    coverImage,    "author": author->{firstName, lastName, designation, picture, bio},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}  }
 export type SidebarArticlesQueryResult = Array<{
@@ -1830,14 +1793,6 @@ export type AuthorArticlesQueryResult = Array<{
   }
 }>
 
-// Source: ./sanity/lib/rss-queries.ts
-// Variable: rssArticlesByTopicQuery
-// Query: *[_type == "rssArticle" && topic == $topic] | order(pubDate desc) [0...20] {    _id,    title,    link,    description,    pubDate,    source,    topic  }
-export type RssArticlesByTopicQueryResult = Array<never>
-// Variable: allRssArticlesQuery
-// Query: *[_type == "rssArticle"] | order(pubDate desc) [0...40] {    _id,    title,    link,    description,    pubDate,    source,    topic  }
-export type AllRssArticlesQueryResult = Array<never>
-
 // Query TypeMap
 import '@sanity/client'
 declare module '@sanity/client' {
@@ -1849,8 +1804,9 @@ declare module '@sanity/client' {
     '\n  *[_type == "article" && category != "commentary" && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...12] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': LatestArticlesQueryResult
     '\n  *[_type == "article" && category == "osint-exclusive" && defined(slug.current) && !(_id in $excludeIds)] | order(date desc)[0...2] {\n    _id,\n    title,\n    slug,\n    date,\n    category,\n    coverImage\n  }\n': OriginalsArticlesQueryResult
     '\n  *[_type == "article" && category == $category && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...3] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    category,\n    coverImage\n  }\n': LatestByCategoryQueryResult
-    '\n  *[_type == "article" && _id in $ids && defined(slug.current)] {\n    _id,\n    title,\n    slug,\n    date,\n    category,\n    coverImage\n  }\n': MostReadByIdsQueryResult
-    '\n  *[_type == "article" && defined(slug.current)] | order(date desc)[0...20] {\n    _id,\n    title,\n    slug,\n    date,\n    category,\n    coverImage\n  }\n': MostReadFallbackQueryResult
+    '\n  *[_type == "article" && handpicked == true && defined(slug.current)] | order(date desc)[0...20] {\n    _id,\n    title,\n    slug,\n    date,\n    excerpt,\n    category,\n    coverImage\n  }\n': HandpickedArticlesQueryResult
+    '\n  *[_type == "article" && handpicked == true && defined(slug.current)] | order(date desc)[$offset...$limit] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    category,\n    coverImage\n  }\n': HandpickedArticlesPageQueryResult
+    '\n  count(*[_type == "article" && handpicked == true && defined(slug.current)])\n': HandpickedArticlesCountQueryResult
     '\n  *[_type == "article" && category != "commentary" && (_id != $excludeId)] | order(date desc)[0...12] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': SidebarArticlesQueryResult
     '\n  *[_type == "article" && category == $category] | order(date desc)[$offset...$limit] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': CategoryArticlesQueryResult
     '\n  count(*[_type == "article" && category == $category])\n': CategoryArticlesCountQueryResult
@@ -1867,7 +1823,5 @@ declare module '@sanity/client' {
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
     '\n  *[_type == "person" && slug.current == $slug][0] {\n    _id,\n    firstName,\n    lastName,\n    designation,\n    bio,\n    picture\n  }\n': AuthorBySlugQueryResult
     '\n  *[_type == "article" && author->slug.current == $slug] | order(date desc) {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{_id, firstName, lastName, designation, picture, bio}\n  }\n': AuthorArticlesQueryResult
-    '\n  *[_type == "rssArticle" && topic == $topic] | order(pubDate desc) [0...20] {\n    _id,\n    title,\n    link,\n    description,\n    pubDate,\n    source,\n    topic\n  }\n': RssArticlesByTopicQueryResult
-    '\n  *[_type == "rssArticle"] | order(pubDate desc) [0...40] {\n    _id,\n    title,\n    link,\n    description,\n    pubDate,\n    source,\n    topic\n  }\n': AllRssArticlesQueryResult
   }
 }

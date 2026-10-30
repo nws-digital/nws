@@ -10,7 +10,6 @@ import {Breadcrumb} from '@/app/components/Breadcrumb'
 import {LatestArticlesSidebar} from '@/app/components/LatestArticlesSidebar'
 import {ArticleDates} from '@/app/components/ArticleDates'
 import {ShareArticle} from '@/app/components/ShareArticle'
-import {RecordArticleView} from '@/app/components/RecordArticleView'
 import {sanityFetch} from '@/sanity/lib/live'
 import {postQuery, allPostsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
@@ -211,7 +210,6 @@ export default async function ArticlePage(props: Props) {
 
   return (
     <>
-      <RecordArticleView articleId={post._id} />
       <div>
         <div className="max-w-[1366px] mx-auto px-4 py-8">
           {/* Breadcrumb Navigation */}

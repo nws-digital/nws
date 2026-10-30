@@ -7,6 +7,7 @@ const sectionLinks = [
   {href: '/india', label: 'India'},
   {href: '/nws-originals', label: 'NWS Originals'},
   {href: '/commentary', label: 'Commentary'},
+  {href: '/hand-picked', label: 'Hand-Picked'},
 ]
 
 const pageLinks = [

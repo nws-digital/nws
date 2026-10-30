@@ -9,6 +9,7 @@ export async function GET() {
 
   const entries = [
     urlEntry({loc: absoluteUrl('/')}),
+    urlEntry({loc: absoluteUrl('/hand-picked')}),
     ...(data || []).map((page) => urlEntry({loc: absoluteUrl(`/pages/${page.slug}`), lastmod: page._updatedAt})),
   ]
 

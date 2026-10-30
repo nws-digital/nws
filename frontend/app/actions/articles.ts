@@ -1,7 +1,7 @@
 'use server'
 
 import {sanityFetch} from '@/sanity/lib/live'
-import {categoryArticlesQuery, commentaryArticlesPageQuery} from '@/sanity/lib/queries'
+import {categoryArticlesQuery, commentaryArticlesPageQuery, handpickedArticlesPageQuery} from '@/sanity/lib/queries'
 
 export async function loadMoreArticles(category: string, offset: number, limit: number) {
   const {data} = await sanityFetch({
@@ -19,6 +19,18 @@ export async function loadMoreArticles(category: string, offset: number, limit: 
 export async function loadMoreCommentaryArticles(offset: number, limit: number) {
   const {data} = await sanityFetch({
     query: commentaryArticlesPageQuery,
+    params: {
+      offset,
+      limit,
+    },
+  })
+
+  return data || []
+}
+
+export async function loadMoreHandpickedArticles(offset: number, limit: number) {
+  const {data} = await sanityFetch({
+    query: handpickedArticlesPageQuery,
     params: {
       offset,
       limit,

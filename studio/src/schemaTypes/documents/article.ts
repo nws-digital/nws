@@ -35,6 +35,13 @@ export const article = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'handpicked',
+      title: 'Hand-Picked',
+      type: 'boolean',
+      description: 'Show this article in the Hand-Picked section on the homepage',
+      initialValue: false,
+    }),
+    defineField({
       name: 'category',
       title: 'Category',
       type: 'string',

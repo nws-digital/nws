@@ -6,7 +6,8 @@ import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
 import {motion} from 'framer-motion'
 import {urlForImage, withDefinedSlug} from '@/sanity/lib/utils'
-import {loadMoreArticles} from '@/app/actions/articles'
+import {loadMoreArticles, loadMoreHandpickedArticles} from '@/app/actions/articles'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
 
 interface Article {
@@ -22,8 +23,11 @@ interface Article {
 
 interface CategoryArticlesListProps {
   initialArticles: Article[]
-  category: string
-  categorySlug: string
+  category?: string
+  categorySlug?: string
+  // The Hand-Picked page lists articles across all categories, so each card
+  // links to and is labelled with its own category.
+  handpicked?: boolean
   totalCount: number
 }
 
@@ -38,6 +42,7 @@ export function CategoryArticlesList({
   initialArticles,
   category,
   categorySlug,
+  handpicked = false,
   totalCount,
 }: CategoryArticlesListProps) {
   const [articles, setArticles] = useState<Article[]>(initialArticles)
@@ -49,7 +54,9 @@ export function CategoryArticlesList({
   const loadMore = async () => {
     setLoading(true)
     try {
-      const newArticles = await loadMoreArticles(category, offset, offset + 12)
+      const newArticles = handpicked
+        ? await loadMoreHandpickedArticles(offset, offset + 12)
+        : await loadMoreArticles(category!, offset, offset + 12)
 
       setArticles([...articles, ...withDefinedSlug(newArticles)])
       setOffset(offset + 12)
@@ -60,7 +67,7 @@ export function CategoryArticlesList({
     }
   }
 
-  const categoryLabel = categoryLabels[category] || category
+  const categoryLabel = handpicked ? 'Hand-Picked' : categoryLabels[category!] || category!
 
   const itemVariants = {
     hidden: {opacity: 0, y: 20},
@@ -102,7 +109,7 @@ export function CategoryArticlesList({
               transition={{type: 'spring', stiffness: 300}}
             >
               <Link
-                href={`/${categorySlug}/${article.slug.current}`}
+                href={`/${handpicked ? categoryToUrlSlug(article.category || '') : categorySlug}/${article.slug.current}`}
                 className="group flex flex-col bg-white rounded-lg overflow-hidden h-full border border-gray-200"
               >
                 {/* Cover Image */}
@@ -137,7 +144,7 @@ export function CategoryArticlesList({
                   {/* Time at bottom */}
                   <div className="flex items-center justify-between text-xs mt-auto pt-4 border-t border-gray-100">
                     <span className="text-gray-400">{timeAgo}</span>
-                    <span className="text-red-600 font-semibold uppercase">{categoryLabel}</span>
+                    <span className="text-red-600 font-semibold uppercase">{handpicked ? categoryLabels[article.category || ''] || article.category : categoryLabel}</span>
                   </div>
                 </div>
               </Link>
@@ -167,7 +174,7 @@ export function CategoryArticlesList({
       {/* No articles at all */}
       {articles.length === 0 && (
         <div className="text-center text-gray-500 py-12">
-          <p className="text-xl">No articles found in this category yet.</p>
+          <p className="text-xl">{handpicked ? 'No hand-picked articles yet.' : 'No articles found in this category yet.'}</p>
         </div>
       )}
     </div>

@@ -14,7 +14,7 @@ export interface CompactCardArticle {
   coverImage?: any
 }
 
-// Small story card used in the "NWS Originals" and "Most Read" columns of the home hero
+// Small story card used in the "NWS Originals" and "Hand-Picked" columns of the home hero
 export function CompactCard({article}: {article: CompactCardArticle}) {
   const imageUrl = article.coverImage
     ? urlForImage(article.coverImage)?.width(600).height(400).fit('crop').url()

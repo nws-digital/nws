@@ -24,6 +24,7 @@ const navLinks = [
   {href: '/india', label: 'India'},
   {href: '/nws-originals', label: 'NWS Originals'},
   {href: '/commentary', label: 'Commentary'},
+  {href: '/hand-picked', label: 'Hand-Picked'},
 ]
 
 /* eslint-disable @next/next/no-img-element */

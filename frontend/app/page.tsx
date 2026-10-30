@@ -1,4 +1,4 @@
-import {MostReadPanel} from '@/app/components/MostReadPanel'
+import {HandpickedPanel} from '@/app/components/HandpickedPanel'
 import {NwsOriginalsColumn} from '@/app/components/NwsOriginalsColumn'
 import {FeaturedCarousel} from '@/app/components/FeaturedCarousel'
 import {FeaturedPlaceholder} from '@/app/components/FeaturedPlaceholder'
@@ -12,10 +12,10 @@ import {
 } from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
 import {withDefinedSlug} from '@/sanity/lib/utils'
-import {getMostReadArticles} from '@/app/actions/mostRead'
+import {getHandpickedArticles} from '@/app/actions/handpicked'
 
-// The home page is statically generated; refresh it periodically so the Most Read
-// ranking (read from Supabase at render time) doesn't stay frozen between deploys.
+// The home page is statically generated; refresh it periodically so newly
+// hand-picked articles show up without waiting for a deploy.
 export const revalidate = 300
 
 export default async function Page() {
@@ -32,7 +32,7 @@ export default async function Page() {
     {data: commentaryArticles},
     {data: worldArticles},
     {data: indiaArticles},
-    mostReadArticles,
+    handpickedArticles,
   ] = await Promise.all([
     // Skip Originals already shown in the featured carousel
     sanityFetch({query: originalsArticlesQuery, params: {excludeIds: featuredIds}}),
@@ -45,17 +45,17 @@ export default async function Page() {
       query: latestByCategoryQuery,
       params: {category: 'india-exclusive', excludeId: topFeaturedId},
     }),
-    getMostReadArticles(),
+    getHandpickedArticles(),
   ])
 
   const originals = withDefinedSlug(originalsArticles || [])
   const hasOriginals = originals.length > 0
-  // Articles already shown in the carousel or Originals column, so Most Read doesn't repeat them
+  // Articles already shown in the carousel or Originals column, so Hand-Picked doesn't repeat them
   const heroIds = [...featuredIds, ...originals.map((a) => a._id)]
 
   return (
     <div className="font-literata">
-      {/* Hero: NWS Originals | Featured carousel | Most Read */}
+      {/* Hero: NWS Originals | Featured carousel | Hand-Picked */}
       <section id="nws-originals" className="border-b border-[#d0d0d0] pt-6 pb-8">
         <div
           className={`shell grid gap-6 max-tablet:flex max-tablet:flex-col ${
@@ -74,7 +74,7 @@ export default async function Page() {
             )}
           </div>
 
-          <MostReadPanel articles={mostReadArticles} excludeIds={heroIds} />
+          <HandpickedPanel articles={handpickedArticles} excludeIds={heroIds} />
         </div>
       </section>
 

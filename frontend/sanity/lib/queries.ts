@@ -90,12 +90,11 @@ export const latestByCategoryQuery = defineQuery(`
   }
 `)
 
-// Resolves ranked article ids (from the article_views Supabase table) into
-// full Sanity docs for the homepage "Most Read" panel. Deliberately not
-// filtered by category -- a genuinely popular commentary piece should be
-// eligible to appear, same as any news article.
-export const mostReadByIdsQuery = defineQuery(`
-  *[_type == "article" && _id in $ids && defined(slug.current)] {
+// Articles an editor ticked "Hand Picked" in the Studio, for the homepage
+// "Hand Picked" panel. Deliberately not filtered by category -- an editor's
+// pick should be eligible whatever section it belongs to.
+export const handpickedArticlesQuery = defineQuery(`
+  *[_type == "article" && handpicked == true && defined(slug.current)] | order(date desc)[0...20] {
     _id,
     title,
     slug,
@@ -106,18 +105,22 @@ export const mostReadByIdsQuery = defineQuery(`
   }
 `)
 
-// Backfill for the "Most Read" panel when there isn't (yet) enough view
-// data to fill all slots -- e.g. right after launch.
-export const mostReadFallbackQuery = defineQuery(`
-  *[_type == "article" && defined(slug.current)] | order(date desc)[0...20] {
+// Full, paginated list for the /hand-picked page.
+export const handpickedArticlesPageQuery = defineQuery(`
+  *[_type == "article" && handpicked == true && defined(slug.current)] | order(date desc)[$offset...$limit] {
     _id,
     title,
     slug,
-    date,
     excerpt,
+    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),
+    date,
     category,
     coverImage
   }
+`)
+
+export const handpickedArticlesCountQuery = defineQuery(`
+  count(*[_type == "article" && handpicked == true && defined(slug.current)])
 `)
 
 export const sidebarArticlesQuery = defineQuery(`

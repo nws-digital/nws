@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Avatar from '@/app/components/Avatar'
 import {SectionTitle} from '@/app/components/SectionTitle'
-import {formatTimeAgo} from '@/lib/timeAgo'
 
 interface CommentaryAuthor {
   slug?: string | null
@@ -79,8 +78,6 @@ export function CommentarySection({articles}: CommentarySectionProps) {
                   {article.excerpt || article.contentPreview}
                 </p>
               </div>
-
-              <p className="text-sm text-[#666]">{formatTimeAgo(article.date, {long: true})}</p>
             </Link>
           </article>
         ))}

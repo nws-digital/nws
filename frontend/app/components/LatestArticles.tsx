@@ -3,7 +3,6 @@ import Link from 'next/link'
 import {urlForImage} from '@/sanity/lib/utils'
 import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 import {CATEGORY_LABELS} from '@/lib/constants'
-import {formatTimeAgo} from '@/lib/timeAgo'
 import {SectionTitle} from '@/app/components/SectionTitle'
 
 interface LatestArticle {
@@ -51,15 +50,11 @@ function StoryCard({article}: {article: LatestArticle}) {
             <h3 className="line-clamp-3 text-base leading-normal font-bold">{article.title}</h3>
             {description && <p className="line-clamp-3 leading-normal">{description}</p>}
           </div>
-          <div className="flex items-center gap-2 whitespace-nowrap text-sm text-[#666]">
-            <span>{formatTimeAgo(article.date)}</span>
-            {categoryLabel && (
-              <>
-                <span className="text-[#a7a7a7]">|</span>
-                <span>{categoryLabel}</span>
-              </>
-            )}
-          </div>
+          {categoryLabel && (
+            <div className="whitespace-nowrap text-sm text-[#666]">
+              <span>{categoryLabel}</span>
+            </div>
+          )}
         </div>
       </Link>
     </article>

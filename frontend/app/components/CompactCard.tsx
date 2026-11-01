@@ -3,7 +3,6 @@ import Link from 'next/link'
 import {urlForImage} from '@/sanity/lib/utils'
 import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 import {CATEGORY_LABELS} from '@/lib/constants'
-import {formatTimeAgo} from '@/lib/timeAgo'
 
 export interface CompactCardArticle {
   _id: string
@@ -40,11 +39,11 @@ export function CompactCard({article}: {article: CompactCardArticle}) {
         </div>
         <div className="flex flex-col gap-2 p-4 max-phone:justify-center max-phone:p-3.5">
           <h3 className="text-base font-bold leading-normal max-phone:text-sm">{article.title}</h3>
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 whitespace-nowrap text-xs text-[#666] max-phone:gap-x-[5px]">
-            {article.date && <span>{formatTimeAgo(article.date)}</span>}
-            {article.date && categoryLabel && <span className="text-[#a7a7a7]">|</span>}
-            {categoryLabel && <span>{categoryLabel}</span>}
-          </div>
+          {categoryLabel && (
+            <div className="whitespace-nowrap text-xs text-[#666]">
+              <span>{categoryLabel}</span>
+            </div>
+          )}
         </div>
       </Link>
     </article>

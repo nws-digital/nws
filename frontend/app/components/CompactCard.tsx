@@ -38,7 +38,10 @@ export function CompactCard({article}: {article: CompactCardArticle}) {
           )}
         </div>
         <div className="flex flex-col gap-2 p-4 max-phone:justify-center max-phone:p-3.5">
-          <h3 className="text-base font-bold leading-normal max-phone:text-sm">{article.title}</h3>
+          {/* Clamp to 3 lines and reserve that height so cards line up */}
+          <h3 className="line-clamp-3 min-h-[4.5em] text-base font-bold leading-normal max-phone:text-sm">
+            {article.title}
+          </h3>
           {categoryLabel && (
             <div className="whitespace-nowrap text-xs text-[#666]">
               <span>{categoryLabel}</span>

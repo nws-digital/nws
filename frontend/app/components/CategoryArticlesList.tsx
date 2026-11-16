@@ -144,7 +144,11 @@ export function CategoryArticlesList({
                   {/* Time at bottom */}
                   <div className="flex items-center justify-between text-xs mt-auto pt-4 border-t border-gray-100">
                     <span className="text-gray-400">{timeAgo}</span>
-                    <span className="text-red-600 font-semibold uppercase">{handpicked ? categoryLabels[article.category || ''] || article.category : categoryLabel}</span>
+                    {handpicked && (
+                      <span className="text-red-600 font-semibold uppercase">
+                        {categoryLabels[article.category || ''] || article.category}
+                      </span>
+                    )}
                   </div>
                 </div>
               </Link>

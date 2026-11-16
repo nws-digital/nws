@@ -13,7 +13,7 @@ export const SOCIAL_LINKS = [
   },
   {
     name: 'LinkedIn',
-    url: 'https://www.linkedin.com/in/nwsnetwork',
+    url: 'https://www.linkedin.com/company/nws-network',
   },
 ] as const
 

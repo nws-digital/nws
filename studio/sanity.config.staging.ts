@@ -8,6 +8,7 @@ import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './src/schemaTypes'
 import {structure} from './src/structure'
 import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
+import {media} from 'sanity-plugin-media'
 import {previewAction} from './src/actions/previewAction'
 import {
   presentationTool,
@@ -106,6 +107,7 @@ export default defineConfig({
     }),
     structureTool({structure}),
     unsplashImageAsset(),
+    media(),
     assist(),
     visionTool(),
   ],

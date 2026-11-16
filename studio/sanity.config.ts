@@ -11,6 +11,7 @@ import {structure} from './src/structure'
 import {publishWithDates} from './src/actions/publishWithDates'
 import {previewAction} from './src/actions/previewAction'
 import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
+import {media} from 'sanity-plugin-media'
 import {
   presentationTool,
   defineDocuments,
@@ -121,6 +122,7 @@ export default defineConfig({
     }),
     // Additional plugins for enhanced functionality
     unsplashImageAsset(),
+    media(),
     assist(),
     visionTool(),
   ],

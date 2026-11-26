@@ -106,6 +106,45 @@ export type BlockContent = Array<
     } & Embed)
 >
 
+export type Video = {
+  _id: string
+  _type: 'video'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: string
+  youtubeUrl: string
+  category: 'documentary' | 'world' | 'india'
+  thumbnail?: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+}
+
+export type SanityImageCrop = {
+  _type: 'sanity.imageCrop'
+  top: number
+  bottom: number
+  left: number
+  right: number
+}
+
+export type SanityImageHotspot = {
+  _type: 'sanity.imageHotspot'
+  x: number
+  y: number
+  height: number
+  width: number
+}
+
 export type PromptConfig = {
   _id: string
   _type: 'promptConfig'
@@ -171,22 +210,6 @@ export type Settings = {
   }
 }
 
-export type SanityImageCrop = {
-  _type: 'sanity.imageCrop'
-  top: number
-  bottom: number
-  left: number
-  right: number
-}
-
-export type SanityImageHotspot = {
-  _type: 'sanity.imageHotspot'
-  x: number
-  y: number
-  height: number
-  width: number
-}
-
 export type Page = {
   _id: string
   _type: 'page'
@@ -217,6 +240,7 @@ export type Article = {
   title: string
   slug?: Slug
   featured?: boolean
+  handpicked?: boolean
   category: 'world-exclusive' | 'india-exclusive' | 'osint-exclusive' | 'commentary'
   content?: BlockContent
   excerpt?: string
@@ -434,6 +458,15 @@ export type SanityAssistSchemaTypeField = {
   >
 }
 
+export type MediaTag = {
+  _id: string
+  _type: 'media.tag'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name?: Slug
+}
+
 export type SanityImagePaletteSwatch = {
   _type: 'sanity.imagePaletteSwatch'
   background?: string
@@ -536,10 +569,11 @@ export type AllSanitySchemaTypes =
   | InfoSection
   | Embed
   | BlockContent
-  | PromptConfig
-  | Settings
+  | Video
   | SanityImageCrop
   | SanityImageHotspot
+  | PromptConfig
+  | Settings
   | Page
   | Article
   | Person
@@ -556,6 +590,7 @@ export type AllSanitySchemaTypes =
   | SanityAssistInstructionFieldRef
   | SanityAssistInstruction
   | SanityAssistSchemaTypeField
+  | MediaTag
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
@@ -917,10 +952,53 @@ export type LatestByCategoryQueryResult = Array<{
 }>
 // Variable: handpickedArticlesQuery
 // Query: *[_type == "article" && handpicked == true && defined(slug.current)] | order(date desc)[0...20] {    _id,    title,    slug,    date,    excerpt,    category,    coverImage  }
-export type HandpickedArticlesQueryResult = Array<never>
+export type HandpickedArticlesQueryResult = Array<{
+  _id: string
+  title: string
+  slug: Slug | null
+  date: string | null
+  excerpt: string | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+}>
 // Variable: handpickedArticlesPageQuery
 // Query: *[_type == "article" && handpicked == true && defined(slug.current)] | order(date desc)[$offset...$limit] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    category,    coverImage  }
-export type HandpickedArticlesPageQueryResult = Array<never>
+export type HandpickedArticlesPageQueryResult = Array<{
+  _id: string
+  title: string
+  slug: Slug | null
+  excerpt: string | null
+  contentPreview: string
+  date: string | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+}>
 // Variable: handpickedArticlesCountQuery
 // Query: count(*[_type == "article" && handpicked == true && defined(slug.current)])
 export type HandpickedArticlesCountQueryResult = number
@@ -1792,6 +1870,53 @@ export type AuthorArticlesQueryResult = Array<{
     }> | null
   }
 }>
+// Variable: videosPageQuery
+// Query: *[_type == "video" && defined(youtubeUrl) && ($category == "" || category == $category)]    | order(_createdAt desc)[$offset...$limit] {  _id,  title,  youtubeUrl,  category,  "publishedAt": _createdAt,  thumbnail,  "thumbnailAspect": thumbnail.asset->metadata.dimensions.aspectRatio}
+export type VideosPageQueryResult = Array<{
+  _id: string
+  title: string
+  youtubeUrl: string
+  category: 'documentary' | 'india' | 'world'
+  publishedAt: string
+  thumbnail: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  } | null
+  thumbnailAspect: number | null
+}>
+// Variable: videosCountQuery
+// Query: count(*[_type == "video" && defined(youtubeUrl) && ($category == "" || category == $category)])
+export type VideosCountQueryResult = number
+// Variable: recentVideosQuery
+// Query: *[_type == "video" && defined(youtubeUrl)] | order(_createdAt desc)[0...500] {  _id,  title,  youtubeUrl,  category,  "publishedAt": _createdAt,  thumbnail,  "thumbnailAspect": thumbnail.asset->metadata.dimensions.aspectRatio}
+export type RecentVideosQueryResult = Array<{
+  _id: string
+  title: string
+  youtubeUrl: string
+  category: 'documentary' | 'india' | 'world'
+  publishedAt: string
+  thumbnail: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  } | null
+  thumbnailAspect: number | null
+}>
 
 // Query TypeMap
 import '@sanity/client'
@@ -1823,5 +1948,8 @@ declare module '@sanity/client' {
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
     '\n  *[_type == "person" && slug.current == $slug][0] {\n    _id,\n    firstName,\n    lastName,\n    designation,\n    bio,\n    picture\n  }\n': AuthorBySlugQueryResult
     '\n  *[_type == "article" && author->slug.current == $slug] | order(date desc) {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{_id, firstName, lastName, designation, picture, bio}\n  }\n': AuthorArticlesQueryResult
+    '\n  *[_type == "video" && defined(youtubeUrl) && ($category == "" || category == $category)]\n    | order(_createdAt desc)[$offset...$limit] {\n  _id,\n  title,\n  youtubeUrl,\n  category,\n  "publishedAt": _createdAt,\n  thumbnail,\n  "thumbnailAspect": thumbnail.asset->metadata.dimensions.aspectRatio\n}\n': VideosPageQueryResult
+    '\n  count(*[_type == "video" && defined(youtubeUrl) && ($category == "" || category == $category)])\n': VideosCountQueryResult
+    '\n  *[_type == "video" && defined(youtubeUrl)] | order(_createdAt desc)[0...500] {\n  _id,\n  title,\n  youtubeUrl,\n  category,\n  "publishedAt": _createdAt,\n  thumbnail,\n  "thumbnailAspect": thumbnail.asset->metadata.dimensions.aspectRatio\n}\n': RecentVideosQueryResult
   }
 }

@@ -17,6 +17,8 @@ interface Article {
 
 interface HeaderClientProps {
   latestArticles: Article[]
+  /** False until the first video is published, which hides the Videos link. */
+  showVideos: boolean
 }
 
 const navLinks = [
@@ -24,11 +26,12 @@ const navLinks = [
   {href: '/india', label: 'India'},
   {href: '/nws-originals', label: 'NWS Originals'},
   {href: '/commentary', label: 'Commentary'},
+  {href: '/videos', label: 'Videos'},
   {href: '/hand-picked', label: 'Hand-Picked'},
 ]
 
 /* eslint-disable @next/next/no-img-element */
-export default function HeaderClient({latestArticles}: HeaderClientProps) {
+export default function HeaderClient({latestArticles, showVideos}: HeaderClientProps) {
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
   const [searchModalOpen, setSearchModalOpen] = useState(false)
   const [compact, setCompact] = useState(false)
@@ -96,7 +99,7 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
               aria-label="Sections"
               className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-5 text-sm font-medium whitespace-nowrap uppercase tablet:flex wide:gap-8 wide:text-base"
             >
-              {navLinks.map(({href, label}) => {
+              {navLinks.filter(({href}) => showVideos || href !== '/videos').map(({href, label}) => {
                 const isActive = pathname === href
                 return (
                   <Link key={href} href={href} className="group relative transition-colors">
@@ -152,6 +155,7 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
         isOpen={sideMenuOpen}
         onClose={() => setSideMenuOpen(false)}
         latestArticles={latestArticles}
+        showVideos={showVideos}
       />
     </>
   )

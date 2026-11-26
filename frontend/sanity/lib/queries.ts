@@ -323,3 +323,30 @@ export const authorArticlesQuery = defineQuery(`
     "author": author->{_id, firstName, lastName, designation, picture, bio}
   }
 `)
+
+// Videos (/videos). $category is "" for all categories.
+const videoFields = /* groq */ `
+  _id,
+  title,
+  youtubeUrl,
+  category,
+  "publishedAt": _createdAt,
+  thumbnail,
+  "thumbnailAspect": thumbnail.asset->metadata.dimensions.aspectRatio
+`
+
+export const videosPageQuery = defineQuery(`
+  *[_type == "video" && defined(youtubeUrl) && ($category == "" || category == $category)]
+    | order(_createdAt desc)[$offset...$limit] {${videoFields}}
+`)
+
+export const videosCountQuery = defineQuery(`
+  count(*[_type == "video" && defined(youtubeUrl) && ($category == "" || category == $category)])
+`)
+
+// Used to open a shared /videos?v=<id> link for a video that is not on the
+// first page. Matching on the YouTube ID happens in code, since editors paste
+// links in several formats.
+export const recentVideosQuery = defineQuery(`
+  *[_type == "video" && defined(youtubeUrl)] | order(_createdAt desc)[0...500] {${videoFields}}
+`)

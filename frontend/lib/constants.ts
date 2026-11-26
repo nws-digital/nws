@@ -42,3 +42,16 @@ export const CATEGORY_LABELS: Record<string, string> = {
   'osint-exclusive': 'NWS Originals',
   'commentary': 'Commentary',
 } as const
+
+// Filter chips on /videos. Values match the `category` field of the Sanity `video` type.
+export const VIDEO_CATEGORIES = [
+  {value: 'documentary', label: 'Documentary'},
+  {value: 'world', label: 'World'},
+  {value: 'india', label: 'India'},
+] as const
+
+export type VideoCategory = (typeof VIDEO_CATEGORIES)[number]['value']
+
+export function isVideoCategory(value: unknown): value is VideoCategory {
+  return VIDEO_CATEGORIES.some((c) => c.value === value)
+}

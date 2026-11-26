@@ -15,6 +15,7 @@ import {Image} from 'next-sanity/image'
 import {urlForImage, getContainedImageDimensions} from '@/sanity/lib/utils'
 import TweetEmbed from '@/app/components/TweetEmbed'
 import ResolvedLink from '@/app/components/ResolvedLink'
+import {getYouTubeId} from '@/lib/youtube'
 
 // Body images are scaled down (never cropped, never upscaled) to fit within
 // this box on whichever axis is the tighter constraint - full width when the
@@ -156,8 +157,7 @@ export default function CustomPortableText({
         if (!value?.url || !value?.type) return null
         if (value.type === 'youtube') {
           // Extract YouTube video ID
-          const match = value.url.match(/(?:youtu.be\/|youtube.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([\w-]{11})/)
-          const videoId = match ? match[1] : null
+          const videoId = getYouTubeId(value.url)
           if (!videoId) return null
           return (
             <div className="my-8 max-w-full overflow-hidden">

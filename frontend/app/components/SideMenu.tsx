@@ -23,6 +23,8 @@ interface SideMenuProps {
   isOpen: boolean
   onClose: () => void
   latestArticles: Article[]
+  /** False until the first video is published, which hides the Videos link. */
+  showVideos?: boolean
 }
 
 const sectionLinks = [
@@ -30,6 +32,7 @@ const sectionLinks = [
   {href: '/india', label: 'India'},
   {href: '/nws-originals', label: 'NWS Originals'},
   {href: '/commentary', label: 'Commentary'},
+  {href: '/videos', label: 'Videos'},
   {href: '/hand-picked', label: 'Hand-Picked'},
 ]
 
@@ -48,7 +51,7 @@ function Divider() {
 }
 
 /* eslint-disable @next/next/no-img-element */
-export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProps) {
+export default function SideMenu({isOpen, onClose, latestArticles, showVideos = false}: SideMenuProps) {
   const closeButton = useRef<HTMLButtonElement>(null)
 
   // Lock page scroll, close on Escape and move focus into the drawer while it is open
@@ -119,7 +122,7 @@ export default function SideMenu({isOpen, onClose, latestArticles}: SideMenuProp
               aria-label="Sections"
               className="flex flex-col gap-6 text-base font-medium uppercase tablet:hidden"
             >
-              {sectionLinks.map(({href, label}) => (
+              {sectionLinks.filter(({href}) => showVideos || href !== '/videos').map(({href, label}) => (
                 <Link key={href} href={href} className={linkClass} onClick={onClose}>
                   {label}
                 </Link>

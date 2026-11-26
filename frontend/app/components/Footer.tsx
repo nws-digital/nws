@@ -1,12 +1,14 @@
 import Link from 'next/link'
 import {SOCIAL_LINKS} from '@/lib/constants'
 import {SectionTitle} from '@/app/components/SectionTitle'
+import {hasVideos} from '@/lib/videos'
 
 const sectionLinks = [
   {href: '/world', label: 'World'},
   {href: '/india', label: 'India'},
   {href: '/nws-originals', label: 'NWS Originals'},
   {href: '/commentary', label: 'Commentary'},
+  {href: '/videos', label: 'Videos'},
   {href: '/hand-picked', label: 'Hand-Picked'},
 ]
 
@@ -24,7 +26,8 @@ const underlineClass =
   'absolute right-0 -bottom-[5px] left-0 h-0.5 origin-right scale-x-0 bg-[#ed1c24] transition-transform duration-200 group-hover:origin-left group-hover:scale-x-100 group-focus-visible:origin-left group-focus-visible:scale-x-100'
 
 /* eslint-disable @next/next/no-img-element */
-export default function Footer() {
+export default async function Footer() {
+  const showVideos = await hasVideos()
   return (
     <footer className="flex flex-col gap-6 bg-black py-6 font-literata text-[#d0d2d6]">
       <div className="shell grid grid-cols-4 gap-6 max-tablet:grid-cols-2 max-phone:gap-2">
@@ -41,7 +44,7 @@ export default function Footer() {
         <div className="flex flex-col gap-6 p-2.5 max-phone:col-span-full">
           <SectionTitle headingClassName="text-white">Sections</SectionTitle>
           <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
-            {sectionLinks.map(({href, label}) => (
+            {sectionLinks.filter(({href}) => showVideos || href !== '/videos').map(({href, label}) => (
               <li key={href}>
                 <Link href={href} className={linkClass}>
                   {label}

@@ -7,11 +7,12 @@ interface BreadcrumbItem {
 
 interface BreadcrumbProps {
   items: BreadcrumbItem[]
+  className?: string
 }
 
-export function Breadcrumb({items}: BreadcrumbProps) {
+export function Breadcrumb({items, className = 'mb-8'}: BreadcrumbProps) {
   return (
-    <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+    <nav aria-label="Breadcrumb" className={`flex items-center gap-2 text-sm text-gray-600 ${className}`}>
       {items.map((item, index) => (
         <div key={index} className="flex items-center gap-2">
           {item.href ? (

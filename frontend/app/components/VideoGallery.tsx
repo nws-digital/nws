@@ -180,6 +180,7 @@ export function VideoGallery({initialVideos, initialTotal, pageSize}: VideoGalle
                     video={video}
                     onPlay={openVideo}
                     sizes={CARD_SIZES}
+                    widescreen={columns === 1}
                     priority={videos.indexOf(video) < columns}
                   />
                 ))}

@@ -33,14 +33,16 @@ interface VideoCardProps {
   onPlay: (video: VideoItem) => void
   sizes: string
   priority?: boolean
+  /** Fixed 16:9 thumbnail instead of the varied masonry shape (single-column phone layout). */
+  widescreen?: boolean
 }
 
-export function VideoCard({video, onPlay, sizes, priority = false}: VideoCardProps) {
+export function VideoCard({video, onPlay, sizes, priority = false, widescreen = false}: VideoCardProps) {
   const meta = videoMeta(video)
 
   return (
     <article className="group relative rounded-xl border border-[#dfe1e4] bg-white transition-shadow duration-200 hover:shadow-[0_10px_24px_rgb(0_0_0/8%)]">
-      <div className="relative w-full overflow-hidden rounded-t-[11px] bg-[#f0f0ea]" style={{aspectRatio: video.aspect}}>
+      <div className="relative w-full overflow-hidden rounded-t-[11px] bg-[#f0f0ea]" style={{aspectRatio: widescreen ? 16 / 9 : video.aspect}}>
         <Image
           src={video.thumbnailUrl}
           alt=""
@@ -49,7 +51,7 @@ export function VideoCard({video, onPlay, sizes, priority = false}: VideoCardPro
           priority={priority}
           className={`object-cover transition-transform duration-300 ${
             // Zoom past the black bars baked into YouTube's 4:3 fallback thumbnail
-            video.letterboxed ? 'scale-[1.34] group-hover:scale-[1.4]' : 'group-hover:scale-105'
+            video.letterboxed && !widescreen ? 'scale-[1.34] group-hover:scale-[1.4]' : 'group-hover:scale-105'
           }`}
         />
         <PlayBadge className="absolute top-1/2 left-1/2 h-7 w-10 -translate-x-1/2 -translate-y-1/2 drop-shadow transition-transform duration-200 group-hover:scale-110" />

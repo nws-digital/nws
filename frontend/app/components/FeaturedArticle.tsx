@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import {urlForImage} from '@/sanity/lib/utils'
-import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 
 interface FeaturedArticleProps {
   article: {
@@ -25,7 +25,7 @@ interface FeaturedArticleProps {
 const categoryLabels: Record<string, string> = {
   'world-exclusive': 'World',
   'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
+  'osint-exclusive': 'NWS Originals',
   'commentary': 'Commentary',
 }
 
@@ -40,7 +40,7 @@ export function FeaturedArticle({article}: FeaturedArticleProps) {
 
   return (
     <Link 
-      href={`/${cleanCategorySlug(article.category || '')}/${article.slug.current}`}
+      href={`/${categoryToUrlSlug(article.category || '')}/${article.slug.current}`}
       className="group block relative overflow-hidden shadow-2xl"
     >
       {/* Image */}

@@ -43,18 +43,18 @@ export default function HeaderClient({latestArticles}: HeaderClientProps) {
           <nav className="hidden md:flex flex-1 justify-center">
             <ul className="flex items-center gap-6 lg:gap-8 text-xs lg:text-sm font-bold uppercase tracking-wide text-black">
               <li>
-                <Link href="/world" className="hover:text-red-600 transition-colors">
+                <Link href="/world-exclusive" className="hover:text-red-600 transition-colors">
                   World
                 </Link>
               </li>
               <li>
-                <Link href="/india" className="hover:text-red-600 transition-colors">
+                <Link href="/india-exclusive" className="hover:text-red-600 transition-colors">
                   India
                 </Link>
               </li>
               <li>
-                <Link href="/osint" className="hover:text-red-600 transition-colors">
-                  OSINT
+                <Link href="/nws-originals" className="hover:text-red-600 transition-colors">
+                  NWS Originals
                 </Link>
               </li>
               <li>

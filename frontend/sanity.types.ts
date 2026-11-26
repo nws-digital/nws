@@ -15,7 +15,7 @@
 // Source: schema.json
 export type Link = {
   _type: 'link'
-  linkType?: 'href' | 'page' | 'post'
+  linkType?: 'href' | 'page' | 'article'
   href?: string
   page?: {
     _ref: string
@@ -23,11 +23,11 @@ export type Link = {
     _weak?: boolean
     [internalGroqTypeReferenceTo]?: 'page'
   }
-  post?: {
+  article?: {
     _ref: string
     _type: 'reference'
     _weak?: boolean
-    [internalGroqTypeReferenceTo]?: 'post'
+    [internalGroqTypeReferenceTo]?: 'article'
   }
   openInNewTab?: boolean
 }
@@ -47,38 +47,74 @@ export type InfoSection = {
   content?: BlockContent
 }
 
-export type BlockContent = Array<{
-  children?: Array<{
-    marks?: Array<string>
-    text?: string
-    _type: 'span'
-    _key: string
-  }>
-  style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
-  listItem?: 'bullet' | 'number'
-  markDefs?: Array<{
-    linkType?: 'href' | 'page' | 'post'
-    href?: string
-    page?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'page'
+export type Embed = {
+  _type: 'embed'
+  type: 'youtube' | 'twitter' | 'iframe'
+  url: string
+}
+
+export type BlockContent = Array<
+  | {
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        linkType?: 'href' | 'page' | 'article'
+        href?: string
+        page?: {
+          _ref: string
+          _type: 'reference'
+          _weak?: boolean
+          [internalGroqTypeReferenceTo]?: 'page'
+        }
+        article?: {
+          _ref: string
+          _type: 'reference'
+          _weak?: boolean
+          [internalGroqTypeReferenceTo]?: 'article'
+        }
+        openInNewTab?: boolean
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
     }
-    post?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'post'
+  | {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt: string
+      caption?: string
+      _type: 'image'
+      _key: string
     }
-    openInNewTab?: boolean
-    _type: 'link'
-    _key: string
-  }>
-  level?: number
-  _type: 'block'
-  _key: string
-}>
+  | ({
+      _key: string
+    } & Embed)
+>
+
+export type PromptConfig = {
+  _id: string
+  _type: 'promptConfig'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  prompt?: string
+  instructions?: string
+}
 
 export type Settings = {
   _id: string
@@ -97,7 +133,7 @@ export type Settings = {
     style?: 'normal'
     listItem?: never
     markDefs?: Array<{
-      linkType?: 'href' | 'page' | 'post'
+      linkType?: 'href' | 'page' | 'article'
       href?: string
       page?: {
         _ref: string
@@ -105,11 +141,11 @@ export type Settings = {
         _weak?: boolean
         [internalGroqTypeReferenceTo]?: 'page'
       }
-      post?: {
+      article?: {
         _ref: string
         _type: 'reference'
         _weak?: boolean
-        [internalGroqTypeReferenceTo]?: 'post'
+        [internalGroqTypeReferenceTo]?: 'article'
       }
       openInNewTab?: boolean
       _type: 'link'
@@ -161,6 +197,7 @@ export type Page = {
   slug: Slug
   heading: string
   subheading?: string
+  rawHtml?: string
   pageBuilder?: Array<
     | ({
         _key: string
@@ -171,14 +208,16 @@ export type Page = {
   >
 }
 
-export type Post = {
+export type Article = {
   _id: string
-  _type: 'post'
+  _type: 'article'
   _createdAt: string
   _updatedAt: string
   _rev: string
   title: string
-  slug: Slug
+  slug?: Slug
+  featured?: boolean
+  category: 'world-exclusive' | 'india-exclusive' | 'osint-exclusive' | 'commentary'
   content?: BlockContent
   excerpt?: string
   coverImage?: {
@@ -192,10 +231,18 @@ export type Post = {
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     alt?: string
+    caption?: string
     _type: 'image'
   }
   date?: string
-  author?: {
+  lastPublishedDate?: string
+  author: {
+    _ref: string
+    _type: 'reference'
+    _weak?: boolean
+    [internalGroqTypeReferenceTo]?: 'person'
+  }
+  coAuthor?: {
     _ref: string
     _type: 'reference'
     _weak?: boolean
@@ -211,6 +258,26 @@ export type Person = {
   _rev: string
   firstName: string
   lastName: string
+  slug: Slug
+  designation?: string
+  bio?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
   picture: {
     asset?: {
       _ref: string
@@ -467,12 +534,14 @@ export type AllSanitySchemaTypes =
   | Link
   | CallToAction
   | InfoSection
+  | Embed
   | BlockContent
+  | PromptConfig
   | Settings
   | SanityImageCrop
   | SanityImageHotspot
   | Page
-  | Post
+  | Article
   | Person
   | Slug
   | SanityAssistInstructionTask
@@ -516,7 +585,7 @@ export type SettingsQueryResult = {
     style?: 'normal'
     listItem?: never
     markDefs?: Array<{
-      linkType?: 'href' | 'page' | 'post'
+      linkType?: 'article' | 'href' | 'page'
       href?: string
       page?: {
         _ref: string
@@ -524,11 +593,11 @@ export type SettingsQueryResult = {
         _weak?: boolean
         [internalGroqTypeReferenceTo]?: 'page'
       }
-      post?: {
+      article?: {
         _ref: string
         _type: 'reference'
         _weak?: boolean
-        [internalGroqTypeReferenceTo]?: 'post'
+        [internalGroqTypeReferenceTo]?: 'article'
       }
       openInNewTab?: boolean
       _type: 'link'
@@ -555,30 +624,592 @@ export type SettingsQueryResult = {
 } | null
 // Variable: featuredArticleQuery
 // Query: *[_type == "article" && featured == true] | order(date desc)[0] {    _id,    _updatedAt,    title,    slug,    excerpt,    date,    lastPublishedDate,    category,    "author": author->{firstName, lastName},    coverImage  }
-export type FeaturedArticleQueryResult = null
+export type FeaturedArticleQueryResult = {
+  _id: string
+  _updatedAt: string
+  title: string
+  slug: Slug | null
+  excerpt: string | null
+  date: string | null
+  lastPublishedDate: string | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  author: {
+    firstName: string
+    lastName: string
+  }
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+} | null
 // Variable: featuredArticlesQuery
 // Query: *[_type == "article" && featured == true] | order(date desc)[0...6] {    _id,    _updatedAt,    title,    slug,    excerpt,    date,    lastPublishedDate,    category,    "author": author->{firstName, lastName},    coverImage  }
-export type FeaturedArticlesQueryResult = Array<never>
+export type FeaturedArticlesQueryResult = Array<{
+  _id: string
+  _updatedAt: string
+  title: string
+  slug: Slug | null
+  excerpt: string | null
+  date: string | null
+  lastPublishedDate: string | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  author: {
+    firstName: string
+    lastName: string
+  }
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+}>
 // Variable: commentaryArticlesQuery
-// Query: *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {    _id,    _updatedAt,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    "author": author->{firstName, lastName, designation, picture, bio},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}  }
-export type CommentaryArticlesQueryResult = Array<never>
+// Query: *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {    _id,    _updatedAt,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    "author": author->{firstName, lastName, designation, picture, bio, "slug": slug.current},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio, "slug": slug.current}  }
+export type CommentaryArticlesQueryResult = Array<{
+  _id: string
+  _updatedAt: string
+  title: string
+  slug: Slug | null
+  excerpt: string | null
+  contentPreview: string
+  date: string | null
+  lastPublishedDate: string | null
+  author: {
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    slug: string
+  }
+  coAuthor: {
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    slug: string
+  } | null
+}>
 // Variable: latestArticlesQuery
 // Query: *[_type == "article" && category != "commentary" && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...12] {    _id,    _updatedAt,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    category,    coverImage,    "author": author->{firstName, lastName, designation, picture, bio},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}  }
-export type LatestArticlesQueryResult = Array<never>
+export type LatestArticlesQueryResult = Array<{
+  _id: string
+  _updatedAt: string
+  title: string
+  slug: Slug | null
+  excerpt: string | null
+  contentPreview: string
+  date: string | null
+  lastPublishedDate: string | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+  author: {
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+  }
+  coAuthor: {
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+  } | null
+}>
+// Variable: originalsArticlesQuery
+// Query: *[_type == "article" && category == "osint-exclusive" && defined(slug.current) && !(_id in $excludeIds)] | order(date desc)[0...2] {    _id,    title,    slug,    date,    category,    coverImage  }
+export type OriginalsArticlesQueryResult = Array<{
+  _id: string
+  title: string
+  slug: Slug | null
+  date: string | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+}>
+// Variable: latestByCategoryQuery
+// Query: *[_type == "article" && category == $category && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...3] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    category,    coverImage  }
+export type LatestByCategoryQueryResult = Array<{
+  _id: string
+  title: string
+  slug: Slug | null
+  excerpt: string | null
+  contentPreview: string
+  date: string | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+}>
+// Variable: handpickedArticlesQuery
+// Query: *[_type == "article" && handpicked == true && defined(slug.current)] | order(date desc)[0...20] {    _id,    title,    slug,    date,    excerpt,    category,    coverImage  }
+export type HandpickedArticlesQueryResult = Array<never>
+// Variable: handpickedArticlesPageQuery
+// Query: *[_type == "article" && handpicked == true && defined(slug.current)] | order(date desc)[$offset...$limit] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    category,    coverImage  }
+export type HandpickedArticlesPageQueryResult = Array<never>
+// Variable: handpickedArticlesCountQuery
+// Query: count(*[_type == "article" && handpicked == true && defined(slug.current)])
+export type HandpickedArticlesCountQueryResult = number
 // Variable: sidebarArticlesQuery
 // Query: *[_type == "article" && category != "commentary" && (_id != $excludeId)] | order(date desc)[0...12] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    category,    coverImage,    "author": author->{firstName, lastName, designation, picture, bio},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}  }
-export type SidebarArticlesQueryResult = Array<never>
+export type SidebarArticlesQueryResult = Array<{
+  _id: string
+  title: string
+  slug: Slug | null
+  excerpt: string | null
+  contentPreview: string
+  date: string | null
+  lastPublishedDate: string | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+  author: {
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+  }
+  coAuthor: {
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+  } | null
+}>
 // Variable: categoryArticlesQuery
 // Query: *[_type == "article" && category == $category] | order(date desc)[$offset...$limit] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    category,    coverImage,    "author": author->{firstName, lastName, designation, picture, bio},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}  }
-export type CategoryArticlesQueryResult = Array<never>
+export type CategoryArticlesQueryResult = Array<{
+  _id: string
+  title: string
+  slug: Slug | null
+  excerpt: string | null
+  contentPreview: string
+  date: string | null
+  lastPublishedDate: string | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+  author: {
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+  }
+  coAuthor: {
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+  } | null
+}>
 // Variable: categoryArticlesCountQuery
 // Query: count(*[_type == "article" && category == $category])
 export type CategoryArticlesCountQueryResult = number
 // Variable: commentaryArticlesPageQuery
-// Query: *[_type == "article" && category == "commentary"] | order(date desc)[$offset...$limit] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    "author": author->{firstName, lastName, designation, picture, bio},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}  }
-export type CommentaryArticlesPageQueryResult = Array<never>
+// Query: *[_type == "article" && category == "commentary"] | order(date desc)[$offset...$limit] {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    "author": author->{firstName, lastName, designation, picture, bio, "slug": slug.current},    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio, "slug": slug.current}  }
+export type CommentaryArticlesPageQueryResult = Array<{
+  _id: string
+  title: string
+  slug: Slug | null
+  excerpt: string | null
+  contentPreview: string
+  date: string | null
+  lastPublishedDate: string | null
+  author: {
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    slug: string
+  }
+  coAuthor: {
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    slug: string
+  } | null
+}>
 // Variable: getPageQuery
-// Query: *[_type == 'page' && slug.current == $slug][0]{    _id,    _type,    name,    slug,    heading,    subheading,    rawHtml,    "pageBuilder": pageBuilder[]{      ...,      _type == "callToAction" => {          link {      ...,        _type == "link" => {    "page": page->slug.current,    "article": article->slug.current  }      },      },      _type == "infoSection" => {        content[]{          ...,          markDefs[]{            ...,              _type == "link" => {    "page": page->slug.current,    "article": article->slug.current  }          }        }      },    },  }
+// Query: *[_type == 'page' && slug.current == $slug][0]{    _id,    _type,    name,    slug,    heading,    subheading,    rawHtml,    "pageBuilder": pageBuilder[]{      ...,      _type == "callToAction" => {          link {      ...,        _type == "link" => {    "page": page->slug.current,    "article": article->{"slug": slug.current, category}  }      },      },      _type == "infoSection" => {        content[]{          ...,          markDefs[]{            ...,              _type == "link" => {    "page": page->slug.current,    "article": article->{"slug": slug.current, category}  }          }        }      },    },  }
 export type GetPageQueryResult = {
   _id: string
   _type: 'page'
@@ -586,7 +1217,7 @@ export type GetPageQueryResult = {
   slug: Slug
   heading: string
   subheading: string | null
-  rawHtml: null
+  rawHtml: string | null
   pageBuilder: Array<
     | {
         _key: string
@@ -596,17 +1227,14 @@ export type GetPageQueryResult = {
         buttonText?: string
         link: {
           _type: 'link'
-          linkType?: 'href' | 'page' | 'post'
+          linkType?: 'article' | 'href' | 'page'
           href?: string
           page: string | null
-          post?: {
-            _ref: string
-            _type: 'reference'
-            _weak?: boolean
-            [internalGroqTypeReferenceTo]?: 'post'
-          }
+          article: {
+            slug: string | null
+            category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+          } | null
           openInNewTab?: boolean
-          article: null
         } | null
       }
     | {
@@ -614,69 +1242,479 @@ export type GetPageQueryResult = {
         _type: 'infoSection'
         heading?: string
         subheading?: string
-        content: Array<{
-          children?: Array<{
-            marks?: Array<string>
-            text?: string
-            _type: 'span'
-            _key: string
-          }>
-          style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
-          listItem?: 'bullet' | 'number'
-          markDefs: Array<{
-            linkType?: 'href' | 'page' | 'post'
-            href?: string
-            page: string | null
-            post?: {
-              _ref: string
-              _type: 'reference'
-              _weak?: boolean
-              [internalGroqTypeReferenceTo]?: 'post'
+        content: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<{
+                linkType?: 'article' | 'href' | 'page'
+                href?: string
+                page: string | null
+                article: {
+                  slug: string | null
+                  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+                } | null
+                openInNewTab?: boolean
+                _type: 'link'
+                _key: string
+              }> | null
+              level?: number
+              _type: 'block'
+              _key: string
             }
-            openInNewTab?: boolean
-            _type: 'link'
-            _key: string
-            article: null
-          }> | null
-          level?: number
-          _type: 'block'
-          _key: string
-        }> | null
+          | {
+              _key: string
+              _type: 'embed'
+              type: 'iframe' | 'twitter' | 'youtube'
+              url: string
+              markDefs: null
+            }
+          | {
+              asset?: {
+                _ref: string
+                _type: 'reference'
+                _weak?: boolean
+                [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+              }
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              alt: string
+              caption?: string
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
       }
   > | null
 } | null
-// Variable: sitemapData
-// Query: *[_type == "page" || _type == "article" && defined(slug.current)] | order(_type asc) {    "slug": slug.current,    _type,    _updatedAt,  }
-export type SitemapDataResult = Array<{
+// Variable: sitemapPagesQuery
+// Query: *[_type == "page" && defined(slug.current)] {    "slug": slug.current,    _updatedAt,  }
+export type SitemapPagesQueryResult = Array<{
   slug: string
-  _type: 'page'
+  _updatedAt: string
+}>
+// Variable: sitemapArticlesByCategoryQuery
+// Query: *[_type == "article" && category == $category && defined(slug.current)] {    "slug": slug.current,    "lastmod": coalesce(lastPublishedDate, date, _updatedAt),  }
+export type SitemapArticlesByCategoryQueryResult = Array<{
+  slug: string | null
+  lastmod: string
+}>
+// Variable: newsSitemapQuery
+// Query: *[_type == "article" && defined(slug.current) && defined(category) && coalesce(date, _createdAt) >= $since] | order(date desc) [0...1000] {    "slug": slug.current,    category,    "title": coalesce(title, "Untitled"),    "publicationDate": coalesce(date, _createdAt),  }
+export type NewsSitemapQueryResult = Array<{
+  slug: string | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  title: string
+  publicationDate: string
+}>
+// Variable: sitemapAuthorsQuery
+// Query: *[_type == "person" && defined(slug.current) && count(*[_type == "article" && references(^._id)]) > 0] {    "slug": slug.current,    _updatedAt,  }
+export type SitemapAuthorsQueryResult = Array<{
+  slug: string
   _updatedAt: string
 }>
 // Variable: allPostsQuery
-// Query: *[_type == "article" && defined(slug.current)] | order(date desc, _updatedAt desc) {      _id,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  lastPublishedDate,  "author": author->{_id, firstName, lastName, designation, picture, bio},  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},  category,  }
-export type AllPostsQueryResult = Array<never>
+// Query: *[_type == "article" && defined(slug.current)] | order(date desc, _updatedAt desc) {      _id,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  lastPublishedDate,  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},  category,  }
+export type AllPostsQueryResult = Array<{
+  _id: string
+  _updatedAt: string
+  status: 'draft' | 'published'
+  title: string
+  slug: string | null
+  excerpt: string | null
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+  date: string
+  lastPublishedDate: string | null
+  author: {
+    _id: string
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    slug: string
+  }
+  coAuthor: {
+    _id: string
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    slug: string
+  } | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+}>
 // Variable: morePostsQuery
-// Query: *[_type == "article" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {      _id,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  lastPublishedDate,  "author": author->{_id, firstName, lastName, designation, picture, bio},  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},  category,  }
-export type MorePostsQueryResult = Array<never>
+// Query: *[_type == "article" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {      _id,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  lastPublishedDate,  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},  category,  }
+export type MorePostsQueryResult = Array<{
+  _id: string
+  _updatedAt: string
+  status: 'draft' | 'published'
+  title: string
+  slug: string | null
+  excerpt: string | null
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+  date: string
+  lastPublishedDate: string | null
+  author: {
+    _id: string
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    slug: string
+  }
+  coAuthor: {
+    _id: string
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    slug: string
+  } | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+}>
 // Variable: postQuery
-// Query: *[_type == "article" && slug.current == $slug] [0] {    content[]{    ...,    markDefs[]{      ...,        _type == "link" => {    "page": page->slug.current,    "article": article->slug.current  }    }  },      _id,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  lastPublishedDate,  "author": author->{_id, firstName, lastName, designation, picture, bio},  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},  category,  }
-export type PostQueryResult = null
+// Query: *[_type == "article" && slug.current == $slug] [0] {    content[]{    ...,    markDefs[]{      ...,        _type == "link" => {    "page": page->slug.current,    "article": article->{"slug": slug.current, category}  }    }  },      _id,  _updatedAt,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _createdAt),  lastPublishedDate,  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},  category,  }
+export type PostQueryResult = {
+  content: Array<
+    | {
+        children?: Array<{
+          marks?: Array<string>
+          text?: string
+          _type: 'span'
+          _key: string
+        }>
+        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+        listItem?: 'bullet' | 'number'
+        markDefs: Array<{
+          linkType?: 'article' | 'href' | 'page'
+          href?: string
+          page: string | null
+          article: {
+            slug: string | null
+            category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+          } | null
+          openInNewTab?: boolean
+          _type: 'link'
+          _key: string
+        }> | null
+        level?: number
+        _type: 'block'
+        _key: string
+      }
+    | {
+        _key: string
+        _type: 'embed'
+        type: 'iframe' | 'twitter' | 'youtube'
+        url: string
+        markDefs: null
+      }
+    | {
+        asset?: {
+          _ref: string
+          _type: 'reference'
+          _weak?: boolean
+          [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+        }
+        media?: unknown
+        hotspot?: SanityImageHotspot
+        crop?: SanityImageCrop
+        alt: string
+        caption?: string
+        _type: 'image'
+        _key: string
+        markDefs: null
+      }
+  > | null
+  _id: string
+  _updatedAt: string
+  status: 'draft' | 'published'
+  title: string
+  slug: string | null
+  excerpt: string | null
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+  date: string
+  lastPublishedDate: string | null
+  author: {
+    _id: string
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    slug: string
+  }
+  coAuthor: {
+    _id: string
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+    slug: string
+  } | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+} | null
 // Variable: postPagesSlugs
 // Query: *[_type == "article" && defined(slug.current)]  {"slug": slug.current}
-export type PostPagesSlugsResult = Array<never>
+export type PostPagesSlugsResult = Array<{
+  slug: string | null
+}>
 // Variable: pagesSlugs
 // Query: *[_type == "page" && defined(slug.current)]  {"slug": slug.current}
 export type PagesSlugsResult = Array<{
   slug: string
 }>
-// Variable: authorByIdQuery
-// Query: *[_type == "person" && _id == $id][0] {    _id,    firstName,    lastName,    designation,    bio,    picture  }
-export type AuthorByIdQueryResult = {
+// Variable: authorBySlugQuery
+// Query: *[_type == "person" && slug.current == $slug][0] {    _id,    firstName,    lastName,    designation,    bio,    picture  }
+export type AuthorBySlugQueryResult = {
   _id: string
   firstName: string
   lastName: string
-  designation: null
-  bio: null
+  designation: string | null
+  bio: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }> | null
   picture: {
     asset?: {
       _ref: string
@@ -692,16 +1730,68 @@ export type AuthorByIdQueryResult = {
   }
 } | null
 // Variable: authorArticlesQuery
-// Query: *[_type == "article" && author._ref == $id] | order(date desc) {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    category,    coverImage,    "author": author->{_id, firstName, lastName, designation, picture, bio}  }
-export type AuthorArticlesQueryResult = Array<never>
-
-// Source: ./sanity/lib/rss-queries.ts
-// Variable: rssArticlesByTopicQuery
-// Query: *[_type == "rssArticle" && topic == $topic] | order(pubDate desc) [0...20] {    _id,    title,    link,    description,    pubDate,    source,    topic  }
-export type RssArticlesByTopicQueryResult = Array<never>
-// Variable: allRssArticlesQuery
-// Query: *[_type == "rssArticle"] | order(pubDate desc) [0...40] {    _id,    title,    link,    description,    pubDate,    source,    topic  }
-export type AllRssArticlesQueryResult = Array<never>
+// Query: *[_type == "article" && author->slug.current == $slug] | order(date desc) {    _id,    title,    slug,    excerpt,    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),    date,    lastPublishedDate,    category,    coverImage,    "author": author->{_id, firstName, lastName, designation, picture, bio}  }
+export type AuthorArticlesQueryResult = Array<{
+  _id: string
+  title: string
+  slug: Slug | null
+  excerpt: string | null
+  contentPreview: string
+  date: string | null
+  lastPublishedDate: string | null
+  category: 'commentary' | 'india-exclusive' | 'osint-exclusive' | 'world-exclusive'
+  coverImage: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    caption?: string
+    _type: 'image'
+  } | null
+  author: {
+    _id: string
+    firstName: string
+    lastName: string
+    designation: string | null
+    picture: {
+      asset?: {
+        _ref: string
+        _type: 'reference'
+        _weak?: boolean
+        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+      }
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+    bio: Array<{
+      children?: Array<{
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }>
+      style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+      listItem?: 'bullet' | 'number'
+      markDefs?: Array<{
+        href?: string
+        _type: 'link'
+        _key: string
+      }>
+      level?: number
+      _type: 'block'
+      _key: string
+    }> | null
+  }
+}>
 
 // Query TypeMap
 import '@sanity/client'
@@ -710,22 +1800,28 @@ declare module '@sanity/client' {
     '*[_type == "settings"][0]': SettingsQueryResult
     '\n  *[_type == "article" && featured == true] | order(date desc)[0] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    date,\n    lastPublishedDate,\n    category,\n    "author": author->{firstName, lastName},\n    coverImage\n  }\n': FeaturedArticleQueryResult
     '\n  *[_type == "article" && featured == true] | order(date desc)[0...6] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    date,\n    lastPublishedDate,\n    category,\n    "author": author->{firstName, lastName},\n    coverImage\n  }\n': FeaturedArticlesQueryResult
-    '\n  *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': CommentaryArticlesQueryResult
+    '\n  *[_type == "article" && category == "commentary"] | order(date desc)[0...3] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    "author": author->{firstName, lastName, designation, picture, bio, "slug": slug.current},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio, "slug": slug.current}\n  }\n': CommentaryArticlesQueryResult
     '\n  *[_type == "article" && category != "commentary" && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...12] {\n    _id,\n    _updatedAt,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': LatestArticlesQueryResult
+    '\n  *[_type == "article" && category == "osint-exclusive" && defined(slug.current) && !(_id in $excludeIds)] | order(date desc)[0...2] {\n    _id,\n    title,\n    slug,\n    date,\n    category,\n    coverImage\n  }\n': OriginalsArticlesQueryResult
+    '\n  *[_type == "article" && category == $category && (_id != $excludeId) && defined(slug.current)] | order(date desc)[0...3] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    category,\n    coverImage\n  }\n': LatestByCategoryQueryResult
+    '\n  *[_type == "article" && handpicked == true && defined(slug.current)] | order(date desc)[0...20] {\n    _id,\n    title,\n    slug,\n    date,\n    excerpt,\n    category,\n    coverImage\n  }\n': HandpickedArticlesQueryResult
+    '\n  *[_type == "article" && handpicked == true && defined(slug.current)] | order(date desc)[$offset...$limit] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    category,\n    coverImage\n  }\n': HandpickedArticlesPageQueryResult
+    '\n  count(*[_type == "article" && handpicked == true && defined(slug.current)])\n': HandpickedArticlesCountQueryResult
     '\n  *[_type == "article" && category != "commentary" && (_id != $excludeId)] | order(date desc)[0...12] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': SidebarArticlesQueryResult
     '\n  *[_type == "article" && category == $category] | order(date desc)[$offset...$limit] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': CategoryArticlesQueryResult
     '\n  count(*[_type == "article" && category == $category])\n': CategoryArticlesCountQueryResult
-    '\n  *[_type == "article" && category == "commentary"] | order(date desc)[$offset...$limit] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    "author": author->{firstName, lastName, designation, picture, bio},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio}\n  }\n': CommentaryArticlesPageQueryResult
-    '\n  *[_type == \'page\' && slug.current == $slug][0]{\n    _id,\n    _type,\n    name,\n    slug,\n    heading,\n    subheading,\n    rawHtml,\n    "pageBuilder": pageBuilder[]{\n      ...,\n      _type == "callToAction" => {\n        \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "article": article->slug.current\n  }\n\n      }\n,\n      },\n      _type == "infoSection" => {\n        content[]{\n          ...,\n          markDefs[]{\n            ...,\n            \n  _type == "link" => {\n    "page": page->slug.current,\n    "article": article->slug.current\n  }\n\n          }\n        }\n      },\n    },\n  }\n': GetPageQueryResult
-    '\n  *[_type == "page" || _type == "article" && defined(slug.current)] | order(_type asc) {\n    "slug": slug.current,\n    _type,\n    _updatedAt,\n  }\n': SitemapDataResult
-    '\n  *[_type == "article" && defined(slug.current)] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt),\n  lastPublishedDate,\n  "author": author->{_id, firstName, lastName, designation, picture, bio},\n  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},\n  category,\n\n  }\n': AllPostsQueryResult
-    '\n  *[_type == "article" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt),\n  lastPublishedDate,\n  "author": author->{_id, firstName, lastName, designation, picture, bio},\n  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},\n  category,\n\n  }\n': MorePostsQueryResult
-    '\n  *[_type == "article" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "article": article->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt),\n  lastPublishedDate,\n  "author": author->{_id, firstName, lastName, designation, picture, bio},\n  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio},\n  category,\n\n  }\n': PostQueryResult
+    '\n  *[_type == "article" && category == "commentary"] | order(date desc)[$offset...$limit] {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    "author": author->{firstName, lastName, designation, picture, bio, "slug": slug.current},\n    "coAuthor": coAuthor->{firstName, lastName, designation, picture, bio, "slug": slug.current}\n  }\n': CommentaryArticlesPageQueryResult
+    '\n  *[_type == \'page\' && slug.current == $slug][0]{\n    _id,\n    _type,\n    name,\n    slug,\n    heading,\n    subheading,\n    rawHtml,\n    "pageBuilder": pageBuilder[]{\n      ...,\n      _type == "callToAction" => {\n        \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "article": article->{"slug": slug.current, category}\n  }\n\n      }\n,\n      },\n      _type == "infoSection" => {\n        content[]{\n          ...,\n          markDefs[]{\n            ...,\n            \n  _type == "link" => {\n    "page": page->slug.current,\n    "article": article->{"slug": slug.current, category}\n  }\n\n          }\n        }\n      },\n    },\n  }\n': GetPageQueryResult
+    '\n  *[_type == "page" && defined(slug.current)] {\n    "slug": slug.current,\n    _updatedAt,\n  }\n': SitemapPagesQueryResult
+    '\n  *[_type == "article" && category == $category && defined(slug.current)] {\n    "slug": slug.current,\n    "lastmod": coalesce(lastPublishedDate, date, _updatedAt),\n  }\n': SitemapArticlesByCategoryQueryResult
+    '\n  *[_type == "article" && defined(slug.current) && defined(category) && coalesce(date, _createdAt) >= $since] | order(date desc) [0...1000] {\n    "slug": slug.current,\n    category,\n    "title": coalesce(title, "Untitled"),\n    "publicationDate": coalesce(date, _createdAt),\n  }\n': NewsSitemapQueryResult
+    '\n  *[_type == "person" && defined(slug.current) && count(*[_type == "article" && references(^._id)]) > 0] {\n    "slug": slug.current,\n    _updatedAt,\n  }\n': SitemapAuthorsQueryResult
+    '\n  *[_type == "article" && defined(slug.current)] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt),\n  lastPublishedDate,\n  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},\n  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},\n  category,\n\n  }\n': AllPostsQueryResult
+    '\n  *[_type == "article" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt),\n  lastPublishedDate,\n  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},\n  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},\n  category,\n\n  }\n': MorePostsQueryResult
+    '\n  *[_type == "article" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "article": article->{"slug": slug.current, category}\n  }\n\n    }\n  },\n    \n  _id,\n  _updatedAt,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _createdAt),\n  lastPublishedDate,\n  "author": author->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},\n  "coAuthor": coAuthor->{_id, firstName, lastName, designation, picture, bio, "slug": slug.current},\n  category,\n\n  }\n': PostQueryResult
     '\n  *[_type == "article" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
-    '\n  *[_type == "person" && _id == $id][0] {\n    _id,\n    firstName,\n    lastName,\n    designation,\n    bio,\n    picture\n  }\n': AuthorByIdQueryResult
-    '\n  *[_type == "article" && author._ref == $id] | order(date desc) {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{_id, firstName, lastName, designation, picture, bio}\n  }\n': AuthorArticlesQueryResult
-    '\n  *[_type == "rssArticle" && topic == $topic] | order(pubDate desc) [0...20] {\n    _id,\n    title,\n    link,\n    description,\n    pubDate,\n    source,\n    topic\n  }\n': RssArticlesByTopicQueryResult
-    '\n  *[_type == "rssArticle"] | order(pubDate desc) [0...40] {\n    _id,\n    title,\n    link,\n    description,\n    pubDate,\n    source,\n    topic\n  }\n': AllRssArticlesQueryResult
+    '\n  *[_type == "person" && slug.current == $slug][0] {\n    _id,\n    firstName,\n    lastName,\n    designation,\n    bio,\n    picture\n  }\n': AuthorBySlugQueryResult
+    '\n  *[_type == "article" && author->slug.current == $slug] | order(date desc) {\n    _id,\n    title,\n    slug,\n    excerpt,\n    "contentPreview": array::join(string::split(pt::text(content), "")[0..200], ""),\n    date,\n    lastPublishedDate,\n    category,\n    coverImage,\n    "author": author->{_id, firstName, lastName, designation, picture, bio}\n  }\n': AuthorArticlesQueryResult
   }
 }

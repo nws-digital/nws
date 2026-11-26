@@ -5,38 +5,47 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
 import {motion} from 'framer-motion'
-import {urlForImage} from '@/sanity/lib/utils'
-import {loadMoreArticles} from '@/app/actions/articles'
-import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
+import {urlForImage, withDefinedSlug} from '@/sanity/lib/utils'
+import {loadMoreArticles, loadMoreHandpickedArticles} from '@/app/actions/articles'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
+import {AuthorCredit, hasAuthorCredit, type AuthorCreditPerson} from '@/app/components/AuthorCredit'
 
 interface Article {
   _id: string
   title: string
   slug: {current: string}
-  excerpt?: string
+  excerpt?: string | null
   contentPreview?: string
   date: string
   category?: string
   coverImage?: any
+  author?: AuthorCreditPerson | null
+  coAuthor?: AuthorCreditPerson | null
 }
 
 interface CategoryArticlesListProps {
   initialArticles: Article[]
-  category: string
+  category?: string
+  categorySlug?: string
+  // The Hand-Picked page lists articles across all categories, so each card
+  // links to and is labelled with its own category.
+  handpicked?: boolean
   totalCount: number
 }
 
 const categoryLabels: Record<string, string> = {
   'world-exclusive': 'World',
   'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
+  'osint-exclusive': 'NWS Originals',
   'commentary': 'Commentary',
 }
 
 export function CategoryArticlesList({
   initialArticles,
   category,
+  categorySlug,
+  handpicked = false,
   totalCount,
 }: CategoryArticlesListProps) {
   const [articles, setArticles] = useState<Article[]>(initialArticles)
@@ -48,9 +57,11 @@ export function CategoryArticlesList({
   const loadMore = async () => {
     setLoading(true)
     try {
-      const newArticles = await loadMoreArticles(category, offset, offset + 12)
+      const newArticles = handpicked
+        ? await loadMoreHandpickedArticles(offset, offset + 12)
+        : await loadMoreArticles(category!, offset, offset + 12)
 
-      setArticles([...articles, ...newArticles])
+      setArticles([...articles, ...withDefinedSlug(newArticles)])
       setOffset(offset + 12)
     } catch (error) {
       console.error('Error loading more articles:', error)
@@ -59,7 +70,7 @@ export function CategoryArticlesList({
     }
   }
 
-  const categoryLabel = categoryLabels[category] || category
+  const categoryLabel = handpicked ? 'Hand-Picked' : categoryLabels[category!] || category!
 
   const itemVariants = {
     hidden: {opacity: 0, y: 20},
@@ -101,7 +112,7 @@ export function CategoryArticlesList({
               transition={{type: 'spring', stiffness: 300}}
             >
               <Link
-                href={`/${cleanCategorySlug(category)}/${article.slug.current}`}
+                href={`/${handpicked ? categoryToUrlSlug(article.category || '') : categorySlug}/${article.slug.current}`}
                 className="group flex flex-col bg-white rounded-lg overflow-hidden h-full border border-gray-200"
               >
                 {/* Cover Image */}
@@ -133,10 +144,25 @@ export function CategoryArticlesList({
                     {(article.excerpt || article.contentPreview) && '...'}
                   </p>
 
+                  {/* Author credit (NWS Originals only) */}
+                  {hasAuthorCredit(article.author, article.coAuthor, article.category) && (
+                    <AuthorCredit
+                      author={article.author}
+                      coAuthor={article.coAuthor}
+                      category={article.category}
+                      avatarSize={20}
+                      className="text-gray-500 text-xs font-medium mb-3"
+                    />
+                  )}
+
                   {/* Time at bottom */}
                   <div className="flex items-center justify-between text-xs mt-auto pt-4 border-t border-gray-100">
                     <span className="text-gray-400">{timeAgo}</span>
-                    <span className="text-red-600 font-semibold uppercase">{categoryLabel}</span>
+                    {handpicked && (
+                      <span className="text-red-600 font-semibold uppercase">
+                        {categoryLabels[article.category || ''] || article.category}
+                      </span>
+                    )}
                   </div>
                 </div>
               </Link>
@@ -166,7 +192,7 @@ export function CategoryArticlesList({
       {/* No articles at all */}
       {articles.length === 0 && (
         <div className="text-center text-gray-500 py-12">
-          <p className="text-xl">No articles found in this category yet.</p>
+          <p className="text-xl">{handpicked ? 'No hand-picked articles yet.' : 'No articles found in this category yet.'}</p>
         </div>
       )}
     </div>

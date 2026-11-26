@@ -5,40 +5,44 @@ import Link from 'next/link'
 import {PortableText} from '@portabletext/react'
 import {formatDistanceToNow} from 'date-fns'
 import {sanityFetch} from '@/sanity/lib/live'
-import {authorByIdQuery, authorArticlesQuery} from '@/sanity/lib/queries'
+import {authorBySlugQuery, authorArticlesQuery} from '@/sanity/lib/queries'
 import {urlForImage} from '@/sanity/lib/utils'
-import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 
 type Props = {
-  params: Promise<{id: string}>
+  params: Promise<{slug: string}>
 }
 
 export const revalidate = 300
 export const dynamicParams = true
 
+// URL segment values (short form) -- matches the labels used on article/category pages.
 const categoryLabels: Record<string, string> = {
-  'world-exclusive': 'World',
-  'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
-  'commentary': 'Commentary',
+  world: 'World',
+  india: 'India',
+  'nws-originals': 'NWS Originals',
+  commentary: 'Commentary',
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const {id} = await props.params
-  const {data: author} = await sanityFetch({query: authorByIdQuery, params: {id}, stega: false})
+  const {slug} = await props.params
+  const {data: author} = await sanityFetch({query: authorBySlugQuery, params: {slug}, stega: false})
   if (!author) return {}
   return {
     title: `${author.firstName} ${author.lastName} — NWS`,
     description: `Articles by ${author.firstName} ${author.lastName}${author.designation ? `, ${author.designation}` : ''}`,
+    alternates: {
+      canonical: `/author/${slug}`,
+    },
   }
 }
 
 export default async function AuthorPage(props: Props) {
-  const {id} = await props.params
+  const {slug} = await props.params
 
   const [{data: author}, {data: articles}] = await Promise.all([
-    sanityFetch({query: authorByIdQuery, params: {id}}),
-    sanityFetch({query: authorArticlesQuery, params: {id}}),
+    sanityFetch({query: authorBySlugQuery, params: {slug}}),
+    sanityFetch({query: authorArticlesQuery, params: {slug}}),
   ])
 
   if (!author) return notFound()
@@ -50,7 +54,7 @@ export default async function AuthorPage(props: Props) {
   const hasBio = !!(author.bio as any)?.length
 
   return (
-    <div className="pt-20 min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-[1366px] mx-auto px-4 py-12">
 
         {/* Author profile header */}
@@ -101,8 +105,8 @@ export default async function AuthorPage(props: Props) {
               {(articles as any[]).map((article) => {
                 const coverBuilder = article.coverImage ? urlForImage(article.coverImage) : null
                 const coverImageUrl = coverBuilder?.width(600).height(400).fit('crop').url()
-                const categorySlug = article.category ? cleanCategorySlug(article.category) : 'posts'
-                const categoryLabel = article.category ? (categoryLabels[article.category] || article.category) : ''
+                const categorySlug = article.category ? categoryToUrlSlug(article.category) : 'posts'
+                const categoryLabel = article.category ? (categoryLabels[categorySlug] || article.category) : ''
                 const timeAgo = article.date
                   ? formatDistanceToNow(new Date(article.date), {addSuffix: true})
                   : ''

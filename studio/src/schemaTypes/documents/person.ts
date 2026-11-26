@@ -25,11 +25,42 @@ export const person = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      description: 'Used to build this author\'s public profile URL (/author/<slug>).',
+      options: {
+        source: (doc) => `${(doc as {firstName?: string}).firstName ?? ''} ${(doc as {lastName?: string}).lastName ?? ''}`.trim(),
+        maxLength: 96,
+      },
+      validation: (rule) =>
+        rule
+          .required()
+          .custom(async (slug, context) => {
+            if (!slug?.current) return true
+            const {document, getClient} = context
+            const client = getClient({apiVersion: '2024-01-01'})
+            const id = document?._id.replace(/^drafts\./, '')
+            const isUnique = await client.fetch(
+              `!defined(*[_type == "person" && !(_id in [$draft, $published]) && slug.current == $slug][0]._id)`,
+              {draft: `drafts.${id}`, published: id, slug: slug.current}
+            )
+            return isUnique || 'Another author already uses this slug — pick a different one.'
+          }),
+    }),
+    defineField({
       name: 'designation',
       title: 'Designation',
       type: 'string',
       description: 'Job title or role (e.g., Senior Editor, Columnist, Correspondent)',
       placeholder: 'e.g., Senior Editor',
+    }),
+    defineField({
+      name: 'country',
+      title: 'Country',
+      type: 'string',
+      description: 'Country this author is based in / reporting from. Shown on NWS Originals story cards (e.g., "By Jane Doe, India").',
+      placeholder: 'e.g., India',
     }),
     defineField({
       name: 'bio',
@@ -75,12 +106,14 @@ export const person = defineType({
       firstName: 'firstName',
       lastName: 'lastName',
       designation: 'designation',
+      country: 'country',
       picture: 'picture',
     },
     prepare(selection) {
+      const subtitle = [selection.designation, selection.country].filter(Boolean).join(' · ')
       return {
         title: `${selection.firstName} ${selection.lastName}`,
-        subtitle: selection.designation || 'Person',
+        subtitle: subtitle || 'Person',
         media: selection.picture,
       }
     },

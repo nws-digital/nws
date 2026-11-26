@@ -9,7 +9,9 @@ import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './src/schemaTypes'
 import {structure} from './src/structure'
 import {publishWithDates} from './src/actions/publishWithDates'
+import {previewAction} from './src/actions/previewAction'
 import {unsplashImageAsset} from 'sanity-plugin-asset-source-unsplash'
+import {media} from 'sanity-plugin-media'
 import {
   presentationTool,
   defineDocuments,
@@ -17,8 +19,6 @@ import {
   type DocumentLocation,
 } from 'sanity/presentation'
 import {assist} from '@sanity/assist'
-import {DocumentTextIcon} from '@sanity/icons'
-import SupabaseTitlesTool from './src/tools/SupabaseTitlesTool'
 
 // Environment variables for project configuration
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || '01seu5c9'
@@ -37,8 +37,6 @@ const homeLocation = {
 // path for different document types and used in the presentation tool.
 function resolveHref(documentType?: string, slug?: string): string | undefined {
   switch (documentType) {
-    case 'article':
-      return slug ? `/posts/${slug}` : undefined
     case 'page':
       return slug ? `/${slug}` : undefined
     default:
@@ -79,8 +77,8 @@ export default defineConfig({
             filter: `_type == "page" && slug.current == $slug || _id == $slug`,
           },
           {
-            route: '/posts/:slug',
-            filter: `_type == "article" && slug.current == $slug || _id == $slug`,
+            route: '/:category/:slug',
+            filter: `_type == "article" && slug.current == $slug`,
           },
         ]),
         // Locations Resolver API allows you to define where data is being used in your application. https://www.sanity.io/docs/presentation-resolver-api#8d8bca7bfcd7
@@ -108,17 +106,14 @@ export default defineConfig({
             select: {
               title: 'title',
               slug: 'slug.current',
+              category: 'category',
             },
             resolve: (doc) => ({
               locations: [
-                {
-                  title: doc?.title || 'Untitled',
-                  href: resolveHref('article', doc?.slug)!,
-                },
-                {
-                  title: 'Home',
-                  href: '/',
-                } satisfies DocumentLocation,
+                doc?.slug && doc?.category
+                  ? {title: doc.title || 'Untitled', href: `/${doc.category}/${doc.slug}`}
+                  : null,
+                {title: 'Home', href: '/'} satisfies DocumentLocation,
               ].filter(Boolean) as DocumentLocation[],
             }),
           }),
@@ -127,19 +122,9 @@ export default defineConfig({
     }),
     // Additional plugins for enhanced functionality
     unsplashImageAsset(),
+    media(),
     assist(),
     visionTool(),
-  ],
-
-  // Custom tools
-  tools: (prev) => [
-    ...prev,
-    {
-      name: 'supabase-titles',
-      title: 'Breaking',
-      icon: DocumentTextIcon,
-      component: SupabaseTitlesTool,
-    },
   ],
 
   // Schema configuration, imported from ./src/schemaTypes/index.ts
@@ -152,9 +137,12 @@ export default defineConfig({
     actions: (prev, context) => {
       // Only use custom publish action for articles
       if (context.schemaType === 'article') {
-        return prev.map((originalAction) =>
-          originalAction.action === 'publish' ? publishWithDates : originalAction
-        )
+        return [
+          ...prev.map((originalAction) =>
+            originalAction.action === 'publish' ? publishWithDates : originalAction
+          ),
+          previewAction,
+        ]
       }
       return prev
     },

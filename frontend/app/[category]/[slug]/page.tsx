@@ -1,8 +1,9 @@
 import type {Metadata} from 'next'
-import {notFound} from 'next/navigation'
+import {notFound, permanentRedirect} from 'next/navigation'
 import {type PortableTextBlock} from 'next-sanity'
 import {Suspense} from 'react'
 import Avatar from '@/app/components/Avatar'
+import ArticleAuthors from '@/app/components/ArticleAuthors'
 import CoverImage from '@/app/components/CoverImage'
 import PortableText from '@/app/components/PortableText'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
@@ -12,8 +13,8 @@ import {ShareArticle} from '@/app/components/ShareArticle'
 import {sanityFetch} from '@/sanity/lib/live'
 import {postQuery, allPostsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
+import {categoryToUrlSlug, urlSlugToCategory} from '@/sanity/lib/cleanCategorySlug'
 import * as demo from '@/sanity/lib/demo'
-import {CATEGORY_TO_URL_SLUG, URL_SLUG_TO_CATEGORY} from '@/lib/constants'
 
 type Props = {
   params: Promise<{
@@ -24,6 +25,7 @@ type Props = {
 
 type ArticleAuthor = {
   _id?: string | null
+  slug?: string | null
   firstName?: string | null
   lastName?: string | null
   designation?: string | null
@@ -46,15 +48,14 @@ type ArticlePost = {
   coAuthor?: ArticleAuthor | null
 }
 
-// URL-facing slugs (what visitors see in the address bar)
-const validCategories = Object.keys(URL_SLUG_TO_CATEGORY)
+// URL segment values (short form) -- the underlying Sanity `category` field is unchanged.
+const validCategories = ['world', 'india', 'nws-originals', 'commentary']
 
 const categoryLabels: Record<string, string> = {
-  'world-exclusive': 'World',
-  'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
-  'commentary': 'Commentary',
-
+  world: 'World',
+  india: 'India',
+  'nws-originals': 'NWS Originals',
+  commentary: 'Commentary',
 }
 
 function getMetadataBaseForArticle() {
@@ -88,12 +89,12 @@ export async function generateStaticParams() {
   })
   
   const params = (data || [])
-    .filter((post: any) => post.category && CATEGORY_TO_URL_SLUG[post.category])
+    .filter((post: any) => post.category && validCategories.includes(categoryToUrlSlug(post.category)))
     .map((post: any) => ({
-      category: CATEGORY_TO_URL_SLUG[post.category],
+      category: categoryToUrlSlug(post.category),
       slug: post.slug,
     }))
-  
+
   return params
 }
 
@@ -159,33 +160,30 @@ export default async function ArticlePage(props: Props) {
   const post = postResponse as ArticlePost | null
 
   if (!post?._id) {
-    console.log('Article not found for slug:', params.slug)
     return notFound()
   }
 
   // Normalize and compare categories (trim whitespace and invisible characters).
-  // post.category is the raw value stored in Sanity (e.g. "india-exclusive");
-  // params.category is the clean URL-facing slug (e.g. "india") - translate
-  // the raw value to its URL slug before comparing.
+  // params.category is the short URL slug (e.g. "world"); map it back to the
+  // full Sanity category value (e.g. "world-exclusive") before comparing.
   const normalizedPostCategory = post.category?.trim().replace(/[\u200B-\u200D\uFEFF]/g, '')
-  const normalizedPostCategoryUrlSlug = normalizedPostCategory ? CATEGORY_TO_URL_SLUG[normalizedPostCategory] : undefined
-  const normalizedParamsCategory = params.category.trim()
+  const normalizedParamsCategory = urlSlugToCategory(params.category)
 
-  if (normalizedPostCategoryUrlSlug !== normalizedParamsCategory) {
-    console.log('Category mismatch:', {
-      urlCategory: params.category,
-      articleCategory: post.category,
-      normalizedArticleCategoryUrlSlug: normalizedPostCategoryUrlSlug,
-      slug: params.slug
-    })
+  // The article exists but under a different category (e.g. it was moved to NWS
+  // Originals) -- send old links to its current URL instead of a 404.
+  if (normalizedPostCategory !== normalizedParamsCategory) {
+    if (normalizedPostCategory) {
+      permanentRedirect(`/${categoryToUrlSlug(normalizedPostCategory)}/${params.slug}`)
+    }
     notFound()
   }
 
-  const categoryLabel = categoryLabels[URL_SLUG_TO_CATEGORY[params.category]] || params.category
+  const categoryLabel = categoryLabels[params.category] || params.category
 
   const authorForAvatar = post.author
     ? {
         _id: post.author._id ?? null,
+        slug: post.author.slug ?? null,
         firstName: post.author.firstName ?? null,
         lastName: post.author.lastName ?? null,
         designation: post.author.designation ?? null,
@@ -197,6 +195,7 @@ export default async function ArticlePage(props: Props) {
   const coAuthorForAvatar = post.coAuthor
     ? {
         _id: post.coAuthor._id ?? null,
+        slug: post.coAuthor.slug ?? null,
         firstName: post.coAuthor.firstName ?? null,
         lastName: post.coAuthor.lastName ?? null,
         designation: post.coAuthor.designation ?? null,
@@ -211,7 +210,7 @@ export default async function ArticlePage(props: Props) {
 
   return (
     <>
-      <div className="pt-20">
+      <div>
         <div className="max-w-[1366px] mx-auto px-4 py-8">
           {/* Breadcrumb Navigation */}
           <Breadcrumb
@@ -231,9 +230,9 @@ export default async function ArticlePage(props: Props) {
             <div className="lg:col-span-3">
               <div className="pb-2 mb-2 border-b border-gray-100">
                 <div className="flex flex-col gap-2">
-                  <h2 className="text-xl font-bold tracking-tight text-black sm:text-2xl lg:text-3xl">
+                  <h1 className="text-xl font-bold tracking-tight text-black sm:text-2xl lg:text-3xl">
                     {post.title}
-                  </h2>
+                  </h1>
                   {post.excerpt && (
                     <p className="text-gray-600 text-base leading-relaxed">
                       {post.excerpt}
@@ -243,7 +242,7 @@ export default async function ArticlePage(props: Props) {
                 <div className="flex items-center justify-between gap-4 mt-3">
                   {/* Author - Left Side */}
                   {authorForAvatar?.firstName && authorForAvatar?.lastName && (
-                    <Avatar person={authorForAvatar} coAuthor={coAuthorForAvatar} date={post.date} small />
+                    <Avatar person={authorForAvatar} coAuthor={coAuthorForAvatar} date={post.date} small interactive={false} />
                   )}
                   {/* Share Button - Right Side */}
                   <ShareArticle 
@@ -267,11 +266,13 @@ export default async function ArticlePage(props: Props) {
                   />
                 )}
               </div>
+
+              <ArticleAuthors author={authorForAvatar} coAuthor={coAuthorForAvatar} />
             </div>
 
             <div className="hidden lg:block lg:col-span-1">
-              <div className="sticky top-24">
-                <h3 className="text-xl font-bold">Latest on NWS</h3>
+              <div className="sticky top-36">
+                <p className="text-xl font-bold">Latest on NWS</p>
                 <div className="w-7 h-1 bg-red-500 mb-6" />
                 <LatestArticlesSidebar currentArticleId={post._id} />
               </div>
@@ -280,7 +281,7 @@ export default async function ArticlePage(props: Props) {
 
           {/* Mobile Latest Articles - Below article content */}
           <div className="lg:hidden mt-12 pt-8 border-t border-gray-200">
-            <h3 className="text-xl font-bold">Latest on NWS</h3>
+            <p className="text-xl font-bold">Latest on NWS</p>
             <div className="w-7 h-1 bg-red-500 mb-6" />
             <LatestArticlesSidebar currentArticleId={post._id} />
           </div>

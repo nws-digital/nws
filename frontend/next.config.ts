@@ -14,13 +14,52 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
+    // Category URLs were shortened (world-exclusive -> world, etc). Redirect
+    // old, already-indexed/shared links to the new short URLs.
+    const renamedCategories: Array<[string, string]> = [
+      ['world-exclusive', 'world'],
+      ['india-exclusive', 'india'],
+      ['osint-exclusive', 'nws-originals'],
+      // Interim short URL used before the NWS Originals rename
+      ['osint', 'nws-originals'],
+    ]
+
+    const categoryRedirects = renamedCategories.flatMap(([from, to]) => [
+      {
+        source: `/${from}`,
+        destination: `/${to}`,
+        permanent: true,
+      },
+      {
+        source: `/${from}/:slug`,
+        destination: `/${to}/:slug`,
+        permanent: true,
+      },
+    ])
+
+    // Static pages live at /pages/<slug>, not at the bare root path.
+    const staticPageSlugs = ['about', 'contact', 'privacy', 'terms']
+    const staticPageRedirects = staticPageSlugs.map((slug) => ({
+      source: `/${slug}`,
+      destination: `/pages/${slug}`,
+      permanent: true,
+    }))
+
     return [
-      { source: '/world-exclusive', destination: '/world', permanent: true },
-      { source: '/world-exclusive/:slug', destination: '/world/:slug', permanent: true },
-      { source: '/india-exclusive', destination: '/india', permanent: true },
-      { source: '/india-exclusive/:slug', destination: '/india/:slug', permanent: true },
-      { source: '/osint-exclusive', destination: '/osint', permanent: true },
-      { source: '/osint-exclusive/:slug', destination: '/osint/:slug', permanent: true },
+      ...categoryRedirects,
+      ...staticPageRedirects,
+      {
+        source: '/osint-news-sitemap.xml',
+        destination: '/nws-originals-news-sitemap.xml',
+        permanent: true,
+      },
+      // The sitemap is now a sitemap-index at /index-sitemap.xml; keep the
+      // old /sitemap.xml URL working during the crawler/Search Console migration.
+      {
+        source: '/sitemap.xml',
+        destination: '/index-sitemap.xml',
+        permanent: true,
+      },
     ]
   },
   async headers() {

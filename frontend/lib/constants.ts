@@ -13,7 +13,7 @@ export const SOCIAL_LINKS = [
   },
   {
     name: 'LinkedIn',
-    url: 'https://www.linkedin.com/in/nwsnetwork',
+    url: 'https://www.linkedin.com/company/nws-network',
   },
 ] as const
 
@@ -39,24 +39,6 @@ export const SOCIAL_ICONS: Record<string, {viewBox: string; path: string}> = {
 export const CATEGORY_LABELS: Record<string, string> = {
   'world-exclusive': 'World',
   'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
+  'osint-exclusive': 'NWS Originals',
   'commentary': 'Commentary',
-} as const
-
-// Maps the raw category value stored in Sanity (unchanged, so no CMS
-// migration is needed) to the clean URL segment we want to expose publicly.
-export const CATEGORY_TO_URL_SLUG: Record<string, string> = {
-  'world-exclusive': 'world',
-  'india-exclusive': 'india',
-  'osint-exclusive': 'osint',
-  'commentary': 'commentary',
-} as const
-
-// Reverse of the above - used when a request comes in for /india/... and we
-// need to know which raw category value to query Sanity with.
-export const URL_SLUG_TO_CATEGORY: Record<string, string> = {
-  world: 'world-exclusive',
-  india: 'india-exclusive',
-  osint: 'osint-exclusive',
-  commentary: 'commentary',
 } as const

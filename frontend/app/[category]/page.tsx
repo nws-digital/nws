@@ -3,10 +3,11 @@ import {CategoryArticlesList} from '@/app/components/CategoryArticlesList'
 import {CommentaryArticlesList} from '@/app/components/CommentaryArticlesList'
 import {categoryArticlesQuery, categoryArticlesCountQuery, commentaryArticlesPageQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
-import {URL_SLUG_TO_CATEGORY} from '@/lib/constants'
+import {urlSlugToCategory} from '@/sanity/lib/cleanCategorySlug'
+import {withDefinedSlug} from '@/sanity/lib/utils'
 
-// URL-facing slugs (what visitors see and what generateStaticParams builds)
-const validCategories = Object.keys(URL_SLUG_TO_CATEGORY)
+// URL segment values (short form) -- the underlying Sanity `category` field is unchanged.
+const validCategorySlugs = ['world', 'india', 'nws-originals', 'commentary']
 
 interface CategoryPageProps {
   params: Promise<{
@@ -15,21 +16,19 @@ interface CategoryPageProps {
 }
 
 export async function generateStaticParams() {
-  return validCategories.map((category) => ({
+  return validCategorySlugs.map((category) => ({
     category,
   }))
 }
 
 export default async function CategoryPage({params}: CategoryPageProps) {
-  const {category: urlCategory} = await params
+  const {category: categorySlug} = await params
 
-  // Validate the URL-facing slug
-  if (!validCategories.includes(urlCategory)) {
+  // Validate category and resolve the short URL slug back to the Sanity category value
+  if (!validCategorySlugs.includes(categorySlug)) {
     notFound()
   }
-
-  // Translate back to the raw value stored in Sanity for querying
-  const category = URL_SLUG_TO_CATEGORY[urlCategory]
+  const category = urlSlugToCategory(categorySlug)!
 
   // Commentary page uses different query and component
   if (category === 'commentary') {
@@ -47,9 +46,9 @@ export default async function CategoryPage({params}: CategoryPageProps) {
     })
 
     return (
-      <div className="pt-20 min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50">
         <CommentaryArticlesList
-          initialArticles={articles || []}
+          initialArticles={withDefinedSlug(articles || [])}
           totalCount={totalCount || 0}
         />
       </div>
@@ -72,10 +71,11 @@ export default async function CategoryPage({params}: CategoryPageProps) {
   })
 
   return (
-    <div className="pt-20 min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <CategoryArticlesList
-        initialArticles={articles || []}
+        initialArticles={withDefinedSlug(articles || [])}
         category={category}
+        categorySlug={categorySlug}
         totalCount={totalCount || 0}
       />
     </div>

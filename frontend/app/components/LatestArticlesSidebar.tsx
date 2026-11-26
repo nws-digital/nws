@@ -1,13 +1,23 @@
 import Link from 'next/link'
 import {Image} from 'next-sanity/image'
 import {urlForImage} from '@/sanity/lib/utils'
-import {cleanCategorySlug} from '@/sanity/lib/cleanCategorySlug'
+import {categoryToUrlSlug} from '@/sanity/lib/cleanCategorySlug'
 import {formatDistanceToNow} from 'date-fns'
 import {sidebarArticlesQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
+import {AuthorCredit, hasAuthorCredit} from '@/app/components/AuthorCredit'
 
 interface LatestArticlesSidebarProps {
   currentArticleId?: string
+}
+
+interface SidebarAuthor {
+  firstName: string
+  lastName: string
+  designation?: string
+  country?: string
+  picture?: any
+  bio?: any
 }
 
 interface SidebarArticle {
@@ -20,19 +30,14 @@ interface SidebarArticle {
   date: string
   category: string
   coverImage?: any
-  author?: {
-    firstName: string
-    lastName: string
-    designation?: string
-    picture?: any
-    bio?: any
-  }
+  author?: SidebarAuthor
+  coAuthor?: SidebarAuthor
 }
 
 const categoryLabels: Record<string, string> = {
   'world-exclusive': 'World',
   'india-exclusive': 'India',
-  'osint-exclusive': 'OSINT',
+  'osint-exclusive': 'NWS Originals',
   'commentary': 'Commentary',
 }
 
@@ -63,7 +68,7 @@ export async function LatestArticlesSidebar({currentArticleId}: LatestArticlesSi
           return (
             <Link
               key={article._id}
-              href={`/${cleanCategorySlug(article.category)}/${article.slug.current}`}
+              href={`/${categoryToUrlSlug(article.category)}/${article.slug.current}`}
               className="group flex gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0"
             >
               {/* Square Image - Left */}
@@ -81,22 +86,26 @@ export async function LatestArticlesSidebar({currentArticleId}: LatestArticlesSi
               {/* Details - Right */}
               <div className="flex-1 min-w-0">
                 {/* Title */}
-                <h4 className="font-semibold text-sm text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-3">
+                <p className="font-semibold text-sm text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-3">
                   {article.title}
-                </h4>
+                </p>
 
                 {/* Time ago and Category */}
                 <div className="flex items-center gap-2 text-xs text-gray-500">
-                  {/* <span>{timeAgo}</span> */}
-                  {/* <br /> */}
-                  {/* <span className="block h-1" /> */}
-                  {article.category && (
-                    <>
-                      {/* <span>•</span> */}
+                  {hasAuthorCredit(article.author, article.coAuthor, article.category) ? (
+                    <AuthorCredit
+                      author={article.author}
+                      coAuthor={article.coAuthor}
+                      category={article.category}
+                      avatarSize={16}
+                      className="text-gray-500 font-medium"
+                    />
+                  ) : (
+                    article.category && (
                       <span className="text-gray-500 font-medium">
                         {categoryLabels[article.category] || article.category}
                       </span>
-                    </>
+                    )
                   )}
                 </div>
               </div>

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {formatDistanceToNow} from 'date-fns'
 import {motion} from 'framer-motion'
-import {urlForImage} from '@/sanity/lib/utils'
+import {urlForImage, withDefinedSlug} from '@/sanity/lib/utils'
 import {loadMoreCommentaryArticles} from '@/app/actions/articles'
 import {Breadcrumb} from '@/app/components/Breadcrumb'
 import Avatar from '@/app/components/Avatar'
@@ -14,21 +14,23 @@ interface CommentaryArticle {
   _id: string
   title: string
   slug: {current: string}
-  excerpt?: string
+  excerpt?: string | null
   contentPreview?: string
   date: string
   author?: {
+    slug?: string | null
     firstName: string
     lastName: string
-    designation?: string
+    designation?: string | null
     picture?: any
   }
   coAuthor?: {
+    slug?: string | null
     firstName: string
     lastName: string
-    designation?: string
+    designation?: string | null
     picture?: any
-  }
+  } | null
 }
 
 interface CommentaryArticlesListProps {
@@ -51,7 +53,7 @@ export function CommentaryArticlesList({
     try {
       const newArticles = await loadMoreCommentaryArticles(offset, offset + 12)
 
-      setArticles([...articles, ...newArticles])
+      setArticles([...articles, ...withDefinedSlug(newArticles)])
       setOffset(offset + 12)
     } catch (error) {
       console.error('Error loading more articles:', error)
@@ -81,6 +83,7 @@ export function CommentaryArticlesList({
         {articles.map((article) => {
           const authorForAvatar = article.author
             ? {
+                slug: article.author.slug ?? null,
                 firstName: article.author.firstName ?? null,
                 lastName: article.author.lastName ?? null,
                 designation: article.author.designation ?? null,
@@ -91,6 +94,7 @@ export function CommentaryArticlesList({
 
           const coAuthorForAvatar = article.coAuthor
             ? {
+                slug: article.coAuthor.slug ?? null,
                 firstName: article.coAuthor.firstName ?? null,
                 lastName: article.coAuthor.lastName ?? null,
                 designation: article.coAuthor.designation ?? null,

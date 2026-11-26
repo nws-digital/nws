@@ -64,3 +64,5 @@ coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# Saved by studio/scripts/moveToNwsOriginals.mjs (keep locally, do not commit)
+studio/scripts/migration-backups/

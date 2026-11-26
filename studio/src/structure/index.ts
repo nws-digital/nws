@@ -8,7 +8,7 @@ import pluralize from 'pluralize-esm'
  * Learn more: https://www.sanity.io/docs/structure-builder-introduction
  */
 
-const DISABLED_TYPES = ['settings', 'promptConfig', 'assist.instruction.context']
+const DISABLED_TYPES = ['settings', 'promptConfig', 'assist.instruction.context', 'media.tag']
 
 export const structure: StructureResolver = (S: StructureBuilder) =>
   S.list()

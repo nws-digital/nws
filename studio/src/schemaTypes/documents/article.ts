@@ -35,6 +35,13 @@ export const article = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'handpicked',
+      title: 'Hand-Picked',
+      type: 'boolean',
+      description: 'Show this article in the Hand-Picked section on the homepage',
+      initialValue: false,
+    }),
+    defineField({
       name: 'category',
       title: 'Category',
       type: 'string',
@@ -42,7 +49,7 @@ export const article = defineType({
         list: [
           {title: 'World Exclusive', value: 'world-exclusive'},
           {title: 'India Exclusive', value: 'india-exclusive'},
-          {title: 'OSINT Exclusive', value: 'osint-exclusive'},
+          {title: 'NWS Originals', value: 'osint-exclusive'},
           {title: 'Commentary', value: 'commentary'},
         ],
         layout: 'radio',

@@ -3,7 +3,7 @@ import {defineQuery} from 'next-sanity'
 import HeaderClient from './HeaderClient'
 
 const sideMenuArticlesQuery = defineQuery(`
-  *[_type == "article" && category != "commentary"] | order(date desc)[0...3] {
+  *[_type == "article" && category != "commentary"] | order(date desc)[0...5] {
     _id,
     title,
     slug,

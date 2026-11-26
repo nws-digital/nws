@@ -11,10 +11,17 @@
  */
 
 import {PortableText, type PortableTextComponents, type PortableTextBlock} from 'next-sanity'
-import Image from 'next/image'
-import {urlForImage} from '@/sanity/lib/utils'
+import {Image} from 'next-sanity/image'
+import {urlForImage, getContainedImageDimensions} from '@/sanity/lib/utils'
 import TweetEmbed from '@/app/components/TweetEmbed'
 import ResolvedLink from '@/app/components/ResolvedLink'
+
+// Body images are scaled down (never cropped, never upscaled) to fit within
+// this box on whichever axis is the tighter constraint - full width when the
+// image is wide/normal, full height with blank space on the sides when it's
+// tall. Sources already smaller than the box keep their natural size.
+const MAX_BODY_IMAGE_WIDTH = 600
+const MAX_BODY_IMAGE_HEIGHT = 600
 
 export default function CustomPortableText({
   className,
@@ -88,20 +95,55 @@ export default function CustomPortableText({
         if (!value?.asset?._ref) {
           return null
         }
-        const imageBuilder = urlForImage(value)
-        const imageUrl = imageBuilder?.width(800).height(600).fit('max').url()
-        if (!imageUrl) {
+        // No cropping: the image is scaled down (never up) to fit within a
+        // MAX_BODY_IMAGE_WIDTH x MAX_BODY_IMAGE_HEIGHT box on whichever axis
+        // is the tighter fit - full width for a normal/wide photo, full
+        // height with blank space on the sides for a tall one. A source
+        // already smaller than the box in both dimensions renders at its
+        // natural size instead of being stretched up to fill it.
+        //
+        // Uses next-sanity's Image (not plain next/image) so every srcset
+        // candidate is generated live by Sanity's CDN loader, matching
+        // CoverImage.tsx - it requests exactly the resolution each viewport
+        // needs and never upscales past what the source actually has, which
+        // is what a plain next/image resizing from one static pre-baked URL
+        // could not guarantee (that previously blurred larger renders).
+        const dims = getContainedImageDimensions(value, MAX_BODY_IMAGE_WIDTH, MAX_BODY_IMAGE_HEIGHT)
+        const imageUrl = urlForImage(value)?.url()
+        if (!imageUrl || !dims) {
           return null
         }
         return (
           <figure className="my-8">
-            <Image
-              src={imageUrl}
-              alt={value.alt || 'Article image'}
-              width={800}
-              height={600}
-              className="rounded-lg w-full h-auto"
-            />
+            <div className="flex justify-center bg-gray-50 rounded-lg overflow-hidden">
+              <Image
+                src={imageUrl}
+                alt={value.alt || 'Article image'}
+                width={dims.width}
+                height={dims.height}
+                sizes={`(max-width: 768px) 100vw, ${dims.width}px`}
+                // className="rounded-lg"
+                // width:auto/height:auto (e.g. via Tailwind's w-auto/h-auto)
+                // only holds until the image decodes - once real pixel data
+                // arrives, browsers size a plain <img> to ITS OWN natural
+                // resolution and ignore the width/height attributes, which
+                // silently shrank every image down to its raw source pixel
+                // count. An explicit aspect-ratio isn't overridden that way,
+                // so it's what actually keeps the contain-fit box.
+                style={{
+                  width: dims.width,
+                  height: 'auto',
+                  maxWidth: '100%',
+                  maxHeight: MAX_BODY_IMAGE_HEIGHT,
+                  // Tailwind Typography's `.prose img` default adds 2em of
+                  // vertical margin on every image, stacking with the
+                  // figure's own my-8 spacing and pushing the image away
+                  // from this box's edges (the "space on all sides" look).
+                  margin: 0,
+                  aspectRatio: `${dims.width} / ${dims.height}`,
+                }}
+              />
+            </div>
             {value.caption && (
                 <figcaption className="mt-2 text-md text-gray-500">
                 {value.caption}
